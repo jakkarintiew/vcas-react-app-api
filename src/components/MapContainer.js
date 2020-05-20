@@ -52,9 +52,9 @@ class MapContainer extends Component {
   }
 
   _renderLayers() {
-    const {
+    // const {
      
-    } = this.props;
+    // } = this.props;
 
     return [
       new PathLayer ({
@@ -69,7 +69,7 @@ class MapContainer extends Component {
         data: data_points,
         radiusScale: 5,
         radiusMinPixels: 1,
-        getPosition: d => [d.longitude, d.latitude, d.altitude],
+        getPosition: d => [d.longitude, d.latitude, d.altitude*100],
         getColor: [101, 147, 245],
         getRadius: 35
       }),
@@ -78,7 +78,7 @@ class MapContainer extends Component {
         data: data_trips,
         getPath: d => d.path,
         getTimestamps: d => d.timestamps,
-        getColor: [23, 255, 233],
+        getColor: [255, 190, 210],
         opacity: 1,
         widthMinPixels: 5,
         rounded: true,

@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import MapIcon from '@material-ui/icons/Map';
 
 const LogoTitle = styled.div`
   display: inline-block;
@@ -29,18 +28,18 @@ const LogoWrapper = styled.div`
   align-items: flex-start;
 `;
 
-const LogoSvgWrapper = styled.div`
-  margin-top: 3px;
-`;
+// const LogoSvgWrapper = styled.div`
+//   margin-top: 3px;
+// `;
 
-const LogoSvg = () => (
-  <svg className="side-panel-logo__logo" width="22px" height="15px" viewBox="0 0 22 15">
-    <g transform="translate(11, -3) rotate(45.000000)">
-      <rect fill="#535C6C" x="0" y="5" width="10" height="10" />
-      <rect fill="#1FBAD6" x="5" y="0" width="10" height="10" />
-    </g>
-  </svg>
-);
+// const LogoSvg = () => (
+//   <svg className="side-panel-logo__logo" width="22px" height="15px" viewBox="0 0 22 15">
+//     <g transform="translate(11, -3) rotate(45.000000)">
+//       <rect fill="#535C6C" x="0" y="5" width="10" height="10" />
+//       <rect fill="#1FBAD6" x="5" y="0" width="10" height="10" />
+//     </g>
+//   </svg>
+// );
 
 const VCASLogo = ({appName, appWebsite, version}) => (
   <LogoWrapper className="side-panel-logo">

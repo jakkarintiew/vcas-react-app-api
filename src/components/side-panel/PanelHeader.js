@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import VCASLogo from '../common/logo';
+import VCASLogo from './logo';
 
 const StyledPanelHeader = styled.div`
   background-color: lightgrey;

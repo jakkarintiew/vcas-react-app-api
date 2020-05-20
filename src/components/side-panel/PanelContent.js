@@ -1,8 +1,7 @@
-import React, { Component } from 'react'
+import React from 'react'
 
 import PropTypes from 'prop-types';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
@@ -57,7 +56,7 @@ const StyledTab = withStyles((theme) => ({
       color: 'primary',
     },
     minWidth: "auto",
-    width: 75,
+    width: 100,
     minHeight: "auto",
     height: 50,
     padding: 0
@@ -73,7 +72,7 @@ export default function SimpleTabs() {
   };
   return (
     <div className={classes.root}>
-      <div position="static" style={{backgroundColor: 'lightgrey'}}>
+      <div position="static">
         <Tabs value={value} onChange={handleChange} indicatorColor='primary'>
           <StyledTab label={ <div><StorageIcon style={{verticalAlign: 'middle'}} />  Data</div> } />
           <StyledTab label={ <div><LayersIcon style={{verticalAlign: 'middle'}} />  Layers</div> } />
