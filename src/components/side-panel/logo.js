@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import React from "react";
+import PropTypes from "prop-types";
+import styled from "styled-components";
 
 const LogoTitle = styled.div`
   display: inline-block;
@@ -41,18 +41,25 @@ const LogoWrapper = styled.div`
 //   </svg>
 // );
 
-const VCASLogo = ({appName, appWebsite, version}) => (
+const VCASLogo = ({ appName, appWebsite, version }) => (
   <LogoWrapper className="side-panel-logo">
     {/* <LogoSvgWrapper>
       <MapIcon style={{fill: "white", verticalAlign: 'middle'}} />
     </LogoSvgWrapper> */}
     <LogoTitle className="logo__title">
       <LogoName className="logo__name">
-        <a className="logo__link" target="_blank" rel="noopener noreferrer" href={appWebsite}>
+        <a
+          className="logo__link"
+          target="_blank"
+          rel="noopener noreferrer"
+          href={appWebsite}
+        >
           {appName}
         </a>
       </LogoName>
-      {version ? <LogoVersion className="logo__version">{version}</LogoVersion> : null}
+      {version ? (
+        <LogoVersion className="logo__version">{version}</LogoVersion>
+      ) : null}
     </LogoTitle>
   </LogoWrapper>
 );
@@ -60,13 +67,13 @@ const VCASLogo = ({appName, appWebsite, version}) => (
 VCASLogo.propTypes = {
   appName: PropTypes.string,
   version: PropTypes.string,
-  appWebsite: PropTypes.string
+  appWebsite: PropTypes.string,
 };
 
 VCASLogo.defaultProps = {
-  appName: 'VCAS',
-  version: '0.0.1',
-  appWebsite: 'https://www.eng.nus.edu.sg/c4ngp/'
+  appName: "VCAS",
+  version: "0.0.1",
+  appWebsite: "https://www.eng.nus.edu.sg/c4ngp/",
 };
 
 export default VCASLogo;

@@ -1,14 +1,14 @@
-import React from 'react'
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
-import StorageIcon from '@material-ui/icons/Storage';
-import LayersIcon from '@material-ui/icons/Layers';
-import EditLocationIcon from '@material-ui/icons/EditLocation';
+import PropTypes from "prop-types";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import Typography from "@material-ui/core/Typography";
+import Box from "@material-ui/core/Box";
+import StorageIcon from "@material-ui/icons/Storage";
+import LayersIcon from "@material-ui/icons/Layers";
+import EditLocationIcon from "@material-ui/icons/EditLocation";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -39,31 +39,31 @@ TabPanel.propTypes = {
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-    width: '100%',
+    width: "100%",
     backgroundColor: theme.palette.background.paper,
   },
 }));
 
 const StyledTab = withStyles((theme) => ({
   root: {
-    textTransform: 'none',
-    color: 'black',
-    backgroundColor: 'lightgrey',
+    textTransform: "none",
+    color: "black",
+    backgroundColor: "lightgrey",
     fontWeight: 150,
     fontSize: theme.typography.pxToRem(12),
-    '&:focus': {
+    "&:focus": {
       opacity: 1,
-      color: 'primary',
+      color: "primary",
     },
     minWidth: "auto",
     width: 100,
     minHeight: "auto",
     height: 50,
-    padding: 0
+    padding: 0,
   },
 }))((props) => <Tab disableRipple {...props} />);
 
-export default function SimpleTabs() {
+const SimpleTabs = () => {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
@@ -73,10 +73,28 @@ export default function SimpleTabs() {
   return (
     <div className={classes.root}>
       <div position="static">
-        <Tabs value={value} onChange={handleChange} indicatorColor='primary'>
-          <StyledTab label={ <div><StorageIcon style={{verticalAlign: 'middle'}} />  Data</div> } />
-          <StyledTab label={ <div><LayersIcon style={{verticalAlign: 'middle'}} />  Layers</div> } />
-          <StyledTab label={ <div><EditLocationIcon style={{verticalAlign: 'middle'}} />  Map</div> } />
+        <Tabs value={value} onChange={handleChange} indicatorColor="primary">
+          <StyledTab
+            label={
+              <div>
+                <StorageIcon style={{ verticalAlign: "middle" }} /> Data
+              </div>
+            }
+          />
+          <StyledTab
+            label={
+              <div>
+                <LayersIcon style={{ verticalAlign: "middle" }} /> Layers
+              </div>
+            }
+          />
+          <StyledTab
+            label={
+              <div>
+                <EditLocationIcon style={{ verticalAlign: "middle" }} /> Map
+              </div>
+            }
+          />
         </Tabs>
       </div>
       <TabPanel value={value} index={0}>
@@ -89,6 +107,7 @@ export default function SimpleTabs() {
         Item Three
       </TabPanel>
     </div>
-  )
-  
-}
+  );
+};
+
+export default SimpleTabs;

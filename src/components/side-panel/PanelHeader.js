@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
-import styled from 'styled-components';
-import VCASLogo from './logo';
+import React from "react";
+import styled from "styled-components";
+import VCASLogo from "./logo";
 
 const StyledPanelHeader = styled.div`
   background-color: lightgrey;
@@ -15,15 +15,14 @@ const StyledPanelHeaderTop = styled.div`
   width: 100%;
 `;
 
+const PanelHeader = () => {
+  return (
+    <StyledPanelHeader>
+      <StyledPanelHeaderTop>
+        <VCASLogo />
+      </StyledPanelHeaderTop>
+    </StyledPanelHeader>
+  );
+};
 
-export default class PanelHeader extends Component {
-  render() {
-    return (
-      <StyledPanelHeader>
-        <StyledPanelHeaderTop>
-          <VCASLogo />
-        </StyledPanelHeaderTop>
-      </StyledPanelHeader>
-    )
-  };
-}
+export default PanelHeader;
