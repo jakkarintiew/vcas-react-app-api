@@ -8,9 +8,10 @@ import PanelContent from "./side-panel/PanelContent";
 const SidePanel = () => {
   return (
     <div>
-      <SideBar width={300}>
+      <SideBar>
         <PanelHeader />
         <PanelContent />
+        {/* <PanelTabs /> */}
       </SideBar>
     </div>
   );

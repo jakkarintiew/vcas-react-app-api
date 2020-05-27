@@ -1,7 +1,8 @@
 import React from "react";
+import styled from "styled-components";
 
 import PropTypes from "prop-types";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { useTheme } from "@material-ui/core/styles";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
@@ -9,6 +10,12 @@ import Box from "@material-ui/core/Box";
 import StorageIcon from "@material-ui/icons/Storage";
 import LayersIcon from "@material-ui/icons/Layers";
 import EditLocationIcon from "@material-ui/icons/EditLocation";
+
+const StyledTabsContainer = styled.div`
+  background-color: ${(props) => props.theme.sidePanelHeaderBg};
+  flex-grow: 1,
+  width: "100%",
+`;
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -36,78 +43,120 @@ TabPanel.propTypes = {
   value: PropTypes.any.isRequired,
 };
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    width: "100%",
-    backgroundColor: theme.palette.background.paper,
-  },
-}));
+// const tabStyles = (theme) => {
+//   return {
+//     root: {
+//       color: theme.activeColor,
+//       textTransform: "none",
+//       fontWeight: 150,
+//       "&:focus": {
+//         opacity: 1,
+//       },
+//       minWidth: "auto",
+//       width: 100,
+//       minHeight: "auto",
+//       height: 35,
+//       padding: 0,
+//     },
+//   };
+// };
 
-const StyledTab = withStyles((theme) => ({
-  root: {
-    textTransform: "none",
-    color: "black",
-    backgroundColor: "lightgrey",
-    fontWeight: 150,
-    fontSize: theme.typography.pxToRem(12),
-    "&:focus": {
-      opacity: 1,
-      color: "primary",
-    },
-    minWidth: "auto",
-    width: 100,
-    minHeight: "auto",
-    height: 50,
-    padding: 0,
-  },
-}))((props) => <Tab disableRipple {...props} />);
+// const StyledTab = withStyles(tabStyles)((props) => (
+//   <Tab disableRipple {...props} />
+// ));
 
-const SimpleTabs = () => {
-  const classes = useStyles();
+const StyledTab = styled(Tab)`
+  transition: ${(props) => props.theme.transition};
+  text-transform: none;
+  font-weight: 150;
+  color: ${(props) => props.theme.textColor};
+  font-size: ${(props) => props.theme.fontSize};
+  :focus {
+    opacity: 1;
+    color: ${(props) => props.theme.activeColor};
+  }
+  :hover {
+    opacity: 1;
+    color: ${(props) => props.theme.activeColor};
+  }
+  min-width: auto;
+  width: 100px;
+  min-height: auto;
+  height: 35px;
+  padding: 0;
+`;
+
+export const panels = [
+  {
+    id: "data",
+    label: "Data",
+    iconComponent: StorageIcon,
+  },
+  {
+    id: "layer",
+    label: "Layer",
+    iconComponent: LayersIcon,
+  },
+  {
+    id: "map",
+    label: "Map",
+    iconComponent: EditLocationIcon,
+  },
+];
+
+const PanelContent = () => {
+  const theme = useTheme();
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
   return (
-    <div className={classes.root}>
-      <div position="static">
-        <Tabs value={value} onChange={handleChange} indicatorColor="primary">
-          <StyledTab
-            label={
-              <div>
-                <StorageIcon style={{ verticalAlign: "middle" }} /> Data
-              </div>
-            }
-          />
-          <StyledTab
-            label={
-              <div>
-                <LayersIcon style={{ verticalAlign: "middle" }} /> Layers
-              </div>
-            }
-          />
-          <StyledTab
-            label={
-              <div>
-                <EditLocationIcon style={{ verticalAlign: "middle" }} /> Map
-              </div>
-            }
-          />
+    <div>
+      <StyledTabsContainer position="static">
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          indicatorColor="primary"
+          style={{
+            minHeight: "auto",
+            height: 35,
+            backgroundColor: theme.sidePanelHeaderBg,
+          }}
+        >
+          {panels.map((panel) => (
+            <StyledTab
+              disableRipple
+              style={{
+                color: theme.activeColor,
+              }}
+              label={
+                <div>
+                  <panel.iconComponent
+                    style={{
+                      verticalAlign: "middle",
+                      fontSize: 18,
+                    }}
+                  />{" "}
+                  {panel.label}
+                </div>
+              }
+            />
+          ))}
         </Tabs>
-      </div>
+      </StyledTabsContainer>
+
       <TabPanel value={value} index={0}>
-        Item One
+        Data manager here
       </TabPanel>
       <TabPanel value={value} index={1}>
-        Item Two
+        Map layers manager here
       </TabPanel>
       <TabPanel value={value} index={2}>
-        Item Three
+        Map style settings <here></here>
       </TabPanel>
     </div>
   );
 };
 
-export default SimpleTabs;
+export default PanelContent;
