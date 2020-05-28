@@ -6,15 +6,18 @@ import {
   PathLayer,
   IconLayer,
   TripsLayer,
+  HexagonLayer,
+  ScreenGridLayer,
+  HeatmapLayer,
   COORDINATE_SYSTEM,
 } from "deck.gl";
 
 // import CustomTripsLayer from "./map-layers/TripsLayer";
 
-import data_points from "../data/data_points.json";
-import data_paths from "../data/data_paths.json";
-import data_trips from "../data/data_trips.json";
-import data_icon from "../data/data_icon.json";
+import data_points from "data/data_points.json";
+import data_paths from "data/data_paths.json";
+import data_trips from "data/data_trips.json";
+import data_icon from "data/data_icon.json";
 
 // Set your mapbox access token here
 const MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
@@ -27,7 +30,7 @@ const INITIAL_VIEW_STATE = {
   bearing: 0,
 };
 
-const MapContainer = () => {
+const MapContainer = (props) => {
   const [tooltipInfo, setTooltipInfo] = useState({
     hoveredObject: "",
     pointerX: 0.0,
@@ -52,15 +55,40 @@ const MapContainer = () => {
     return () => cancelAnimationFrame(requestRef.current);
   });
 
-  const mapStyle = "mapbox://styles/mapbox/light-v10";
-
   const layers = [
+    new HeatmapLayer({
+      id: "heatmapLayer",
+      data: data_points,
+      getPosition: (d) => [d.longitude, d.latitude],
+      intensity: 1.5,
+      threshold: 0.2,
+      visible: false,
+    }),
+    new ScreenGridLayer({
+      id: "screen-grid-layer",
+      data: data_points,
+      pickable: false,
+      opacity: 0.25,
+      cellSizePixels: 50,
+      getPosition: (d) => [d.longitude, d.latitude],
+    }),
+    new HexagonLayer({
+      id: "hexagon-layer",
+      data: data_points,
+      lowerPercentile: 80,
+      extruded: false,
+      radius: 1500,
+      opacity: 0.45,
+      coverage: 0.98,
+      getPosition: (d) => [d.longitude, d.latitude],
+      visible: false,
+    }),
     new PathLayer({
       id: "path",
       data: data_paths,
       getColor: [150, 255, 190],
       getWidth: 7,
-      widthMinPixels: 2,
+      widthMinPixels: 5,
       coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
       pickable: true,
       onHover: (info) =>
@@ -92,15 +120,15 @@ const MapContainer = () => {
       id: "icon-layer",
       data: data_icon,
       coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
-      iconAtlas: require("../img/arrow.png"),
+      iconAtlas: require("../../img/arrow.png"),
       iconMapping: {
         marker: { x: 0, y: 0, width: 512, height: 512, mask: false },
       },
       getIcon: (d) => "marker",
       getPosition: (d) => [d.longitude, d.latitude, 0],
-      getSize: (d) => 20,
+      getSize: (d) => 12,
       sizeScale: 2,
-      sizeMinPixels: 5,
+      sizeMinPixels: 3,
       sizeMaxPixels: 150,
       getColor: (d) => [140, 140, 0],
       getAngle: (d) => d.heading,
@@ -127,7 +155,6 @@ const MapContainer = () => {
       currentTime: time,
       shadowEnabled: false,
     }),
-    // new CustomTripsLayer(data_trips),
   ];
 
   const renderTooltip = () => {
@@ -169,7 +196,7 @@ const MapContainer = () => {
       >
         <StaticMap
           reuseMaps
-          mapStyle={mapStyle}
+          mapStyle={props.mapStyle}
           preventStyleDiffing={true}
           mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
         ></StaticMap>

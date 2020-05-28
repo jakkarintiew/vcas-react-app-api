@@ -16,7 +16,8 @@ const StyledSidePanelContainer = styled.div`
 `;
 
 const SideBarInner = styled.div`
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+  box-shadow: ${(props) => props.theme.panelBoxShadow};
+  transition: ${(props) => props.theme.transition};
   align-items: stretch;
   background-color: ${(props) => props.theme.sidePanelBg};
   border-radius: 5px;

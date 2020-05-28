@@ -506,13 +506,6 @@
   {
     "id": "point_0",
     "message": "Hello I'm a point!",
-    "longitude": 181.0,
-    "latitude": 91.0,
-    "altitude": 2.3
-  },
-  {
-    "id": "point_0",
-    "message": "Hello I'm a point!",
     "longitude": 103.841,
     "latitude": 1.26562,
     "altitude": 0.4
@@ -1062,13 +1055,6 @@
     "longitude": 103.653,
     "latitude": 1.29807,
     "altitude": 0.0
-  },
-  {
-    "id": "point_0",
-    "message": "Hello I'm a point!",
-    "longitude": 181.0,
-    "latitude": 91.0,
-    "altitude": 2.3
   },
   {
     "id": "point_0",

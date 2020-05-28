@@ -1,31 +1,27 @@
-import React, { useState } from "react";
+import React from "react";
 import { StylesProvider } from "@material-ui/styles";
 import { ThemeProvider } from "styled-components";
-import MapContainer from "../components/MapContainer";
-import SidePanel from "../components/SidePanel";
+import { useSelector } from "react-redux";
 
-import { lightTheme, theme as darkTheme } from "../styles/themes";
-import { GlobalStyle } from "../styles/global";
+import { lightTheme, darkTheme } from "styles/themes";
+import { GlobalStyle } from "styles/global";
+
+import MapContainer from "components/Map/MapContainer";
+import SidePanel from "components/SidePanel/SidePanel";
 
 const App = () => {
-  const [theme, setTheme] = useState("light");
-
-  const toggleTheme = () => {
-    if (theme === "light") {
-      setTheme("dark");
-    } else {
-      setTheme("light");
-    }
-  };
-
+  const darkThemeEnabled = useSelector((state) => state.darkThemeEnabled);
   return (
     <div>
       <StylesProvider injectFirst>
-        <ThemeProvider theme={theme === "light" ? lightTheme : darkTheme}>
+        <ThemeProvider theme={darkThemeEnabled ? darkTheme : lightTheme}>
           <GlobalStyle />
-          <button onClick={toggleTheme}>Toggle theme</button>
           <SidePanel />
-          <MapContainer />
+          <MapContainer
+            mapStyle={
+              darkThemeEnabled ? darkTheme.mapStyle : lightTheme.mapStyle
+            }
+          />
         </ThemeProvider>
       </StylesProvider>
     </div>

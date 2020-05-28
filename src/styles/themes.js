@@ -284,7 +284,11 @@ export const DIMENSIONS = {
   },
 };
 
-export const theme = {
+// MapBox Styles
+export const mapStyle = "mapbox://styles/mapbox/dark-v10";
+export const mapStyleLT = "mapbox://styles/mapbox/light-v10";
+
+export const darkTheme = {
   ...DIMENSIONS,
   // Transitions
   transition,
@@ -437,10 +441,13 @@ export const theme = {
   tooltipBg,
   tooltipColor,
   logoColor,
+
+  // Map
+  mapStyle: mapStyle,
 };
 
 export const lightTheme = {
-  ...theme,
+  ...darkTheme,
   // template
   activeColor: activeColorLT,
   input: inputLT,
@@ -513,10 +520,13 @@ export const lightTheme = {
   rangeBrushBgd: "#D3D8E0",
   histogramFillInRange: activeColorLT,
   histogramFillOutRange: "#A0A7B4",
+
+  // Map
+  mapStyle: mapStyleLT,
 };
 
-export const darkTheme = {
-  ...theme,
+export const mutedLightTheme = {
+  ...darkTheme,
   activeColor: "#E2E2E2",
   dropdownListBgd: "#FFFFFF",
   dropdownListBorderTop: "none",
