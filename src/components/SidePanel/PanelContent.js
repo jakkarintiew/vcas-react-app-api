@@ -14,13 +14,11 @@ import MapManagerPanel from "./MapManagerPanel/MapManagerPanel";
 
 const StyledTabsContainer = styled.div`
   background-color: ${(props) => props.theme.sidePanelHeaderBg};
-  transition: ${(props) => props.theme.transition};
   flex-grow: 1;
   width: 100%;
 `;
 
 const StyledTabs = styled(Tabs)`
-  transition: ${(props) => props.theme.transition};
   min-height: auto;
   height: 35;
   background-color: ${(props) => props.theme.sidePanelHeaderBg};
@@ -51,7 +49,6 @@ export const panels = [
 ];
 
 const StyledTab = styled(Tab)`
-  transition: ${(props) => props.theme.transition};
   text-transform: none;
   font-size: 0.75em;
   color: ${(props) => props.theme.textColor};
@@ -72,8 +69,6 @@ const StyledTab = styled(Tab)`
 `;
 
 const StyledPanelContainer = styled.div`
-  transition: ${(props) => props.theme.transition};
-
   background-color: ${(props) => props.theme.sidePanelBg};
   width: 100%;
   height: 100%;
@@ -112,6 +107,7 @@ const PanelContent = () => {
         >
           {panels.map((panel) => (
             <StyledTab
+              key={panel.value}
               disableRipple
               label={
                 <div>
@@ -130,7 +126,7 @@ const PanelContent = () => {
       </StyledTabsContainer>
 
       {panels.map((panel) => (
-        <TabPanel value={value} index={panel.value}>
+        <TabPanel key={panel.value} value={value} index={panel.value}>
           <panel.panelComponent />
         </TabPanel>
       ))}

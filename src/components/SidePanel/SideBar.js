@@ -7,7 +7,6 @@ const StyledSidePanelContainer = styled.div`
   width: ${(props) =>
     props.theme.sidePanel.width + 2 * props.theme.sidePanel.margin.left}px;
   display: flex;
-  transition: width 250ms;
   position: absolute;
   padding-top: ${(props) => props.theme.sidePanel.margin.top}px;
   padding-right: ${(props) => props.theme.sidePanel.margin.right}px;
@@ -17,7 +16,6 @@ const StyledSidePanelContainer = styled.div`
 
 const SideBarInner = styled.div`
   box-shadow: ${(props) => props.theme.panelBoxShadow};
-  transition: ${(props) => props.theme.transition};
   align-items: stretch;
   background-color: ${(props) => props.theme.sidePanelBg};
   border-radius: 5px;

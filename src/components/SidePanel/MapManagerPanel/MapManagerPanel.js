@@ -3,7 +3,6 @@ import ThemeToggler from "components/SidePanel/MapManagerPanel/ThemeToggler";
 import styled from "styled-components";
 
 const StyledPanelContent = styled.div`
-  transition: ${(props) => props.theme.transition};
   background-color: ${(props) => props.theme.sidePanelBg};
   width: 100%;
   height: 100%;
