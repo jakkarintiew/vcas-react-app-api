@@ -17,7 +17,10 @@ export const fontSize = "0.875em";
 export const lineHeight = 1.71429;
 export const labelColor = "#6A7485";
 export const labelHoverColor = "#C6C6C6";
-export const labelColorLT = "#6A7485";
+export const labelColorLT = "#f0F0F0";
+
+export const labelTextColor = "#f7f7f7";
+export const labelTextColorLT = "#3A414C";
 
 export const textColor = "#A0A7B4";
 export const textColorLT = "#3A414C";
@@ -308,7 +311,6 @@ export const darkTheme = {
   dropdownListBorderTop,
 
   labelColor,
-  labelColorLT,
   labelHoverColor,
   mapPanelBackgroundColor,
   mapPanelHeaderBackgroundColor,
@@ -441,6 +443,7 @@ export const darkTheme = {
   tooltipBg,
   tooltipColor,
   logoColor,
+  labelTextColor,
 
   // Map
   mapStyle: mapStyle,
@@ -461,6 +464,7 @@ export const lightTheme = {
   tooltipColor: "#FFFFFF",
   dropdownListBgd: "#FFFFFF",
   textColorHl: activeColorLT,
+  labelColor: labelColorLT,
 
   inputBgd: "#F7F7F7",
   inputBgdHover: "#FFFFFF",
@@ -520,6 +524,8 @@ export const lightTheme = {
   rangeBrushBgd: "#D3D8E0",
   histogramFillInRange: activeColorLT,
   histogramFillOutRange: "#A0A7B4",
+
+  labelTextColor: labelTextColorLT,
 
   // Map
   mapStyle: mapStyleLT,

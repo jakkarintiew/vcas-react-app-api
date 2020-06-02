@@ -56,6 +56,8 @@ const StyledTab = styled(Tab)`
     opacity: 1;
     color: ${(props) => props.theme.activeColor};
     background-color: ${(props) => props.theme.sidePanelBg};
+    font-weight: 400;
+    outline: 0;
   }
   :hover {
     opacity: 1;

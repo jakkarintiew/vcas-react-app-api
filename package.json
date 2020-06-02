@@ -11,9 +11,11 @@
     "@testing-library/react": "^10.0.4",
     "@testing-library/user-event": "^10.4.0",
     "baseui": "^9.80.1",
+    "chart.js": "^2.9.3",
     "deck.gl": "^8.1.8",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
+    "react-chartjs-2": "^2.9.0",
     "react-dom": "^16.13.1",
     "react-map-gl": "^5.2.5",
     "react-redux": "^7.2.0",
@@ -24,10 +26,12 @@
     "styletron-react": "^5.2.7"
   },
   "scripts": {
-    "start": "PORT=8888 react-scripts start",
-    "build": "react-scripts build",
+    "start": "npm run watch:css && PORT=8888 react-scripts start",
+    "build": "npm run build:css && react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "build:css": "postcss src/styles/tailwind.css -o src/styles/main.css",
+    "watch:css": "postcss src/styles/tailwind.css -o src/styles/main.css"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -44,5 +48,9 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "autoprefixer": "^9.8.0",
+    "postcss-cli": "^7.1.1",
+    "tailwindcss": "^1.4.6"
+  }
 }

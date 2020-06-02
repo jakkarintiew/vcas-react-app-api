@@ -3,7 +3,7 @@ import {
   createSlice,
   getDefaultMiddleware,
 } from "@reduxjs/toolkit";
-import logger from "redux-logger";
+// import logger from "redux-logger";
 
 // const sidePanelTabsInitialState = {
 //   activePanel: "data",
@@ -69,6 +69,14 @@ import logger from "redux-logger";
 //   },
 // });
 
+const activeVesselSlice = createSlice({
+  name: "activeVesselID",
+  initialState: null,
+  reducers: {
+    set: (state, { payload }) => payload,
+  },
+});
+
 const themeSlice = createSlice({
   name: "darkThemeEnabled",
   initialState: false,
@@ -79,14 +87,16 @@ const themeSlice = createSlice({
 
 // export actions
 export const { toggle: toggleThemeActionCreator } = themeSlice.actions;
+export const { set: setActiveVesselActionCreator } = activeVesselSlice.actions;
 
 // define reducers
 const reducer = {
   darkThemeEnabled: themeSlice.reducer,
+  activeVesselID: activeVesselSlice.reducer,
 };
 
 // define middleware
-const middleware = [...getDefaultMiddleware(), logger];
+const middleware = [...getDefaultMiddleware()];
 
 // export store
 export default configureStore({

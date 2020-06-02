@@ -11,11 +11,13 @@ import { GlobalStyle } from "styles/global";
 
 import MapContainer from "components/Map/MapContainer";
 import SidePanel from "components/SidePanel/SidePanel";
+import DetailsPanel from "components/DetailsPanel/DetailsPanel";
 
 import data_vessels from "data/data_vessels.json";
 
 const App = () => {
   const darkThemeEnabled = useSelector((state) => state.darkThemeEnabled);
+
   return (
     <div>
       <StyletronProvider value={new Styletron()}>
@@ -23,7 +25,16 @@ const App = () => {
           <StylesProvider injectFirst>
             <ThemeProvider theme={darkThemeEnabled ? darkTheme : lightTheme}>
               <GlobalStyle />
-              <SidePanel />
+              <div className="flex">
+                <div className="w-1/6 h-full">
+                  <SidePanel />
+                </div>
+                <div className="w-2/3 h-full" />
+                <div className="w-1/6 h-full">
+                  <DetailsPanel data={data_vessels} />
+                </div>
+              </div>
+
               <MapContainer
                 mapStyle={
                   darkThemeEnabled ? darkTheme.mapStyle : lightTheme.mapStyle

@@ -12,6 +12,9 @@ import {
 } from "deck.gl";
 import { MapView } from "@deck.gl/core";
 
+import { useSelector, useDispatch } from "react-redux";
+import { setActiveVesselActionCreator } from "app/redux";
+
 // Set your mapbox access token here
 const MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 const MAP_VIEW = new MapView({
@@ -27,6 +30,27 @@ const INITIAL_VIEW_STATE = {
 };
 
 const MapContainer = (props) => {
+  const dispatch = useDispatch();
+  const activeVesselID = useSelector((state) => state.activeVesselID);
+  const setActiveVesselID = (activeVesselID) => {
+    dispatch(setActiveVesselActionCreator(activeVesselID));
+  };
+
+  const [activeVessel, setActiveVessel] = useState(
+    props.data.filter((data) => {
+      return data.mmsi === activeVesselID;
+    })
+  );
+
+  const clickVesselEvent = (activeVesselID) => {
+    setActiveVesselID(activeVesselID);
+    setActiveVessel(
+      props.data.filter((data) => {
+        return data.mmsi === activeVesselID;
+      })
+    );
+  };
+
   const [tooltipInfo, setTooltipInfo] = useState({
     hoveredObject: "",
     pointerX: 0.0,
@@ -88,8 +112,6 @@ const MapContainer = (props) => {
     requestRef.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(requestRef.current);
   });
-
-  const [activeVessel, setActiveVessel] = useState();
 
   const movingVessels = props.data.filter((data) => {
     return data.speed > 1;
@@ -160,31 +182,6 @@ const MapContainer = (props) => {
           coordinate: info.coordinate,
         }),
     }),
-    new IconLayer({
-      id: "icon-layer",
-      data: movingVessels,
-      coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
-      iconAtlas: require("img/vessel_marker.png"),
-      iconMapping: {
-        marker: { x: 0, y: 0, width: 64, height: 64, mask: false },
-      },
-      getIcon: (d) => "marker",
-      getPosition: (d) => [d.longitude, d.latitude, 0],
-      getSize: (d) => 300,
-      sizeUnits: "meters",
-      sizeScale: 1,
-      sizeMinPixels: 14,
-      getAngle: (d) => 360 - d.heading,
-      pickable: true,
-      onHover: (info) =>
-        setTooltipInfo({
-          hoveredObject: info.object,
-          pointerX: info.x,
-          pointerY: info.y,
-          coordinate: info.coordinate,
-        }),
-      onClick: (info) => setActiveVessel([info.object]),
-    }),
     new TripsLayer({
       id: "trips-layer-historical-path",
       visible: true,
@@ -214,6 +211,32 @@ const MapContainer = (props) => {
       trailLength: 5000,
       currentTime: time,
       shadowEnabled: false,
+    }),
+    new IconLayer({
+      id: "icon-layer",
+      data: movingVessels,
+      coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+      iconAtlas: require("img/vessel_marker.png"),
+      iconMapping: {
+        marker: { x: 0, y: 0, width: 64, height: 64, mask: false },
+      },
+      getIcon: (d) => "marker",
+      getPosition: (d) => [d.longitude, d.latitude, 0],
+      getSize: (d) => 300,
+      sizeUnits: "meters",
+      sizeScale: 1,
+      sizeMinPixels: 12,
+      getAngle: (d) => 360 - d.heading,
+      pickable: true,
+      billboard: false,
+      onHover: (info) =>
+        setTooltipInfo({
+          hoveredObject: info.object,
+          pointerX: info.x,
+          pointerY: info.y,
+          coordinate: info.coordinate,
+        }),
+      onClick: (info) => clickVesselEvent(info.object.mmsi),
     }),
   ];
 
