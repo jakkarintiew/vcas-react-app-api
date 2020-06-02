@@ -7,7 +7,7 @@ const PropertyLabel = styled.div`
   font-size: 0.75em;
   font-weight: 500;
   padding: 3px 5px 3px 5px;
-  width: 80px;
+  width: 90px;
 `;
 
 const PropertyData = styled.div`
@@ -16,7 +16,7 @@ const PropertyData = styled.div`
   font-size: 0.75em;
   font-weight: 200;
   padding: 3px 5px 3px 5px;
-  width: 180px;
+  width: 170px;
 `;
 
 const PropertyInfo = (props) => {
