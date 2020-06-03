@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 
+import LayerVisibilityCheckBox from "./LayerVisibilityCheckBox";
+
 const StyledPanelContent = styled.div`
   background-color: ${(props) => props.theme.sidePanelBg};
   width: 100%;
@@ -11,7 +13,15 @@ const StyledPanelContent = styled.div`
 const LayerManagerPanel = () => {
   return (
     <div>
-      <StyledPanelContent> Layer Manager here </StyledPanelContent>
+      <StyledPanelContent>
+        <LayerVisibilityCheckBox name={"Collision Risk Screen Grid"} />
+        <LayerVisibilityCheckBox name={"Collision Risk Hexagon Grid"} />
+        <LayerVisibilityCheckBox name={"Historical Path"} />
+        <LayerVisibilityCheckBox name={"Future Path"} />
+        <LayerVisibilityCheckBox name={"Historical Trip"} />
+        <LayerVisibilityCheckBox name={"Future Trip"} />
+        <LayerVisibilityCheckBox name={"Vessels"} />
+      </StyledPanelContent>
     </div>
   );
 };

@@ -20,54 +20,53 @@ import {
 //   },
 // });
 
-// const mapLayersInitialState = [
-//   {
-//     id: "heatmap-layer",
-//     visible: true,
-//     order: 0,
-//   },
-//   {
-//     id: "screen-grid-layer",
-//     visible: true,
-//     order: 1,
-//   },
-//   {
-//     id: "hexagon-layer",
-//     visible: true,
-//     order: 2,
-//   },
-//   {
-//     id: "path-layer",
-//     visible: true,
-//     order: 3,
-//   },
-//   {
-//     id: "scatter-plot-layer",
-//     visible: true,
-//     order: 4,
-//   },
-//   {
-//     id: "icon-layer",
-//     visible: true,
-//     order: 5,
-//   },
-//   {
-//     id: "trips-layer",
-//     visible: true,
-//     order: 6,
-//   },
+// const layerVisibilityInitialState = [
+//   { id: "risk-screen-grid-layer", visible: true },
+//   { id: "risk-hexagon-layer", visible: true },
+//   { id: "historical-path-layer", visible: true },
+//   { id: "future-path-layer", visible: true },
+//   { id: "historical-trips-layer", visible: true },
+//   { id: "future-trips-layer", visible: true },
+//   { id: "vessel-icon-layer", visible: true },
 // ];
 
-// const mapLayersSlice = createSlice({
-//   name: "mapLayers",
-//   initialState: mapLayersInitialState,
-//   reducers: {
-//     filter: (state, { payload }) => {
-//       const layer = state.find((layer) => layer.id === payload.id);
-//       layer.visible = !layer.visible;
-//     },
-//   },
-// });
+const layerVisibilityInitialState = {
+  riskScreenGrid: {
+    id: "risk-screen-grid-layer",
+    label: "Collision Risk Screen Grid",
+    visible: false,
+  },
+  riskHexagon: {
+    id: "risk-hexagon-layer",
+    label: "Collision Risk Hexagon Grid",
+    visible: false,
+  },
+  historicalPath: {
+    id: "historical-path-layer",
+    label: "Historical Path",
+    visible: true,
+  },
+  futurePath: { id: "future-path-layer", label: "Future Path", visible: true },
+  historicalTrip: {
+    id: "historical-trip-layer",
+    label: "Historical Trip",
+    visible: true,
+  },
+  futureTrip: { id: "future-trip-layer", label: "Future Trip", visible: true },
+  vesselIcon: { id: "vessel-icon-layer", label: "Vessels", visible: true },
+};
+
+const layerVisibilitySlice = createSlice({
+  name: "layerVisibility",
+  initialState: layerVisibilityInitialState,
+  reducers: {
+    toggleVisibility: (state, { payload }) => {
+      const layer =
+        state[Object.keys(state).find((key) => state[key].id === payload)];
+      layer.visible = !layer.visible;
+    },
+  },
+});
 
 const activeVesselSlice = createSlice({
   name: "activeVesselID",
@@ -86,11 +85,15 @@ const themeSlice = createSlice({
 });
 
 // export actions
+export const {
+  toggleVisibility: toggleLayerVisibilityActionCreator,
+} = layerVisibilitySlice.actions;
 export const { toggle: toggleThemeActionCreator } = themeSlice.actions;
 export const { set: setActiveVesselActionCreator } = activeVesselSlice.actions;
 
 // define reducers
 const reducer = {
+  layerVisibility: layerVisibilitySlice.reducer,
   darkThemeEnabled: themeSlice.reducer,
   activeVesselID: activeVesselSlice.reducer,
 };

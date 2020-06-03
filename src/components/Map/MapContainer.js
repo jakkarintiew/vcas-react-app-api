@@ -31,6 +31,8 @@ const INITIAL_VIEW_STATE = {
 
 const MapContainer = (props) => {
   const dispatch = useDispatch();
+  const layerVisibility = useSelector((state) => state.layerVisibility);
+
   const activeVesselID = useSelector((state) => state.activeVesselID);
   const setActiveVesselID = (activeVesselID) => {
     dispatch(setActiveVesselActionCreator(activeVesselID));
@@ -99,7 +101,7 @@ const MapContainer = (props) => {
   const requestRef = useRef();
   const animate = () => {
     const loopLength = 86400; // seconds in a day
-    const animationSpeed = 86400 / 15; // unit time per second
+    const animationSpeed = 86400 / 30; // unit time per second
     const timestamp = Date.now() / 1000;
     const loopTime = loopLength / animationSpeed;
 
@@ -118,127 +120,128 @@ const MapContainer = (props) => {
   });
 
   const riskyVessels = props.data.filter((data) => {
-    return data.speed > 1 && data.risk > 30;
+    return data.speed > 1 && data.risk > 50;
   });
 
   const layers = [
-    new ScreenGridLayer({
-      id: "screen-grid-layer",
-      visible: false,
-      data: riskyVessels,
-      pickable: false,
-      opacity: 0.25,
-      cellSizePixels: 50,
-      getPosition: (d) => [d.longitude, d.latitude],
-    }),
-    new HexagonLayer({
-      id: "hexagon-layer",
-      visible: true,
-      data: riskyVessels,
-      lowerPercentile: 0,
-      extruded: false,
-      radius: 3000,
-      opacity: 0.45,
-      coverage: 0.98,
-      getPosition: (d) => [d.longitude, d.latitude],
-    }),
-    new PathLayer({
-      id: "historical-path-layer",
-      visible: true,
-      data: activeVessel,
-      getPath: (d) => d.historical_path,
-      getColor: [100, 100, 120],
-      opacity: 0.4,
-      getWidth: 10,
-      rounded: true,
-      widthMinPixels: 8,
-      coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
-      pickable: true,
-      onHover: (info) =>
-        setTooltipInfo({
-          hoveredObject: info.object,
-          pointerX: info.x,
-          pointerY: info.y,
-          coordinate: info.coordinate,
-        }),
-    }),
-    new PathLayer({
-      id: "future-path-layer",
-      visible: true,
-      data: activeVessel,
-      getPath: (d) => d.future_path,
-      getColor: (d) => [80, 200, 192],
-      getWidth: 10,
-      opacity: 0.4,
-      rounded: true,
-      widthMinPixels: 8,
-      coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
-      pickable: true,
-      onHover: (info) =>
-        setTooltipInfo({
-          hoveredObject: info.object,
-          pointerX: info.x,
-          pointerY: info.y,
-          coordinate: info.coordinate,
-        }),
-    }),
-    new TripsLayer({
-      id: "trips-layer-historical-path",
-      visible: true,
-      data: activeVessel,
-      coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
-      getPath: (d) => d.historical_path,
-      getTimestamps: (d) => d.historical_timestamps,
-      getColor: [255, 120, 89],
-      opacity: 0.8,
-      widthMinPixels: 10,
-      rounded: true,
-      trailLength: 5000,
-      currentTime: time,
-      shadowEnabled: false,
-    }),
-    new TripsLayer({
-      id: "trips-layer-future-path",
-      visible: true,
-      data: activeVessel,
-      coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
-      getPath: (d) => d.future_path,
-      getTimestamps: (d) => d.future_timestamps,
-      getColor: [80, 255, 120],
-      opacity: 0.8,
-      widthMinPixels: 10,
-      rounded: true,
-      trailLength: 5000,
-      currentTime: time,
-      shadowEnabled: false,
-    }),
-    new IconLayer({
-      id: "icon-layer",
-      data: movingVessels,
-      coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
-      iconAtlas: require("img/vessel_marker.png"),
-      iconMapping: {
-        marker: { x: 0, y: 0, width: 64, height: 64, mask: false },
-      },
-      getIcon: (d) => "marker",
-      getPosition: (d) => [d.longitude, d.latitude, 0],
-      getSize: (d) => 300,
-      sizeUnits: "meters",
-      sizeScale: 1,
-      sizeMinPixels: 12,
-      getAngle: (d) => 360 - d.heading,
-      pickable: true,
-      billboard: false,
-      onHover: (info) =>
-        setTooltipInfo({
-          hoveredObject: info.object,
-          pointerX: info.x,
-          pointerY: info.y,
-          coordinate: info.coordinate,
-        }),
-      onClick: (info) => clickVesselEvent(info.object.mmsi),
-    }),
-  ];
+    layerVisibility.riskScreenGrid.visible &&
+      new ScreenGridLayer({
+        id: "risk-screen-grid-layer",
+        data: riskyVessels,
+        pickable: false,
+        opacity: 0.25,
+        cellSizePixels: 64,
+        getPosition: (d) => [d.longitude, d.latitude],
+      }),
+    layerVisibility.riskHexagon.visible &&
+      new HexagonLayer({
+        id: "risk-hexagon-layer",
+        data: riskyVessels,
+        lowerPercentile: 0,
+        extruded: false,
+        radius: 3000,
+        opacity: 0.25,
+        coverage: 0.98,
+        getPosition: (d) => [d.longitude, d.latitude],
+      }),
+    layerVisibility.historicalPath.visible &&
+      new PathLayer({
+        id: "historical-path-layer",
+        data: activeVessel,
+        getPath: (d) => d.historical_path,
+        getColor: [100, 100, 120],
+        opacity: 1,
+        getWidth: 10,
+        rounded: true,
+        widthMinPixels: 8,
+        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+        pickable: true,
+        onHover: (info) =>
+          setTooltipInfo({
+            hoveredObject: info.object,
+            pointerX: info.x,
+            pointerY: info.y,
+            coordinate: info.coordinate,
+          }),
+      }),
+    layerVisibility.futurePath.visible &&
+      new PathLayer({
+        id: "future-path-layer",
+        data: activeVessel,
+        getPath: (d) => d.future_path,
+        getColor: (d) => [80, 200, 192],
+        getWidth: 10,
+        opacity: 1,
+        rounded: true,
+        widthMinPixels: 8,
+        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+        pickable: true,
+        onHover: (info) =>
+          setTooltipInfo({
+            hoveredObject: info.object,
+            pointerX: info.x,
+            pointerY: info.y,
+            coordinate: info.coordinate,
+          }),
+      }),
+    layerVisibility.historicalTrip.visible &&
+      new TripsLayer({
+        id: "historical-trips-layer",
+        data: activeVessel,
+        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+        getPath: (d) => d.historical_path,
+        getTimestamps: (d) => d.historical_timestamps,
+        getColor: [255, 120, 89],
+        opacity: 1,
+        widthMinPixels: 10,
+        rounded: true,
+        trailLength: 5000,
+        currentTime: time,
+        shadowEnabled: false,
+      }),
+    layerVisibility.futureTrip.visible &&
+      new TripsLayer({
+        id: "future-trips-layer",
+        data: activeVessel,
+        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+        getPath: (d) => d.future_path,
+        getTimestamps: (d) => d.future_timestamps,
+        getColor: [80, 255, 120],
+        opacity: 1,
+        widthMinPixels: 10,
+        rounded: true,
+        trailLength: 5000,
+        currentTime: time,
+        shadowEnabled: false,
+      }),
+    layerVisibility.vesselIcon.visible &&
+      new IconLayer({
+        id: "vessel-icon-layer",
+        data: movingVessels,
+        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+        iconAtlas: require("img/vessel_marker.png"),
+        iconMapping: {
+          vesselMarker: { x: 0, y: 0, width: 64, height: 64, mask: false },
+        },
+        getIcon: (d) => "vesselMarker",
+        getPosition: (d) => [d.longitude, d.latitude, 0],
+        getSize: (d) => 300,
+        sizeUnits: "meters",
+        sizeScale: 1,
+        sizeMinPixels: 10,
+        getAngle: (d) => 360 - d.heading,
+        pickable: true,
+        billboard: false,
+        onHover: (info) =>
+          setTooltipInfo({
+            hoveredObject: info.object,
+            pointerX: info.x,
+            pointerY: info.y,
+            coordinate: info.coordinate,
+          }),
+        onClick: (info) => clickVesselEvent(info.object.mmsi),
+      }),
+  ].filter(Boolean);
 
   return (
     <div>
