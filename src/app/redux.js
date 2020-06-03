@@ -39,7 +39,7 @@ const layerVisibilityInitialState = {
   riskHexagon: {
     id: "risk-hexagon-layer",
     label: "Collision Risk Hexagon Grid",
-    visible: false,
+    visible: true,
   },
   historicalPath: {
     id: "historical-path-layer",

@@ -1,9 +1,16 @@
 import React, { useState } from "react";
-// import styled from "styled-components";
+import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleLayerVisibilityActionCreator } from "app/redux";
 
 const Checkbox = (props) => <input type="checkbox" {...props} />;
+
+const LayerContainer = styled.div`
+  background-color: ${(props) => props.theme.labelColor};
+  color: ${(props) => props.theme.labelTextColor};
+  width: 100%;
+  height: 40px;
+`;
 
 const LayerVisibilityCheckBox = (props) => {
   // Redux states
@@ -28,12 +35,17 @@ const LayerVisibilityCheckBox = (props) => {
   };
 
   return (
-    <div>
+    <LayerContainer className="flex flex-row items-center p-2 mb-2">
       <label>
-        <Checkbox checked={checked} onChange={handleCheckboxChange} />
         <span>{props.name}</span>
       </label>
-    </div>
+      <div className="flex-grow" />
+      <Checkbox
+        className="mr-3"
+        checked={checked}
+        onChange={handleCheckboxChange}
+      />
+    </LayerContainer>
   );
 };
 
