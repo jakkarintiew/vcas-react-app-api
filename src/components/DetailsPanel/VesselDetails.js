@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import PropertyInfo from "./PropertyInfo";
 import { useSelector } from "react-redux";
-import { Line } from "react-chartjs-2";
+
+import VesselLineChart from "./VesselLineChart";
 
 const VesselDetails = (props) => {
   const activeVesselInitialState = {
@@ -42,8 +43,10 @@ const VesselDetails = (props) => {
     datasets: [
       {
         label: "Historical Speed",
-        pointBackgroundColor: "rgba(150, 99, 90, 0.5)",
-        borderColor: "rgba(150, 99, 90, 0.5)",
+        fill: false,
+        lineTension: 0,
+        pointBackgroundColor: "rgba(225, 105, 40, 0.5)",
+        borderColor: "rgba(225, 105, 40, 0.5)",
         pointRadius: 1,
         data: [
           ...activeVessel.historical_timestamps.map((x, i) => ({
@@ -54,6 +57,8 @@ const VesselDetails = (props) => {
       },
       {
         label: "Future Speed",
+        fill: false,
+        lineTension: 0,
         pointBackgroundColor: "rgba(54, 225, 215, 0.5)",
         borderColor: "rgba(54, 225, 215, 0.5)",
         pointRadius: 1,
@@ -71,8 +76,10 @@ const VesselDetails = (props) => {
     datasets: [
       {
         label: "Historical Course",
-        pointBackgroundColor: "rgba(150, 99, 90, 0.5)",
-        borderColor: "rgba(150, 99, 90, 0.5)",
+        fill: false,
+        lineTension: 0,
+        pointBackgroundColor: "rgba(225, 105, 40, 0.5)",
+        borderColor: "rgba(225, 105, 40, 0.5)",
         pointRadius: 1,
         data: [
           ...activeVessel.historical_timestamps.map((x, i) => ({
@@ -83,6 +90,8 @@ const VesselDetails = (props) => {
       },
       {
         label: "Future Course",
+        fill: false,
+        lineTension: 0,
         pointBackgroundColor: "rgba(54, 225, 215, 0.5)",
         borderColor: "rgba(54, 225, 215, 0.5)",
         pointRadius: 1,
@@ -100,8 +109,10 @@ const VesselDetails = (props) => {
     datasets: [
       {
         label: "Historical Heading",
-        pointBackgroundColor: "rgba(150, 99, 90, 0.5)",
-        borderColor: "rgba(150, 99, 90, 0.5)",
+        fill: false,
+        lineTension: 0,
+        pointBackgroundColor: "rgba(225, 105, 40, 0.5)",
+        borderColor: "rgba(225, 105, 40, 0.5)",
         pointRadius: 1,
         data: [
           ...activeVessel.historical_timestamps.map((x, i) => ({
@@ -112,6 +123,8 @@ const VesselDetails = (props) => {
       },
       {
         label: "Future Heading",
+        fill: false,
+        lineTension: 0,
         pointBackgroundColor: "rgba(54, 225, 215, 0.5)",
         borderColor: "rgba(54, 225, 215, 0.5)",
         pointRadius: 1,
@@ -126,87 +139,26 @@ const VesselDetails = (props) => {
   };
 
   return (
-    <div className="p-5">
-      <PropertyInfo label="MMSI" data={activeVesselID} />
-      <PropertyInfo label="Ship Name" data={activeVessel.shipname} />
-      <PropertyInfo label="Ship Type" data={activeVessel.shiptype} />
-      <PropertyInfo label="Speed" data={activeVessel.speed} />
-      <PropertyInfo label="Course" data={activeVessel.course} />
-      <PropertyInfo label="Heading" data={activeVessel.heading} />
-      <PropertyInfo label="Collision Risk" data={activeVessel.risk} />
-      <div>
-        <Line
-          data={speed_data}
-          height={250}
-          options={{
-            scales: {
-              xAxes: [
-                {
-                  type: "time",
-                  time: {
-                    displayFormats: {
-                      second: "DD-MM h:mm",
-                    },
-                  },
-                },
-              ],
-            },
-            legend: {
-              labels: {
-                fontSize: 9,
-              },
-            },
-          }}
-        />
-        <Line
-          data={course_data}
-          height={250}
-          options={{
-            scales: {
-              ticks: {
-                fontSize: 9,
-              },
-              xAxes: [
-                {
-                  type: "time",
-                  time: {
-                    displayFormats: {
-                      second: "DD-MM h:mm",
-                    },
-                  },
-                },
-              ],
-            },
-            legend: {
-              labels: {
-                fontSize: 9,
-              },
-            },
-          }}
-        />
-        <Line
-          data={heading_data}
-          height={250}
-          options={{
-            scales: {
-              xAxes: [
-                {
-                  type: "time",
-                  time: {
-                    displayFormats: {
-                      second: "DD-MM h:mm",
-                    },
-                  },
-                },
-              ],
-            },
-            legend: {
-              labels: {
-                fontSize: 9,
-              },
-            },
-          }}
-        />
+    <div className="p-3 h-full flex flex-col">
+      <div className="p-1">
+        <PropertyInfo label="MMSI" data={activeVesselID} />
+        <PropertyInfo label="Ship Name" data={activeVessel.shipname} />
+        <PropertyInfo label="Ship Type" data={activeVessel.shiptype} />
+        <PropertyInfo label="Speed" data={activeVessel.speed} />
+        <PropertyInfo label="Course" data={activeVessel.course} />
+        <PropertyInfo label="Heading" data={activeVessel.heading} />
+        <PropertyInfo label="Collision Risk" data={activeVessel.risk} />
+      </div>
+      <div className="flex flex-col flex-auto min-h-0">
+        <div className="flex-1 min-h-0">
+          <VesselLineChart data={speed_data} yMax={20} />
+        </div>
+        <div className="flex-1 min-h-0">
+          <VesselLineChart data={course_data} yMax={360} />
+        </div>
+        <div className="flex-1 min-h-0">
+          <VesselLineChart data={heading_data} yMax={360} />
+        </div>
       </div>
     </div>
   );
