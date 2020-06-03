@@ -17,7 +17,7 @@ import data_vessels from "data/data_vessels.json";
 
 const App = () => {
   const darkThemeEnabled = useSelector((state) => state.darkThemeEnabled);
-
+  const activeVesselID = useSelector((state) => state.activeVesselID);
   return (
     <div>
       <StyletronProvider value={new Styletron()}>
@@ -26,12 +26,14 @@ const App = () => {
             <ThemeProvider theme={darkThemeEnabled ? darkTheme : lightTheme}>
               <GlobalStyle />
               <div className="flex">
-                <div className="w-1/6 h-full">
+                <div className="h-full">
                   <SidePanel />
                 </div>
-                <div className="w-2/3 h-full" />
-                <div className="w-1/6 h-full">
-                  <DetailsPanel data={data_vessels} />
+                <div className="flex-grow h-full" />
+                <div className="h-full">
+                  {activeVesselID != null && (
+                    <DetailsPanel data={data_vessels} />
+                  )}
                 </div>
               </div>
 
