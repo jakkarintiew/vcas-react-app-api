@@ -144,7 +144,8 @@ const MapContainer = (props) => {
         coverage: 0.98,
         getPosition: (d) => [d.longitude, d.latitude],
       }),
-    layerVisibility.historicalPath.visible &&
+    activeVesselID != null &&
+      layerVisibility.historicalPath.visible &&
       new PathLayer({
         id: "historical-path-layer",
         data: activeVessel,
@@ -164,7 +165,8 @@ const MapContainer = (props) => {
             coordinate: info.coordinate,
           }),
       }),
-    layerVisibility.futurePath.visible &&
+    activeVesselID != null &&
+      layerVisibility.futurePath.visible &&
       new PathLayer({
         id: "future-path-layer",
         data: activeVessel,
@@ -184,7 +186,8 @@ const MapContainer = (props) => {
             coordinate: info.coordinate,
           }),
       }),
-    layerVisibility.historicalTrip.visible &&
+    activeVesselID != null &&
+      layerVisibility.historicalTrip.visible &&
       new TripsLayer({
         id: "historical-trips-layer",
         data: activeVessel,
@@ -199,7 +202,8 @@ const MapContainer = (props) => {
         currentTime: time,
         shadowEnabled: false,
       }),
-    layerVisibility.futureTrip.visible &&
+    activeVesselID != null &&
+      layerVisibility.futureTrip.visible &&
       new TripsLayer({
         id: "future-trips-layer",
         data: activeVessel,
@@ -229,6 +233,34 @@ const MapContainer = (props) => {
         sizeUnits: "meters",
         sizeScale: 1,
         sizeMinPixels: 10,
+        getAngle: (d) => 360 - d.heading,
+        pickable: true,
+        billboard: false,
+        onHover: (info) =>
+          setTooltipInfo({
+            hoveredObject: info.object,
+            pointerX: info.x,
+            pointerY: info.y,
+            coordinate: info.coordinate,
+          }),
+        onClick: (info) => clickVesselEvent(info.object.mmsi),
+      }),
+    activeVesselID != null &&
+      layerVisibility.vesselIcon.visible &&
+      new IconLayer({
+        id: "active-vessel-icon-layer",
+        data: activeVessel,
+        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+        iconAtlas: require("img/vessel_marker_active.png"),
+        iconMapping: {
+          vesselMarker: { x: 0, y: 0, width: 64, height: 64, mask: false },
+        },
+        getIcon: (d) => "vesselMarker",
+        getPosition: (d) => [d.longitude, d.latitude, 0],
+        getSize: (d) => 300,
+        sizeUnits: "meters",
+        sizeScale: 2,
+        sizeMinPixels: 15,
         getAngle: (d) => 360 - d.heading,
         pickable: true,
         billboard: false,
