@@ -10,7 +10,7 @@ const CollapseButton = styled.div`
   display: flex;
   height: 20px;
   position: absolute;
-  top: ${(props) => props.theme.sidePanel.margin.top}px;
+  top: ${(props) => props.theme.sidePanel.margin.top + 5}px;
   width: 20px;
   :hover {
     cursor: pointer;
@@ -18,39 +18,5 @@ const CollapseButton = styled.div`
     background-color: ${(props) => props.theme.sideBarCloseBtnBgdHover};
   }
 `;
-
-// const CollapseButton = ({ panelName, initialDegree }) => {
-//   // Redux states
-//   const dispatch = useDispatch();
-//   const panelOpen = useSelector((state) => state.panelOpen);
-//   const togglePanelOpen = (panelName) => {
-//     dispatch(togglePanelOpenActionCreator(panelName));
-//   };
-
-//   const panel =
-//     panelOpen[
-//       Object.keys(panelOpen).find(
-//         (key) => panelOpen[key].panelName === panelName
-//       )
-//     ];
-
-//   return (
-//     <div>
-//       <StyledCollapseButton
-//         className="side-bar__close"
-//         onClick={togglePanelOpen(panelName)}
-//       >
-//         <ArrowRight
-//           height="12px"
-//           style={{
-//             transform: `rotate(${
-//               panel.isOpen ? initialDegree + 180 : initialDegree
-//             }deg)`,
-//           }}
-//         />
-//       </StyledCollapseButton>
-//     </div>
-//   );
-// };
 
 export default CollapseButton;

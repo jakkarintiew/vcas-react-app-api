@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-import LayerVisibilityCheckBox from "./LayerVisibilityCheckBox";
+import LayerVisibilityToggle from "./LayerVisibilityToggle";
 
 const StyledPanelContent = styled.div`
   background-color: ${(props) => props.theme.sidePanelBg};
@@ -14,13 +14,13 @@ const LayerManagerPanel = () => {
   return (
     <div>
       <StyledPanelContent>
-        <LayerVisibilityCheckBox layerName={"Vessels"} />
-        <LayerVisibilityCheckBox layerName={"Historical Path"} />
-        <LayerVisibilityCheckBox layerName={"Future Path"} />
-        <LayerVisibilityCheckBox layerName={"Historical Trip"} />
-        <LayerVisibilityCheckBox layerName={"Future Trip"} />
-        <LayerVisibilityCheckBox layerName={"Collision Risk Hexagon Grid"} />
-        <LayerVisibilityCheckBox layerName={"Collision Risk Screen Grid"} />
+        <LayerVisibilityToggle layerName={"Vessels"} />
+        <LayerVisibilityToggle layerName={"Historical Path"} />
+        <LayerVisibilityToggle layerName={"Future Path"} />
+        <LayerVisibilityToggle layerName={"Historical Trip"} />
+        <LayerVisibilityToggle layerName={"Future Trip"} />
+        <LayerVisibilityToggle layerName={"Collision Risk Hexagon Grid"} />
+        <LayerVisibilityToggle layerName={"Collision Risk Screen Grid"} />
       </StyledPanelContent>
     </div>
   );

@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleLayerVisibilityActionCreator } from "app/redux";
 
-const Checkbox = (props) => <input type="checkbox" {...props} />;
+import EyeSeen from "components/common/icons/eye-seen";
+import EyeUnseen from "components/common/icons/eye-unseen";
 
 const LayerContainer = styled.div`
   background-color: ${(props) => props.theme.labelColor};
@@ -12,7 +13,7 @@ const LayerContainer = styled.div`
   height: 40px;
 `;
 
-const LayerVisibilityCheckBox = ({ layerName }) => {
+const LayerVisibilityToggle = ({ layerName }) => {
   // Redux states
   const dispatch = useDispatch();
   const layerVisibility = useSelector((state) => state.layerVisibility);
@@ -27,10 +28,7 @@ const LayerVisibilityCheckBox = ({ layerName }) => {
       )
     ];
 
-  // Component states
-  const [checked, setChecked] = useState(layer.visible);
-  const handleCheckboxChange = (event) => {
-    setChecked(event.target.checked);
+  const handleOnClick = (event) => {
     toggleLayerVisibility(layer.layerName);
   };
 
@@ -40,13 +38,15 @@ const LayerVisibilityCheckBox = ({ layerName }) => {
         <span>{layerName}</span>
       </label>
       <div className="flex-grow" />
-      <Checkbox
-        className="mr-3"
-        checked={checked}
-        onChange={handleCheckboxChange}
-      />
+      <div className="relative mr-3 cursor-pointer" onClick={handleOnClick}>
+        {layer.visible ? (
+          <EyeSeen height="25px" />
+        ) : (
+          <EyeUnseen height="25px" />
+        )}
+      </div>
     </LayerContainer>
   );
 };
 
-export default LayerVisibilityCheckBox;
+export default LayerVisibilityToggle;

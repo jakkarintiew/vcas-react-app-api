@@ -57,7 +57,7 @@ const SidePanel = () => {
             <PanelContent />
           </SidePanelInner>
         )}
-        <CollapseButton onClick={handleOnClick} style={{right: "-8px"}}>
+        <CollapseButton onClick={handleOnClick} style={{ right: "-5px" }}>
           <ArrowRight
             height="12px"
             style={{

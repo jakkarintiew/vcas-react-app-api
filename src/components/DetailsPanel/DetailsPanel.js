@@ -54,7 +54,7 @@ const DetailsPanel = (props) => {
             <VesselDetails data={props.data} />
           </DetailsPanelInner>
         )}
-        <CollapseButton onClick={handleOnClick} style={{ left: "-8px" }}>
+        <CollapseButton onClick={handleOnClick} style={{ left: "-5px" }}>
           <ArrowRight
             height="12px"
             style={{
