@@ -14,13 +14,13 @@ const LayerManagerPanel = () => {
   return (
     <div>
       <StyledPanelContent>
-        <LayerVisibilityCheckBox name={"Vessels"} />
-        <LayerVisibilityCheckBox name={"Historical Path"} />
-        <LayerVisibilityCheckBox name={"Future Path"} />
-        <LayerVisibilityCheckBox name={"Historical Trip"} />
-        <LayerVisibilityCheckBox name={"Future Trip"} />
-        <LayerVisibilityCheckBox name={"Collision Risk Hexagon Grid"} />
-        <LayerVisibilityCheckBox name={"Collision Risk Screen Grid"} />
+        <LayerVisibilityCheckBox layerName={"Vessels"} />
+        <LayerVisibilityCheckBox layerName={"Historical Path"} />
+        <LayerVisibilityCheckBox layerName={"Future Path"} />
+        <LayerVisibilityCheckBox layerName={"Historical Trip"} />
+        <LayerVisibilityCheckBox layerName={"Future Trip"} />
+        <LayerVisibilityCheckBox layerName={"Collision Risk Hexagon Grid"} />
+        <LayerVisibilityCheckBox layerName={"Collision Risk Screen Grid"} />
       </StyledPanelContent>
     </div>
   );

@@ -12,18 +12,18 @@ const LayerContainer = styled.div`
   height: 40px;
 `;
 
-const LayerVisibilityCheckBox = (props) => {
+const LayerVisibilityCheckBox = ({ layerName }) => {
   // Redux states
   const dispatch = useDispatch();
   const layerVisibility = useSelector((state) => state.layerVisibility);
-  const toggleLayerVisibility = (layerID) => {
-    dispatch(toggleLayerVisibilityActionCreator(layerID));
+  const toggleLayerVisibility = (layerName) => {
+    dispatch(toggleLayerVisibilityActionCreator(layerName));
   };
 
   const layer =
     layerVisibility[
       Object.keys(layerVisibility).find(
-        (key) => layerVisibility[key].label === props.name
+        (key) => layerVisibility[key].layerName === layerName
       )
     ];
 
@@ -31,13 +31,13 @@ const LayerVisibilityCheckBox = (props) => {
   const [checked, setChecked] = useState(layer.visible);
   const handleCheckboxChange = (event) => {
     setChecked(event.target.checked);
-    toggleLayerVisibility(layer.id);
+    toggleLayerVisibility(layer.layerName);
   };
 
   return (
     <LayerContainer className="flex flex-row items-center p-2 mb-2">
       <label>
-        <span>{props.name}</span>
+        <span>{layerName}</span>
       </label>
       <div className="flex-grow" />
       <Checkbox

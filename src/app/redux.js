@@ -22,11 +22,11 @@ import {
 
 const panelOpenInitialState = {
   controlPanel: {
-    panelName: "ControlPanel",
+    panelName: "Control Panel",
     isOpen: true,
   },
   detialsPanel: {
-    panelName: "DetailsPanel",
+    panelName: "Details Panel",
     isOpen: false,
   },
 };
@@ -43,29 +43,13 @@ const panelOpenSlice = createSlice({
 });
 
 const layerVisibilityInitialState = {
-  riskScreenGrid: {
-    id: "risk-screen-grid-layer",
-    label: "Collision Risk Screen Grid",
-    visible: false,
-  },
-  riskHexagon: {
-    id: "risk-hexagon-layer",
-    label: "Collision Risk Hexagon Grid",
-    visible: true,
-  },
-  historicalPath: {
-    id: "historical-path-layer",
-    label: "Historical Path",
-    visible: true,
-  },
-  futurePath: { id: "future-path-layer", label: "Future Path", visible: true },
-  historicalTrip: {
-    id: "historical-trip-layer",
-    label: "Historical Trip",
-    visible: true,
-  },
-  futureTrip: { id: "future-trip-layer", label: "Future Trip", visible: true },
-  vesselIcon: { id: "vessel-icon-layer", label: "Vessels", visible: true },
+  riskScreenGrid: { layerName: "Collision Risk Screen Grid", visible: false },
+  riskHexagon: { layerName: "Collision Risk Hexagon Grid", visible: true },
+  historicalPath: { layerName: "Historical Path", visible: true },
+  futurePath: { layerName: "Future Path", visible: true },
+  historicalTrip: { layerName: "Historical Trip", visible: true },
+  futureTrip: { layerName: "Future Trip", visible: true },
+  vesselIcon: { layerName: "Vessels", visible: true },
 };
 
 const layerVisibilitySlice = createSlice({
@@ -74,7 +58,9 @@ const layerVisibilitySlice = createSlice({
   reducers: {
     toggleVisibility: (state, { payload }) => {
       const layer =
-        state[Object.keys(state).find((key) => state[key].id === payload)];
+        state[
+          Object.keys(state).find((key) => state[key].layerName === payload)
+        ];
       layer.visible = !layer.visible;
     },
   },
