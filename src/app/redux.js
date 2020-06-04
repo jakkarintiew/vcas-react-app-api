@@ -20,15 +20,27 @@ import {
 //   },
 // });
 
-// const layerVisibilityInitialState = [
-//   { id: "risk-screen-grid-layer", visible: true },
-//   { id: "risk-hexagon-layer", visible: true },
-//   { id: "historical-path-layer", visible: true },
-//   { id: "future-path-layer", visible: true },
-//   { id: "historical-trips-layer", visible: true },
-//   { id: "future-trips-layer", visible: true },
-//   { id: "vessel-icon-layer", visible: true },
-// ];
+const panelOpenInitialState = {
+  controlPanel: {
+    panelName: "ControlPanel",
+    isOpen: true,
+  },
+  detialsPanel: {
+    panelName: "DetailsPanel",
+    isOpen: false,
+  },
+};
+
+const panelOpenSlice = createSlice({
+  name: "panelOpen",
+  initialState: panelOpenInitialState,
+  reducers: {
+    toggleOpen: (state, { payload }) => {
+      const panel = state[Object.keys(state).find((key) => key === payload)];
+      panel.isOpen = !panel.isOpen;
+    },
+  },
+});
 
 const layerVisibilityInitialState = {
   riskScreenGrid: {
@@ -86,6 +98,9 @@ const themeSlice = createSlice({
 
 // export actions
 export const {
+  toggleOpen: togglePanelOpenActionCreator,
+} = panelOpenSlice.actions;
+export const {
   toggleVisibility: toggleLayerVisibilityActionCreator,
 } = layerVisibilitySlice.actions;
 export const { toggle: toggleThemeActionCreator } = themeSlice.actions;
@@ -93,6 +108,7 @@ export const { set: setActiveVesselActionCreator } = activeVesselSlice.actions;
 
 // define reducers
 const reducer = {
+  panelOpen: panelOpenSlice.reducer,
   layerVisibility: layerVisibilitySlice.reducer,
   darkThemeEnabled: themeSlice.reducer,
   activeVesselID: activeVesselSlice.reducer,

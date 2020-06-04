@@ -1,14 +1,17 @@
 import React from "react";
 import styled from "styled-components";
+import { useSelector, useDispatch } from "react-redux";
+import { togglePanelOpenActionCreator } from "app/redux";
 
 import PanelHeader from "./PanelHeader";
 import PanelContent from "./PanelContent";
+import CollapseButton from "components/common/CollapseButton";
+import ArrowRight from "components/common/icons/arrow-right";
 
 const StyledSidePanelContainer = styled.div`
   z-index: 99;
   height: 100%;
-  width: ${(props) =>
-    props.theme.sidePanel.width + 2 * props.theme.sidePanel.margin.left}px;
+  width: ${(props) => props.width + 2 * props.theme.sidePanel.margin.left}px;
   display: flex;
   position: absolute;
   padding-top: ${(props) => props.theme.sidePanel.margin.top}px;
@@ -27,13 +30,47 @@ const SidePanelInner = styled.div`
 `;
 
 const SidePanel = () => {
+  // Redux states
+  const dispatch = useDispatch();
+  const panelOpen = useSelector((state) => state.panelOpen);
+  const togglePanelOpen = (panelKey) => {
+    dispatch(togglePanelOpenActionCreator(panelKey));
+  };
+
+  // Component constants
+  const initialDegree = 180;
+  const width = 300;
+  const panelKey = "controlPanel";
+  const panel =
+    panelOpen[
+      Object.keys(panelOpen).find(
+        (key) => key === panelKey
+      )
+    ];
+
+  const handleOnClick = (event) => {
+    togglePanelOpen(panelKey);
+  };
+
   return (
     <div>
-      <StyledSidePanelContainer>
-        <SidePanelInner>
-          <PanelHeader />
-          <PanelContent />
-        </SidePanelInner>
+      <StyledSidePanelContainer width={panel.isOpen ? width : 0}>
+        {panel.isOpen && (
+          <SidePanelInner>
+            <PanelHeader />
+            <PanelContent />
+          </SidePanelInner>
+        )}
+        <CollapseButton onClick={handleOnClick}>
+          <ArrowRight
+            height="12px"
+            style={{
+              transform: `rotate(${
+                panel.isOpen ? initialDegree : initialDegree + 180
+              }deg)`,
+            }}
+          />
+        </CollapseButton>
       </StyledSidePanelContainer>
     </div>
   );
