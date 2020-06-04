@@ -10,7 +10,6 @@ const CollapseButton = styled.div`
   display: flex;
   height: 20px;
   position: absolute;
-  right: -8px;
   top: ${(props) => props.theme.sidePanel.margin.top}px;
   width: 20px;
   :hover {

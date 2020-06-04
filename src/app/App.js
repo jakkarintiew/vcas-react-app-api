@@ -17,7 +17,6 @@ import data_vessels from "data/data_vessels.json";
 
 const App = () => {
   const darkThemeEnabled = useSelector((state) => state.darkThemeEnabled);
-  const activeVesselID = useSelector((state) => state.activeVesselID);
   return (
     <div>
       <StyletronProvider value={new Styletron()}>
@@ -31,9 +30,7 @@ const App = () => {
                 </div>
                 <div className="flex-grow h-full" />
                 <div className="h-full">
-                  {activeVesselID != null && (
-                    <DetailsPanel data={data_vessels} />
-                  )}
+                  <DetailsPanel data={data_vessels} />
                 </div>
               </div>
 

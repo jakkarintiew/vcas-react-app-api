@@ -73,24 +73,40 @@ const MapContainer = (props) => {
             top: pointerY,
             backgroundColor: "lightgrey",
             padding: "10px",
-            borderRadius: " 5px",
+            borderRadius: " 3px",
           }}
         >
-          <div>MMSI: {hoveredObject.mmsi} </div>
-          <div>Ship Name: {hoveredObject.shipname} </div>
-          <div>Ship Type: {hoveredObject.shiptype} </div>
-          <div>Speed: {hoveredObject.speed} </div>
-          <div>Course: {hoveredObject.course} </div>
-          <div>Heading: {hoveredObject.heading} </div>
-          <div>Risk: {hoveredObject.risk} </div>
+          <div>
+            <b>MMSI</b>: {hoveredObject.mmsi}
+          </div>
+          <div>
+            <b>Ship Name</b>: {hoveredObject.shipname}
+          </div>
+          <div>
+            <b>Ship Type</b>: {hoveredObject.shiptype}
+          </div>
+          <div>
+            <b>Speed</b>: {hoveredObject.speed}
+          </div>
+          <div>
+            <b>Course</b>: {hoveredObject.course}
+          </div>
+          <div>
+            <b>Heading</b>: {hoveredObject.heading}
+          </div>
+          <div>
+            <b>Collision Risk</b>:{" "}
+            {Math.round((hoveredObject.risk + Number.EPSILON) * 100) / 100}
+          </div>
           {/* <div>X: {pointerX}</div>
           <div>Y: {pointerY}</div> */}
           <div>
-            Longitude:{" "}
+            <b>Longitude</b>:{" "}
             {Math.round((coordinate[0] + Number.EPSILON) * 100) / 100}
           </div>
           <div>
-            Latitude: {Math.round((coordinate[1] + Number.EPSILON) * 100) / 100}
+            <b>Latitude</b>:{" "}
+            {Math.round((coordinate[1] + Number.EPSILON) * 100) / 100}
           </div>
         </div>
       )

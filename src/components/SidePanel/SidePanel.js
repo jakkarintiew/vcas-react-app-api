@@ -42,11 +42,7 @@ const SidePanel = () => {
   const width = 300;
   const panelKey = "controlPanel";
   const panel =
-    panelOpen[
-      Object.keys(panelOpen).find(
-        (key) => key === panelKey
-      )
-    ];
+    panelOpen[Object.keys(panelOpen).find((key) => key === panelKey)];
 
   const handleOnClick = (event) => {
     togglePanelOpen(panelKey);
@@ -61,7 +57,7 @@ const SidePanel = () => {
             <PanelContent />
           </SidePanelInner>
         )}
-        <CollapseButton onClick={handleOnClick}>
+        <CollapseButton onClick={handleOnClick} style={{right: "-8px"}}>
           <ArrowRight
             height="12px"
             style={{

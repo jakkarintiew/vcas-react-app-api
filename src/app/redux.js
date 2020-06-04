@@ -25,7 +25,7 @@ const panelOpenInitialState = {
     panelName: "Control Panel",
     isOpen: true,
   },
-  detialsPanel: {
+  detailsPanel: {
     panelName: "Details Panel",
     isOpen: false,
   },
