@@ -9,28 +9,24 @@ import {
   ScreenGridLayer,
   HexagonLayer,
   COORDINATE_SYSTEM,
+  FlyToInterpolator,
 } from "deck.gl";
 import { MapView } from "@deck.gl/core";
 
 import { useSelector, useDispatch } from "react-redux";
-import { setActiveVesselActionCreator } from "app/redux";
+import {
+  setViewStateActionCreator,
+  setActiveVesselViewStateActionCreator,
+  setActiveVesselActionCreator,
+} from "app/redux";
 
 // Set your mapbox access token here
 const MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
-const MAP_VIEW = new MapView({
-  // 1 is the distance between the camera and the ground
-  farZMultiplier: 100,
-});
-const INITIAL_VIEW_STATE = {
-  longitude: 103.8198,
-  latitude: 1.2521,
-  zoom: 10,
-  pitch: 0,
-  bearing: 0,
-};
 
 const MapContainer = (props) => {
+  // Redux states
   const dispatch = useDispatch();
+
   const layerVisibility = useSelector((state) => state.layerVisibility);
 
   const activeVesselID = useSelector((state) => state.activeVesselID);
@@ -38,19 +34,42 @@ const MapContainer = (props) => {
     dispatch(setActiveVesselActionCreator(activeVesselID));
   };
 
+  const mapView = useSelector((state) => state.mapView);
+  const setViewState = (newViewState) => {
+    dispatch(setViewStateActionCreator(newViewState));
+  };
+  const storeActiveVesselViewState = (vesselViewState) => {
+    dispatch(setActiveVesselViewStateActionCreator(vesselViewState));
+  };
+
+  // Component states
   const [activeVessel, setActiveVessel] = useState(
     props.data.filter((data) => {
       return data.mmsi === activeVesselID;
     })
   );
 
-  const clickVesselEvent = (activeVesselID) => {
-    setActiveVesselID(activeVesselID);
-    setActiveVessel(
-      props.data.filter((data) => {
-        return data.mmsi === activeVesselID;
-      })
-    );
+  const clickVesselEvent = (mmsi) => {
+    setActiveVesselID(mmsi);
+    const newActiveVessel = props.data.filter((data) => {
+      return data.mmsi === mmsi;
+    });
+
+    const vesselViewState = {
+      longitude: newActiveVessel[0].longitude,
+      latitude: newActiveVessel[0].latitude,
+      zoom: 13,
+      pitch: 60,
+      bearing: newActiveVessel[0].heading,
+      transitionDuration: "auto",
+      transitionInterpolator: new FlyToInterpolator({ speed: 2 }),
+    };
+
+    if (mapView.activeVesselView) {
+      setViewState(vesselViewState);
+    }
+    storeActiveVesselViewState(vesselViewState);
+    setActiveVessel(newActiveVessel);
   };
 
   const [tooltipInfo, setTooltipInfo] = useState({
@@ -155,7 +174,7 @@ const MapContainer = (props) => {
         data: riskyVessels,
         lowerPercentile: 0,
         extruded: false,
-        radius: 3000,
+        radius: 1500,
         opacity: 0.25,
         coverage: 0.98,
         getPosition: (d) => [d.longitude, d.latitude],
@@ -294,11 +313,12 @@ const MapContainer = (props) => {
   return (
     <div>
       <DeckGL
-        views={MAP_VIEW}
+        views={new MapView()}
         layers={layers}
-        initialViewState={INITIAL_VIEW_STATE}
         controller={true}
         getCursor={() => "crosshair"}
+        viewState={mapView.viewState}
+        onViewStateChange={({ viewState }) => setViewState(viewState)}
       >
         <StaticMap
           reuseMaps

@@ -23,7 +23,7 @@ const VesselLineChart = (props) => {
           xAxes: [
             {
               ticks: {
-                fontSize: 8,
+                fontSize: 9,
               },
               type: "time",
               time: {

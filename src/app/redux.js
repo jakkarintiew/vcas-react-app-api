@@ -3,22 +3,62 @@ import {
   createSlice,
   getDefaultMiddleware,
 } from "@reduxjs/toolkit";
-// import logger from "redux-logger";
 
-// const sidePanelTabsInitialState = {
-//   activePanel: "data",
-// };
+import { FlyToInterpolator } from "deck.gl";
 
-// const sidePanelTabsSlice = createSlice({
-//   name: "sidePanelTabs",
-//   initialState: sidePanelTabsInitialState,
-//   reducers: {
-//     filter: (state, { payload }) => {
-//       const selectedTab = state.find((tab) => tab.id === tab.id);
-//       state.activePanel = selectedTab.id;
-//     },
-//   },
-// });
+const mapViewInitialState = {
+  activeVesselView: true,
+  miniMapView: false,
+  initialViewState: {
+    longitude: 103.8198,
+    latitude: 1.2521,
+    zoom: 10,
+    pitch: 0,
+    bearing: 0,
+    transitionDuration: "auto",
+    transitionInterpolator: new FlyToInterpolator({ speed: 2 }),
+  },
+  viewState: {
+    longitude: 103.8198,
+    latitude: 1.2521,
+    zoom: 10,
+    pitch: 0,
+    bearing: 0,
+    transitionDuration: "auto",
+    transitionInterpolator: new FlyToInterpolator({ speed: 2 }),
+  },
+  activeVesselViewState: {
+    longitude: 103.8198,
+    latitude: 1.2521,
+    zoom: 10,
+    pitch: 0,
+    bearing: 0,
+    transitionDuration: "auto",
+    transitionInterpolator: new FlyToInterpolator({ speed: 2 }),
+  },
+};
+
+const mapViewSlice = createSlice({
+  name: "mapView",
+  initialState: mapViewInitialState,
+  reducers: {
+    toggleVesselView: (state) => {
+      state.activeVesselView = !state.activeVesselView;
+    },
+    toggleMiniMapView: (state) => {
+      state.miniMapView = !state.miniMapView;
+    },
+    setViewState: (state, { payload }) => {
+      state.viewState = payload;
+    },
+    resetViewState: (state) => {
+      state.viewState = state.initialViewState;
+    },
+    setActiveVesselViewState: (state, { payload }) => {
+      state.activeVesselViewState = payload;
+    },
+  },
+});
 
 const panelOpenInitialState = {
   controlPanel: {
@@ -84,6 +124,13 @@ const themeSlice = createSlice({
 
 // export actions
 export const {
+  toggleVesselView: toggleVesselViewActionCreator,
+  toggleMiniMapView: toggleMiniMapViewActionCreator,
+  setViewState: setViewStateActionCreator,
+  resetViewState: resetViewStateActionCreator,
+  setActiveVesselViewState: setActiveVesselViewStateActionCreator,
+} = mapViewSlice.actions;
+export const {
   toggleOpen: togglePanelOpenActionCreator,
 } = panelOpenSlice.actions;
 export const {
@@ -94,6 +141,7 @@ export const { set: setActiveVesselActionCreator } = activeVesselSlice.actions;
 
 // define reducers
 const reducer = {
+  mapView: mapViewSlice.reducer,
   panelOpen: panelOpenSlice.reducer,
   layerVisibility: layerVisibilitySlice.reducer,
   darkThemeEnabled: themeSlice.reducer,

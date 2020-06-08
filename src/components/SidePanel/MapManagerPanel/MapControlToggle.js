@@ -1,7 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import { useSelector, useDispatch } from "react-redux";
-import { toggleThemeActionCreator } from "app/redux";
+
+const ControlContainer = styled.div`
+  background-color: ${(props) => props.theme.labelColor};
+  color: ${(props) => props.theme.labelTextColor};
+  width: 100%;
+  height: 40px;
+`;
 
 const CheckBoxWrapper = styled.div`
   position: relative;
@@ -48,25 +53,24 @@ const CheckBox = styled.input`
   }
 `;
 
-const ThemeToggler = () => {
-  const dispatch = useDispatch();
-  const darkThemeEnabled = useSelector((state) => state.darkThemeEnabled);
-  const toggleTheme = () => {
-    dispatch(toggleThemeActionCreator());
-  };
+const MapControlToggle = ({ label, checked, onChange }) => {
   return (
-    <div>
-      <CheckBoxWrapper>
+    <ControlContainer className="flex flex-row items-center p-2 mb-2">
+      <label>
+        <span>{label}</span>
+      </label>
+      <div className="flex-grow" />
+      <CheckBoxWrapper className="flex flex-row items-center">
         <CheckBox
-          id="checkbox"
+          id={label}
           type="checkbox"
-          checked={darkThemeEnabled}
-          onChange={toggleTheme}
+          checked={checked}
+          onChange={onChange}
         />
-        <CheckBoxLabel htmlFor="checkbox" />
+        <CheckBoxLabel htmlFor={label} />
       </CheckBoxWrapper>
-    </div>
+    </ControlContainer>
   );
 };
 
-export default ThemeToggler;
+export default MapControlToggle;
