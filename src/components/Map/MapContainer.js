@@ -11,19 +11,19 @@ import {
   COORDINATE_SYSTEM,
   FlyToInterpolator,
 } from "deck.gl";
-import { MapView } from "@deck.gl/core";
+import { View, MapView } from "@deck.gl/core";
 
 import { useSelector, useDispatch } from "react-redux";
 import {
-  setViewStateActionCreator,
-  setActiveVesselViewStateActionCreator,
+  setViewStatesActionCreator,
+  storeActiveVesselViewStatesActionCreator,
   setActiveVesselActionCreator,
 } from "app/redux";
 
-// Set your mapbox access token here
-const MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
-
 const MapContainer = (props) => {
+  // Set your mapbox access token here
+  const MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
+
   // Redux states
   const dispatch = useDispatch();
 
@@ -35,11 +35,43 @@ const MapContainer = (props) => {
   };
 
   const mapView = useSelector((state) => state.mapView);
-  const setViewState = (newViewState) => {
-    dispatch(setViewStateActionCreator(newViewState));
+  const setViewStates = (newViewState) => {
+    dispatch(setViewStatesActionCreator(newViewState));
   };
-  const storeActiveVesselViewState = (vesselViewState) => {
-    dispatch(setActiveVesselViewStateActionCreator(vesselViewState));
+  const storeActiveVesselViewStates = (vesselViewState) => {
+    dispatch(storeActiveVesselViewStatesActionCreator(vesselViewState));
+  };
+
+  const VIEWS = [
+    new MapView({
+      id: "main",
+      controller: true,
+    }),
+    mapView.miniMapViewEnabled &&
+      new MapView({
+        id: "minimap",
+        // Position on top of main map
+        x: "17%",
+        y: "65%",
+        width: "300px",
+        height: "300px",
+        // Minimap is overlaid on top of an existing view, so need to clear the background
+        clear: true,
+        controller: {
+          maxZoom: 10,
+          minZoom: 10,
+          dragRotate: false,
+          keyboard: false,
+        },
+      }),
+  ].filter(Boolean);
+
+  const _onViewStateChange = ({ viewState, viewId }) => {
+    const newViewStates = { ...mapView.viewStates };
+    // Update a single view
+    newViewStates[viewId] = viewState;
+    // Save the view state and trigger rerender
+    setViewStates(newViewStates);
   };
 
   // Component states
@@ -65,10 +97,21 @@ const MapContainer = (props) => {
       transitionInterpolator: new FlyToInterpolator({ speed: 2 }),
     };
 
-    if (mapView.activeVesselView) {
-      setViewState(vesselViewState);
+    if (mapView.vesselViewEnabled) {
+      setViewStates({
+        main: vesselViewState,
+        minimap: { ...vesselViewState, pitch: 0, bearing: 0 },
+      });
+    } else {
+      setViewStates({
+        main: { ...mapView.viewStates.main },
+        minimap: { ...vesselViewState, pitch: 0, bearing: 0 },
+      });
     }
-    storeActiveVesselViewState(vesselViewState);
+    storeActiveVesselViewStates({
+      main: vesselViewState,
+      minimap: { ...vesselViewState, pitch: 0, bearing: 0 },
+    });
     setActiveVessel(newActiveVessel);
   };
 
@@ -313,12 +356,12 @@ const MapContainer = (props) => {
   return (
     <div>
       <DeckGL
-        views={new MapView()}
+        views={VIEWS}
         layers={layers}
         controller={true}
         getCursor={() => "crosshair"}
-        viewState={mapView.viewState}
-        onViewStateChange={({ viewState }) => setViewState(viewState)}
+        viewState={mapView.viewStates}
+        onViewStateChange={_onViewStateChange}
       >
         <StaticMap
           reuseMaps
@@ -326,6 +369,16 @@ const MapContainer = (props) => {
           preventStyleDiffing={true}
           mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
         ></StaticMap>
+        {mapView.miniMapViewEnabled && (
+          <View id="minimap">
+            <StaticMap
+              reuseMaps
+              mapStyle={props.mapStyle}
+              preventStyleDiffing={true}
+              mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
+            />
+          </View>
+        )}
         {renderTooltip()}
       </DeckGL>
       {/* 

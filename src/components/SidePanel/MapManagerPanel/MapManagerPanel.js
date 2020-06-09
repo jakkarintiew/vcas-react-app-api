@@ -5,8 +5,9 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   toggleThemeActionCreator,
   toggleVesselViewActionCreator,
-  setViewStateActionCreator,
-  resetViewStateActionCreator,
+  toggleMiniMapViewActionCreator,
+  setViewStatesActionCreator,
+  resetViewStatesActionCreator,
 } from "app/redux";
 import MapControlToggle from "./MapControlToggle";
 
@@ -26,14 +27,17 @@ const MapManagerPanel = () => {
   };
   const mapView = useSelector((state) => state.mapView);
   const toggleVesselView = () => {
-    if (mapView.activeVesselView) {
+    if (mapView.vesselViewEnabled) {
       // if from true to false
-      dispatch(resetViewStateActionCreator());
+      dispatch(resetViewStatesActionCreator());
     } else {
       // if from false to true
-      dispatch(setViewStateActionCreator(mapView.activeVesselViewState));
+      dispatch(setViewStatesActionCreator(mapView.activeVesselViewStates));
     }
     dispatch(toggleVesselViewActionCreator());
+  };
+  const toggleMiniMapView = () => {
+    dispatch(toggleMiniMapViewActionCreator());
   };
 
   return (
@@ -45,8 +49,13 @@ const MapManagerPanel = () => {
       />
       <MapControlToggle
         label={"Enable Active Vessel View"}
-        checked={mapView.activeVesselView}
+        checked={mapView.vesselViewEnabled}
         onChange={toggleVesselView}
+      />{" "}
+      <MapControlToggle
+        label={"Enable Mini Map"}
+        checked={mapView.miniMapViewEnabled}
+        onChange={toggleMiniMapView}
       />
     </StyledPanelContent>
   );

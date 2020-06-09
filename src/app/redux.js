@@ -6,36 +6,31 @@ import {
 
 import { FlyToInterpolator } from "deck.gl";
 
+const INITIAL_VIEWSTATES = {
+  main: {
+    longitude: 103.8198,
+    latitude: 1.2521,
+    zoom: 10,
+    pitch: 0,
+    bearing: 0,
+    transitionDuration: "auto",
+    transitionInterpolator: new FlyToInterpolator({ speed: 2 }),
+  },
+  minimap: {
+    longitude: 103.8198,
+    latitude: 1.2521,
+    zoom: 10,
+    pitch: 0,
+    bearing: 0,
+  },
+};
+
 const mapViewInitialState = {
-  activeVesselView: true,
-  miniMapView: false,
-  initialViewState: {
-    longitude: 103.8198,
-    latitude: 1.2521,
-    zoom: 10,
-    pitch: 0,
-    bearing: 0,
-    transitionDuration: "auto",
-    transitionInterpolator: new FlyToInterpolator({ speed: 2 }),
-  },
-  viewState: {
-    longitude: 103.8198,
-    latitude: 1.2521,
-    zoom: 10,
-    pitch: 0,
-    bearing: 0,
-    transitionDuration: "auto",
-    transitionInterpolator: new FlyToInterpolator({ speed: 2 }),
-  },
-  activeVesselViewState: {
-    longitude: 103.8198,
-    latitude: 1.2521,
-    zoom: 10,
-    pitch: 0,
-    bearing: 0,
-    transitionDuration: "auto",
-    transitionInterpolator: new FlyToInterpolator({ speed: 2 }),
-  },
+  vesselViewEnabled: false,
+  miniMapViewEnabled: false,
+  initialViewStates: INITIAL_VIEWSTATES,
+  viewStates: INITIAL_VIEWSTATES,
+  activeVesselViewStates: INITIAL_VIEWSTATES,
 };
 
 const mapViewSlice = createSlice({
@@ -43,19 +38,19 @@ const mapViewSlice = createSlice({
   initialState: mapViewInitialState,
   reducers: {
     toggleVesselView: (state) => {
-      state.activeVesselView = !state.activeVesselView;
+      state.vesselViewEnabled = !state.vesselViewEnabled;
     },
     toggleMiniMapView: (state) => {
-      state.miniMapView = !state.miniMapView;
+      state.miniMapViewEnabled = !state.miniMapViewEnabled;
     },
-    setViewState: (state, { payload }) => {
-      state.viewState = payload;
+    setViewStates: (state, { payload }) => {
+      state.viewStates = payload;
     },
-    resetViewState: (state) => {
-      state.viewState = state.initialViewState;
+    resetViewStates: (state) => {
+      state.viewStates.main = state.initialViewStates.main;
     },
-    setActiveVesselViewState: (state, { payload }) => {
-      state.activeVesselViewState = payload;
+    storeActiveVesselViewStates: (state, { payload }) => {
+      state.activeVesselViewStates = payload;
     },
   },
 });
@@ -126,16 +121,19 @@ const themeSlice = createSlice({
 export const {
   toggleVesselView: toggleVesselViewActionCreator,
   toggleMiniMapView: toggleMiniMapViewActionCreator,
-  setViewState: setViewStateActionCreator,
-  resetViewState: resetViewStateActionCreator,
-  setActiveVesselViewState: setActiveVesselViewStateActionCreator,
+  setViewStates: setViewStatesActionCreator,
+  resetViewStates: resetViewStatesActionCreator,
+  storeActiveVesselViewStates: storeActiveVesselViewStatesActionCreator,
 } = mapViewSlice.actions;
+
 export const {
   toggleOpen: togglePanelOpenActionCreator,
 } = panelOpenSlice.actions;
+
 export const {
   toggleVisibility: toggleLayerVisibilityActionCreator,
 } = layerVisibilitySlice.actions;
+
 export const { toggle: toggleThemeActionCreator } = themeSlice.actions;
 export const { set: setActiveVesselActionCreator } = activeVesselSlice.actions;
 
