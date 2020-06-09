@@ -7,7 +7,7 @@ import EyeSeen from "components/common/icons/eye-seen";
 import EyeUnseen from "components/common/icons/eye-unseen";
 
 const LayerContainer = styled.div`
-  background-color: ${(props) => props.theme.labelColor};
+  background-color: ${(props) => props.theme.sidePanelBg};
   color: ${(props) => props.theme.labelTextColor};
   width: 100%;
   height: 40px;
@@ -38,7 +38,7 @@ const LayerVisibilityToggle = ({ layerName }) => {
         <span>{layerName}</span>
       </label>
       <div className="flex-grow" />
-      <div className="relative mr-3 cursor-pointer" onClick={handleOnClick}>
+      <div className="relative mr-1 cursor-pointer" onClick={handleOnClick}>
         {layer.visible ? (
           <EyeSeen height="25px" />
         ) : (

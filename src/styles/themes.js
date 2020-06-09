@@ -15,7 +15,7 @@ export const fontFamily = `ff-clan-web-pro, 'Helvetica Neue', Helvetica, sans-se
 export const fontWeight = 400;
 export const fontSize = "0.875em";
 export const lineHeight = 1.71429;
-export const labelColor = "#6A7485";
+export const labelColor = "#303846";
 export const labelHoverColor = "#C6C6C6";
 export const labelColorLT = "#f0F0F0";
 

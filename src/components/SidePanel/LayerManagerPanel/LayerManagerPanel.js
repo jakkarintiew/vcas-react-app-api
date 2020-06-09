@@ -10,17 +10,40 @@ const StyledPanelContent = styled.div`
   color: ${(props) => props.theme.textColor};
 `;
 
+const LayerGroupContainer = styled.div`
+  background-color: ${(props) => props.theme.labelColor};
+  color: ${(props) => props.theme.textColor};
+  width: 100%;
+  padding: 6px;
+  margin-bottom: 8px;
+`;
+
 const LayerManagerPanel = () => {
   return (
     <div>
       <StyledPanelContent>
-        <LayerVisibilityToggle layerName={"Vessels"} />
-        <LayerVisibilityToggle layerName={"Historical Path"} />
-        <LayerVisibilityToggle layerName={"Future Path"} />
-        <LayerVisibilityToggle layerName={"Historical Trip"} />
-        <LayerVisibilityToggle layerName={"Future Trip"} />
-        <LayerVisibilityToggle layerName={"Collision Risk Hexagon Grid"} />
-        <LayerVisibilityToggle layerName={"Collision Risk Screen Grid"} />
+        <LayerGroupContainer>
+          <div className="px  -1 mb-2">
+            <b>Points</b>
+          </div>
+          <LayerVisibilityToggle layerName={"Vessels"} />
+        </LayerGroupContainer>
+        <LayerGroupContainer>
+          <div className="px  -1 mb-2">
+            <b>Paths</b>
+          </div>
+          <LayerVisibilityToggle layerName={"Historical Path"} />
+          <LayerVisibilityToggle layerName={"Future Path"} />
+          <LayerVisibilityToggle layerName={"Historical Trip"} />
+          <LayerVisibilityToggle layerName={"Future Trip"} />
+        </LayerGroupContainer>
+        <LayerGroupContainer>
+          <div className="px  -1 mb-2">
+            <b>Zones</b>
+          </div>
+          <LayerVisibilityToggle layerName={"Collision Risk Hexagon Grid"} />
+          <LayerVisibilityToggle layerName={"Collision Risk Screen Grid"} />
+        </LayerGroupContainer>
       </StyledPanelContent>
     </div>
   );
