@@ -8,6 +8,8 @@ import {
   TripsLayer,
   ScreenGridLayer,
   HexagonLayer,
+  PolygonLayer,
+  TextLayer,
   COORDINATE_SYSTEM,
   FlyToInterpolator,
 } from "deck.gl";
@@ -19,6 +21,11 @@ import {
   storeActiveVesselViewStatesActionCreator,
   setActiveVesselActionCreator,
 } from "app/redux";
+
+import MapTooltip from "./MapTooltip";
+
+import data_anchorages from "data/seamark_anchorages.json";
+import data_dredged_areas from "data/seamark_dredged_areas.json";
 
 const MapContainer = (props) => {
   // Set your mapbox access token here
@@ -60,7 +67,12 @@ const MapContainer = (props) => {
         controller: {
           maxZoom: 10,
           minZoom: 10,
+          scrollZoom: true,
+          dragPan: true,
           dragRotate: false,
+          doubleClickZoom: false,
+          touchZoom: false,
+          touchRotate: false,
           keyboard: false,
         },
       }),
@@ -90,11 +102,9 @@ const MapContainer = (props) => {
     const vesselViewState = {
       longitude: newActiveVessel[0].longitude,
       latitude: newActiveVessel[0].latitude,
-      zoom: 13,
+      zoom: 14,
       pitch: 60,
       bearing: newActiveVessel[0].heading,
-      transitionDuration: "auto",
-      transitionInterpolator: new FlyToInterpolator({ speed: 2 }),
     };
 
     if (mapView.vesselViewEnabled) {
@@ -105,17 +115,18 @@ const MapContainer = (props) => {
     } else {
       setViewStates({
         main: { ...mapView.viewStates.main },
-        minimap: { ...vesselViewState, pitch: 0, bearing: 0 },
+        minimap: { ...vesselViewState, zoom: 10, pitch: 0, bearing: 0 },
       });
     }
     storeActiveVesselViewStates({
       main: vesselViewState,
-      minimap: { ...vesselViewState, pitch: 0, bearing: 0 },
+      minimap: { ...vesselViewState, zoom: 10, pitch: 0, bearing: 0 },
     });
     setActiveVessel(newActiveVessel);
   };
 
   const [tooltipInfo, setTooltipInfo] = useState({
+    objectType: "",
     hoveredObject: "",
     pointerX: 0.0,
     pointerY: 0.0,
@@ -123,56 +134,8 @@ const MapContainer = (props) => {
   });
 
   const renderTooltip = () => {
-    const { hoveredObject, pointerX, pointerY, coordinate } = tooltipInfo;
-    return (
-      hoveredObject && (
-        <div
-          style={{
-            position: "absolute",
-            zIndex: 1,
-            pointerEvents: "none",
-            left: pointerX,
-            top: pointerY,
-            backgroundColor: "lightgrey",
-            padding: "10px",
-            borderRadius: " 3px",
-          }}
-        >
-          <div>
-            <b>MMSI</b>: {hoveredObject.mmsi}
-          </div>
-          <div>
-            <b>Ship Name</b>: {hoveredObject.shipname}
-          </div>
-          <div>
-            <b>Ship Type</b>: {hoveredObject.shiptype}
-          </div>
-          <div>
-            <b>Speed</b>: {hoveredObject.speed}
-          </div>
-          <div>
-            <b>Course</b>: {hoveredObject.course}
-          </div>
-          <div>
-            <b>Heading</b>: {hoveredObject.heading}
-          </div>
-          <div>
-            <b>Collision Risk</b>:{" "}
-            {Math.round((hoveredObject.risk + Number.EPSILON) * 100) / 100}
-          </div>
-          {/* <div>X: {pointerX}</div>
-          <div>Y: {pointerY}</div> */}
-          <div>
-            <b>Longitude</b>:{" "}
-            {Math.round((coordinate[0] + Number.EPSILON) * 100) / 100}
-          </div>
-          <div>
-            <b>Latitude</b>:{" "}
-            {Math.round((coordinate[1] + Number.EPSILON) * 100) / 100}
-          </div>
-        </div>
-      )
-    );
+    const { hoveredObject } = tooltipInfo;
+    return hoveredObject && <MapTooltip tooltipInfo={tooltipInfo} />;
   };
 
   const [time, setTime] = useState(1546272005);
@@ -202,6 +165,68 @@ const MapContainer = (props) => {
   });
 
   const layers = [
+    layerVisibility.mooringPolygon.visible &&
+      new PolygonLayer({
+        id: "dredged-polygon-layer",
+        data: data_dredged_areas,
+        stroked: true,
+        filled: true,
+        lineWidthMinPixels: 1,
+        getPolygon: (d) => d.coordinates,
+        getFillColor: [225, 225, 255, 100],
+        getLineColor: [130, 130, 190],
+        getLineWidth: 1,
+        pickable: true,
+        autoHighlight: true,
+        highlightColor: [225, 225, 255, 220],
+        onHover: (info) =>
+          setTooltipInfo({
+            objectType: "mooring",
+            hoveredObject: info.object,
+            pointerX: info.x,
+            pointerY: info.y,
+            coordinate: info.centroid,
+          }),
+      }),
+    layerVisibility.anchorangePolygon.visible &&
+      new PolygonLayer({
+        id: "anchorages-polygon-layer",
+        data: data_anchorages,
+        stroked: true,
+        filled: true,
+        lineWidthMinPixels: 1,
+        getPolygon: (d) => d.coordinates,
+        getFillColor: [225, 255, 225, 100],
+        getLineColor: [130, 190, 130],
+        getLineWidth: 1,
+        pickable: true,
+        autoHighlight: true,
+        highlightColor: [225, 255, 225, 220],
+        onHover: (info) =>
+          setTooltipInfo({
+            objectType: "anchorage",
+            hoveredObject: info.object,
+            pointerX: info.x,
+            pointerY: info.y,
+            coordinate: info.centroid,
+          }),
+      }),
+    layerVisibility.anchorangePolygon.visible &&
+      new TextLayer({
+        id: "anchorages-text-layer",
+        data: data_anchorages,
+        pickable: true,
+        getPosition: (d) => d.centroid,
+        getText: (d) => d.name,
+        getColor: [110, 110, 110],
+        sizeUnits: "meters",
+        getSize: 150,
+        getAngle: 0,
+        wordBreak: "break-word",
+        maxWidth: 600,
+        getTextAnchor: "middle",
+        getAlignmentBaseline: "center",
+      }),
     layerVisibility.riskScreenGrid.visible &&
       new ScreenGridLayer({
         id: "risk-screen-grid-layer",
@@ -234,14 +259,6 @@ const MapContainer = (props) => {
         rounded: true,
         widthMinPixels: 8,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
-        pickable: true,
-        onHover: (info) =>
-          setTooltipInfo({
-            hoveredObject: info.object,
-            pointerX: info.x,
-            pointerY: info.y,
-            coordinate: info.coordinate,
-          }),
       }),
     activeVesselID != null &&
       layerVisibility.futurePath.visible &&
@@ -255,14 +272,6 @@ const MapContainer = (props) => {
         rounded: true,
         widthMinPixels: 8,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
-        pickable: true,
-        onHover: (info) =>
-          setTooltipInfo({
-            hoveredObject: info.object,
-            pointerX: info.x,
-            pointerY: info.y,
-            coordinate: info.coordinate,
-          }),
       }),
     activeVesselID != null &&
       layerVisibility.historicalTrip.visible &&
@@ -316,6 +325,7 @@ const MapContainer = (props) => {
         billboard: false,
         onHover: (info) =>
           setTooltipInfo({
+            objectType: "vessel",
             hoveredObject: info.object,
             pointerX: info.x,
             pointerY: info.y,
@@ -344,6 +354,7 @@ const MapContainer = (props) => {
         billboard: false,
         onHover: (info) =>
           setTooltipInfo({
+            objectType: "vessel",
             hoveredObject: info.object,
             pointerX: info.x,
             pointerY: info.y,
@@ -360,7 +371,18 @@ const MapContainer = (props) => {
         layers={layers}
         controller={true}
         getCursor={() => "crosshair"}
-        viewState={mapView.viewStates}
+        viewState={{
+          main: {
+            ...mapView.viewStates.main,
+            transitionDuration: "auto",
+            transitionInterpolator: new FlyToInterpolator({ speed: 2 }),
+          },
+          minimap: {
+            ...mapView.viewStates.minimap,
+            transitionDuration: "auto",
+            transitionInterpolator: new FlyToInterpolator({ speed: 2 }),
+          },
+        }}
         onViewStateChange={_onViewStateChange}
       >
         <StaticMap
@@ -381,17 +403,6 @@ const MapContainer = (props) => {
         )}
         {renderTooltip()}
       </DeckGL>
-      {/* 
-      {timeRange && (
-        <RangeInput
-          min={timeRange[0]}
-          max={timeRange[1]}
-          value={filterValue}
-          animationSpeed={MS_PER_DAY / 1000}
-          formatLabel={_formatLabel}
-          onChange={({ value }) => setFilterValue(value)}
-        />
-      )} */}
     </div>
   );
 };

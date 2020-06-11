@@ -4,8 +4,6 @@ import {
   getDefaultMiddleware,
 } from "@reduxjs/toolkit";
 
-import { FlyToInterpolator } from "deck.gl";
-
 const INITIAL_VIEWSTATES = {
   main: {
     longitude: 103.8198,
@@ -13,8 +11,6 @@ const INITIAL_VIEWSTATES = {
     zoom: 10,
     pitch: 0,
     bearing: 0,
-    transitionDuration: "auto",
-    transitionInterpolator: new FlyToInterpolator({ speed: 2 }),
   },
   minimap: {
     longitude: 103.8198,
@@ -78,6 +74,8 @@ const panelOpenSlice = createSlice({
 });
 
 const layerVisibilityInitialState = {
+  mooringPolygon: { layerName: "Mooring Areas", visible: false },
+  anchorangePolygon: { layerName: "Anchorage Areas", visible: false },
   riskScreenGrid: { layerName: "Collision Risk Screen Grid", visible: false },
   riskHexagon: { layerName: "Collision Risk Hexagon Grid", visible: true },
   historicalPath: { layerName: "Historical Path", visible: true },
