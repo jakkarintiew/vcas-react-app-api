@@ -52,7 +52,6 @@ const MapTooltip = ({ tooltipInfo }) => {
     const windowW = window.innerWidth;
     const windowH = window.innerHeight;
     const { width, height } = size;
-    console.log({ width, height });
     const pos = {};
     if (x + leftOffset + width > windowW) {
       pos.right = windowW - x + leftOffset;

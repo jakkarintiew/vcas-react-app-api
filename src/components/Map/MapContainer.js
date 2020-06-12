@@ -26,6 +26,7 @@ import MapTooltip from "./MapTooltip";
 
 import data_anchorages from "data/seamark_anchorages.json";
 import data_dredged_areas from "data/seamark_dredged_areas.json";
+import vessel_marker from "img/vessel_marker.png";
 
 const MapContainer = (props) => {
   // Set your mapbox access token here
@@ -93,7 +94,7 @@ const MapContainer = (props) => {
     })
   );
 
-  const clickVesselEvent = (mmsi) => {
+  const _clickVesselEvent = (mmsi) => {
     setActiveVesselID(mmsi);
     const newActiveVessel = props.data.filter((data) => {
       return data.mmsi === mmsi;
@@ -133,7 +134,7 @@ const MapContainer = (props) => {
     coordinate: [0.0, 0.0],
   });
 
-  const renderTooltip = () => {
+  const _renderTooltip = () => {
     const { hoveredObject } = tooltipInfo;
     return hoveredObject && <MapTooltip tooltipInfo={tooltipInfo} />;
   };
@@ -165,6 +166,26 @@ const MapContainer = (props) => {
   });
 
   const layers = [
+    layerVisibility.riskScreenGrid.visible &&
+      new ScreenGridLayer({
+        id: "risk-screen-grid-layer",
+        data: riskyVessels,
+        pickable: false,
+        opacity: 0.25,
+        cellSizePixels: 64,
+        getPosition: (d) => [d.longitude, d.latitude],
+      }),
+    layerVisibility.riskHexagon.visible &&
+      new HexagonLayer({
+        id: "risk-hexagon-layer",
+        data: riskyVessels,
+        lowerPercentile: 0,
+        extruded: false,
+        radius: 1500,
+        opacity: 0.25,
+        coverage: 0.98,
+        getPosition: (d) => [d.longitude, d.latitude],
+      }),
     layerVisibility.mooringPolygon.visible &&
       new PolygonLayer({
         id: "dredged-polygon-layer",
@@ -226,26 +247,6 @@ const MapContainer = (props) => {
         maxWidth: 600,
         getTextAnchor: "middle",
         getAlignmentBaseline: "center",
-      }),
-    layerVisibility.riskScreenGrid.visible &&
-      new ScreenGridLayer({
-        id: "risk-screen-grid-layer",
-        data: riskyVessels,
-        pickable: false,
-        opacity: 0.25,
-        cellSizePixels: 64,
-        getPosition: (d) => [d.longitude, d.latitude],
-      }),
-    layerVisibility.riskHexagon.visible &&
-      new HexagonLayer({
-        id: "risk-hexagon-layer",
-        data: riskyVessels,
-        lowerPercentile: 0,
-        extruded: false,
-        radius: 1500,
-        opacity: 0.25,
-        coverage: 0.98,
-        getPosition: (d) => [d.longitude, d.latitude],
       }),
     activeVesselID != null &&
       layerVisibility.historicalPath.visible &&
@@ -310,17 +311,19 @@ const MapContainer = (props) => {
         id: "vessel-icon-layer",
         data: movingVessels,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
-        iconAtlas: require("img/vessel_marker.png"),
+        iconAtlas: vessel_marker,
         iconMapping: {
-          vesselMarker: { x: 0, y: 0, width: 64, height: 64, mask: false },
+          vesselMarker: { x: 0, y: 0, width: 64, height: 64, mask: true },
         },
         getIcon: (d) => "vesselMarker",
         getPosition: (d) => [d.longitude, d.latitude, 0],
-        getSize: (d) => 300,
+        getAngle: (d) => 360 - d.heading,
+        getSize: (d) => (d.mmsi === activeVesselID ? 600 : 300),
+        getColor: (d) =>
+          d.mmsi === activeVesselID ? [220, 40, 50] : [20, 180, 220],
         sizeUnits: "meters",
         sizeScale: 1,
         sizeMinPixels: 10,
-        getAngle: (d) => 360 - d.heading,
         pickable: true,
         billboard: false,
         onHover: (info) =>
@@ -331,36 +334,7 @@ const MapContainer = (props) => {
             pointerY: info.y,
             coordinate: info.coordinate,
           }),
-        onClick: (info) => clickVesselEvent(info.object.mmsi),
-      }),
-    activeVesselID != null &&
-      layerVisibility.vesselIcon.visible &&
-      new IconLayer({
-        id: "active-vessel-icon-layer",
-        data: activeVessel,
-        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
-        iconAtlas: require("img/vessel_marker_active.png"),
-        iconMapping: {
-          vesselMarker: { x: 0, y: 0, width: 64, height: 64, mask: false },
-        },
-        getIcon: (d) => "vesselMarker",
-        getPosition: (d) => [d.longitude, d.latitude, 0],
-        getSize: (d) => 300,
-        sizeUnits: "meters",
-        sizeScale: 2,
-        sizeMinPixels: 15,
-        getAngle: (d) => 360 - d.heading,
-        pickable: true,
-        billboard: false,
-        onHover: (info) =>
-          setTooltipInfo({
-            objectType: "vessel",
-            hoveredObject: info.object,
-            pointerX: info.x,
-            pointerY: info.y,
-            coordinate: info.coordinate,
-          }),
-        onClick: (info) => clickVesselEvent(info.object.mmsi),
+        onClick: (info) => _clickVesselEvent(info.object.mmsi),
       }),
   ].filter(Boolean);
 
@@ -401,7 +375,7 @@ const MapContainer = (props) => {
             />
           </View>
         )}
-        {renderTooltip()}
+        {_renderTooltip()}
       </DeckGL>
     </div>
   );
