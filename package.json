@@ -31,7 +31,7 @@
     "start": "npm run watch:css && react-scripts start",
     "build": "npm run build:css && react-scripts build",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build --repo https://github.com/jakkarintiew/vcas-react-app.git",
+    "deploy": "gh-pages -d build --remote github --repo https://github.com/jakkarintiew/vcas-react-app.git",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "build:css": "postcss src/styles/tailwind.css -o src/styles/main.css",
