@@ -26,7 +26,6 @@ import MapTooltip from "./MapTooltip";
 
 import data_anchorages from "data/seamark_anchorages.json";
 import data_dredged_areas from "data/seamark_dredged_areas.json";
-import vessel_marker from "img/vessel_marker.png";
 
 const MapContainer = (props) => {
   // Set your mapbox access token here
@@ -157,12 +156,8 @@ const MapContainer = (props) => {
     return () => cancelAnimationFrame(requestRef.current);
   });
 
-  const movingVessels = props.data.filter((data) => {
-    return data.speed > 1;
-  });
-
   const riskyVessels = props.data.filter((data) => {
-    return data.speed > 1 && data.risk > 50;
+    return data.risk > 50;
   });
 
   const layers = [
@@ -309,18 +304,16 @@ const MapContainer = (props) => {
     layerVisibility.vesselIcon.visible &&
       new IconLayer({
         id: "vessel-icon-layer",
-        data: movingVessels,
+        data: props.data,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
-        iconAtlas: vessel_marker,
+        iconAtlas: require("img/vessel_marker.png"),
         iconMapping: {
-          vesselMarker: { x: 0, y: 0, width: 64, height: 64, mask: true },
+          vesselMarker: { x: 0, y: 0, width: 64, height: 64, mask: false },
         },
         getIcon: (d) => "vesselMarker",
         getPosition: (d) => [d.longitude, d.latitude, 0],
         getAngle: (d) => 360 - d.heading,
-        getSize: (d) => (d.mmsi === activeVesselID ? 600 : 300),
-        getColor: (d) =>
-          d.mmsi === activeVesselID ? [220, 40, 50] : [20, 180, 220],
+        getSize: (d) => 300,
         sizeUnits: "meters",
         sizeScale: 1,
         sizeMinPixels: 10,
@@ -335,6 +328,34 @@ const MapContainer = (props) => {
             coordinate: info.coordinate,
           }),
         onClick: (info) => _clickVesselEvent(info.object.mmsi),
+      }),
+    activeVesselID != null &&
+      layerVisibility.vesselIcon.visible &&
+      new IconLayer({
+        id: "active-vessel-icon-layer",
+        data: activeVessel,
+        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+        iconAtlas: require("img/vessel_marker_active.png"),
+        iconMapping: {
+          vesselMarker: { x: 0, y: 0, width: 64, height: 64, mask: false },
+        },
+        getIcon: (d) => "vesselMarker",
+        getPosition: (d) => [d.longitude, d.latitude, 0],
+        getAngle: (d) => 360 - d.heading,
+        getSize: (d) => 300,
+        sizeUnits: "meters",
+        sizeScale: 2,
+        sizeMinPixels: 15,
+        billboard: false,
+        pickable: true,
+        onHover: (info) =>
+          setTooltipInfo({
+            objectType: "vessel",
+            hoveredObject: info.object,
+            pointerX: info.x,
+            pointerY: info.y,
+            coordinate: info.coordinate,
+          }),
       }),
   ].filter(Boolean);
 
