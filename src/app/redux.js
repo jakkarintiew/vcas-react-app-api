@@ -116,38 +116,46 @@ const themeSlice = createSlice({
 });
 
 const vesselTypeFiltersInitialState = [
-  { vesselType: "Reserved", filterState: true },
-  { vesselType: "Wing In Grnd", filterState: true },
-  { vesselType: "SAR Aircraft", filterState: true },
-  { vesselType: "Fishing", filterState: true },
-  { vesselType: "Tug", filterState: true },
-  { vesselType: "Dredger", filterState: true },
-  { vesselType: "Dive Vessel", filterState: true },
-  { vesselType: "Military Ops", filterState: true },
-  { vesselType: "Sailing Vessel", filterState: true },
-  { vesselType: "Pleasure Craft", filterState: true },
-  { vesselType: "High-Speed Craft", filterState: true },
-  { vesselType: "Pilot Vessel", filterState: true },
-  { vesselType: "SAR", filterState: true },
-  { vesselType: "Port Tender", filterState: true },
-  { vesselType: "Anti-Pollution", filterState: true },
-  { vesselType: "Law Enforce", filterState: true },
-  { vesselType: "Local Vessel", filterState: true },
-  { vesselType: "Medical Trans", filterState: true },
-  { vesselType: "Special Craft", filterState: true },
-  { vesselType: "Passenger", filterState: true },
-  { vesselType: "Cargo", filterState: true },
-  { vesselType: "Cargo - Hazard A (Major)", filterState: true },
-  { vesselType: "Cargo - Hazard B", filterState: true },
-  { vesselType: "Cargo - Hazard C (Minor)", filterState: true },
-  { vesselType: "Cargo - Hazard D (Recognizable)", filterState: true },
-  { vesselType: "Tanker", filterState: true },
-  { vesselType: "Tanker - Hazard A (Major)", filterState: true },
-  { vesselType: "Tanker - Hazard B", filterState: true },
-  { vesselType: "Tanker - Hazard C (Minor)", filterState: true },
-  { vesselType: "Tanker - Hazard D (Recognizable)", filterState: true },
-  { vesselType: "Other", filterState: true },
-  { vesselType: "Unkown", filterState: true },
+  { vesselType: "Reserved", filterState: true, visible: true },
+  { vesselType: "Wing In Grnd", filterState: true, visible: true },
+  { vesselType: "SAR Aircraft", filterState: true, visible: true },
+  { vesselType: "Fishing", filterState: true, visible: true },
+  { vesselType: "Tug", filterState: true, visible: true },
+  { vesselType: "Dredger", filterState: true, visible: true },
+  { vesselType: "Dive Vessel", filterState: true, visible: true },
+  { vesselType: "Military Ops", filterState: true, visible: true },
+  { vesselType: "Sailing Vessel", filterState: true, visible: true },
+  { vesselType: "Pleasure Craft", filterState: true, visible: true },
+  { vesselType: "High-Speed Craft", filterState: true, visible: true },
+  { vesselType: "Pilot Vessel", filterState: true, visible: true },
+  { vesselType: "SAR", filterState: true, visible: true },
+  { vesselType: "Port Tender", filterState: true, visible: true },
+  { vesselType: "Anti-Pollution", filterState: true, visible: true },
+  { vesselType: "Law Enforce", filterState: true, visible: true },
+  { vesselType: "Local Vessel", filterState: true, visible: true },
+  { vesselType: "Medical Trans", filterState: true, visible: true },
+  { vesselType: "Special Craft", filterState: true, visible: true },
+  { vesselType: "Passenger", filterState: true, visible: true },
+  { vesselType: "Cargo", filterState: true, visible: true },
+  { vesselType: "Cargo - Hazard A (Major)", filterState: true, visible: true },
+  { vesselType: "Cargo - Hazard B", filterState: true, visible: true },
+  { vesselType: "Cargo - Hazard C (Minor)", filterState: true, visible: true },
+  {
+    vesselType: "Cargo - Hazard D (Recognizable)",
+    filterState: true,
+    visible: true,
+  },
+  { vesselType: "Tanker", filterState: true, visible: true },
+  { vesselType: "Tanker - Hazard A (Major)", filterState: true, visible: true },
+  { vesselType: "Tanker - Hazard B", filterState: true, visible: true },
+  { vesselType: "Tanker - Hazard C (Minor)", filterState: true, visible: true },
+  {
+    vesselType: "Tanker - Hazard D (Recognizable)",
+    filterState: true,
+    visible: true,
+  },
+  { vesselType: "Other", filterState: true, visible: true },
+  { vesselType: "Unkown", filterState: true, visible: true },
 ];
 
 const vesselTypeFiltersSlice = createSlice({
@@ -157,6 +165,18 @@ const vesselTypeFiltersSlice = createSlice({
     toggle_filter: (state, { payload }) => {
       const index = state.findIndex((data) => data.vesselType === payload);
       state[index].filterState = !state[index].filterState;
+    },
+    search_filter: (state, { payload }) => {
+      //   return state.filter((elem) =>
+      //     elem.vesselType.toLowerCase().includes(payload.toLowerCase())
+      //   );
+      state.forEach((elem) => {
+        if (elem.vesselType.toLowerCase().includes(payload.toLowerCase())) {
+          elem.visible = true;
+        } else {
+          elem.visible = false;
+        }
+      });
     },
     select_all: (state) => {
       state.map((elem) => (elem.filterState = true));
@@ -189,6 +209,7 @@ export const { set: setActiveVesselActionCreator } = activeVesselSlice.actions;
 
 export const {
   toggle_filter: filterVesselTypeActionCreator,
+  search_filter: searchFilterActionCreator,
   select_all: selectAllActionCreator,
   deselect_all: deselectAllActionCreator,
 } = vesselTypeFiltersSlice.actions;

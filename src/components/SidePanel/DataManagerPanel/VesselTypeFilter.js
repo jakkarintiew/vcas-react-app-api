@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -9,6 +9,7 @@ import { Scrollbars } from "react-custom-scrollbars";
 
 import {
   filterVesselTypeActionCreator,
+  searchFilterActionCreator,
   selectAllActionCreator,
   deselectAllActionCreator,
 } from "app/redux";
@@ -76,8 +77,14 @@ const VesselTypeFilter = () => {
   // Redux states
   const dispatch = useDispatch();
   const vesselTypeFilters = useSelector((state) => state.vesselTypeFilters);
+  const visibleTypes = vesselTypeFilters.filter((elem) => elem.visible);
+
   const toggleFilter = (vesselType) => {
     dispatch(filterVesselTypeActionCreator(vesselType));
+  };
+
+  const searchFilter = (searchStr) => {
+    dispatch(searchFilterActionCreator(searchStr));
   };
 
   const selectAll = () => {
@@ -88,32 +95,10 @@ const VesselTypeFilter = () => {
     dispatch(deselectAllActionCreator());
   };
 
-  const [typesToDispay, setTypesToDispay] = useState(vesselTypeFilters);
-  const searchFilter = (searchStr) => {
-    const filteredTypes = vesselTypeFilters.filter((elem) =>
-      elem.vesselType.toLowerCase().includes(searchStr.toLowerCase())
-    );
-
-    setTypesToDispay(filteredTypes);
-  };
-
   const handleChipClick = (vesselType) => () => {
     toggleFilter(vesselType);
-    const index = typesToDispay.findIndex(
-      (data) => data.vesselType === vesselType
-    );
-    typesToDispay[index].filterState = !typesToDispay[index].filterState;
   };
 
-  const handleSelectAllClick = () => {
-    selectAll();
-    typesToDispay.map((elem) => (elem.filterState = true));
-  };
-
-  const handleDeselectAllClick = () => {
-    deselectAll();
-    typesToDispay.map((elem) => (elem.filterState = false));
-  };
   return (
     <FilterShelfContainer>
       <div className="px-1 mb-2">
@@ -124,16 +109,10 @@ const VesselTypeFilter = () => {
         className="px-2 mb-1 w-full"
         onChange={(e) => searchFilter(e.target.value)}
       />
-      <SelectAllButton
-        className="px-2 mb-2 mr-2"
-        onClick={handleSelectAllClick}
-      >
+      <SelectAllButton className="px-2 mb-2 mr-2" onClick={selectAll}>
         Select All
       </SelectAllButton>
-      <SelectAllButton
-        className="px-2 mb-2 mr-2"
-        onClick={handleDeselectAllClick}
-      >
+      <SelectAllButton className="px-2 mb-2 mr-2" onClick={deselectAll}>
         Deselect All
       </SelectAllButton>
       <Scrollbars
@@ -142,7 +121,7 @@ const VesselTypeFilter = () => {
         }}
       >
         <ChipsContainer>
-          {typesToDispay.map((vessel) => {
+          {visibleTypes.map((vessel) => {
             return (
               <li key={vessel.vesselType} className="pr-1">
                 <StyledChip
