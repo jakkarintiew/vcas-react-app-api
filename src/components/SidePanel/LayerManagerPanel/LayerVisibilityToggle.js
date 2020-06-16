@@ -9,8 +9,9 @@ import EyeUnseen from "components/common/icons/eye-unseen";
 const LayerContainer = styled.div`
   background-color: ${(props) => props.theme.sidePanelBg};
   color: ${(props) => props.theme.labelTextColor};
+  font-size: 0.8em;
   width: 100%;
-  height: 40px;
+  height: 30px;
 `;
 
 const LayerVisibilityToggle = ({ layerName }) => {
@@ -33,10 +34,8 @@ const LayerVisibilityToggle = ({ layerName }) => {
   };
 
   return (
-    <LayerContainer className="flex flex-row items-center p-2 mb-2">
-      <label>
-        <span>{layerName}</span>
-      </label>
+    <LayerContainer className="flex flex-row items-center p-2 mb-1">
+      <label>{layerName}</label>
       <div className="flex-grow" />
       <div className="relative mr-1 cursor-pointer" onClick={handleOnClick}>
         {layer.visible ? (

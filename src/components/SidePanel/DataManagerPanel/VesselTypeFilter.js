@@ -101,7 +101,7 @@ const VesselTypeFilter = () => {
 
   return (
     <FilterShelfContainer>
-      <div className="px-1 mb-2">
+      <div className="px-1 mb-1">
         <b>Vessel Type Filters</b>
       </div>
       <FilterInput
