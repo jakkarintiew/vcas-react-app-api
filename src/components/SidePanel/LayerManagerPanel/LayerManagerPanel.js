@@ -23,13 +23,13 @@ const LayerManagerPanel = () => {
     <div>
       <StyledPanelContent>
         <LayerGroupContainer>
-          <div className="px  -1 mb-2">
+          <div className="px ml-1 mb-2">
             <b>Points</b>
           </div>
           <LayerVisibilityToggle layerName={"Vessels"} />
         </LayerGroupContainer>
         <LayerGroupContainer>
-          <div className="px  -1 mb-2">
+          <div className="px ml-1 mb-2">
             <b>Paths</b>
           </div>
           <LayerVisibilityToggle layerName={"Historical Path"} />
@@ -38,7 +38,7 @@ const LayerManagerPanel = () => {
           <LayerVisibilityToggle layerName={"Future Trip"} />
         </LayerGroupContainer>
         <LayerGroupContainer>
-          <div className="px  -1 mb-2">
+          <div className="px ml-1 mb-2">
             <b>Zones</b>
           </div>
           <LayerVisibilityToggle layerName={"Mooring Areas"} />

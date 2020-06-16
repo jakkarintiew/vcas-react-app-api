@@ -26,6 +26,7 @@ import MapTooltip from "./MapTooltip";
 
 import data_anchorages from "data/seamark_anchorages.json";
 import data_dredged_areas from "data/seamark_dredged_areas.json";
+import vessel_type_lookup from "data/vessel_type_lookup.json";
 
 const MapContainer = (props) => {
   // Set your mapbox access token here
@@ -48,6 +49,8 @@ const MapContainer = (props) => {
   const storeActiveVesselViewStates = (vesselViewState) => {
     dispatch(storeActiveVesselViewStatesActionCreator(vesselViewState));
   };
+
+  const vesselTypeFilters = useSelector((state) => state.vesselTypeFilters);
 
   const VIEWS = [
     new MapView({
@@ -158,6 +161,13 @@ const MapContainer = (props) => {
 
   const riskyVessels = props.data.filter((data) => {
     return data.risk > 50;
+  });
+
+  const visibleVessels = props.data.filter((data) => {
+    const visibleTypes = vesselTypeFilters.map((vessel) => {
+      return vessel.filterState ? vessel.vesselType : null;
+    });
+    return visibleTypes.includes(vessel_type_lookup[data.shiptype]);
   });
 
   const layers = [
@@ -304,7 +314,7 @@ const MapContainer = (props) => {
     layerVisibility.vesselIcon.visible &&
       new IconLayer({
         id: "vessel-icon-layer",
-        data: props.data,
+        data: visibleVessels,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
         iconAtlas: require("img/vessel_marker.png"),
         iconMapping: {

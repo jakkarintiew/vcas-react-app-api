@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 
+import vessel_type_lookup from "data/vessel_type_lookup.json";
+
 const StyledTooltipContainer = styled.div`
   box-shadow: ${(props) => props.theme.panelBoxShadow};
   align-items: stretch;
@@ -83,7 +85,7 @@ const MapTooltip = ({ tooltipInfo }) => {
             <b>Ship Name</b>: {hoveredObject.shipname}
           </div>
           <div>
-            <b>Ship Type</b>: {hoveredObject.shiptype}
+            <b>Ship Type</b>: {vessel_type_lookup[hoveredObject.shiptype]} ({hoveredObject.shiptype})
           </div>
           <div>
             <b>Speed</b>: {hoveredObject.speed}

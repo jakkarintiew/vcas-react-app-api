@@ -18,6 +18,7 @@ const StyledSidePanelContainer = styled.div`
   padding-right: ${(props) => props.theme.sidePanel.margin.right}px;
   padding-bottom: ${(props) => props.theme.sidePanel.margin.bottom}px;
   padding-left: ${(props) => props.theme.sidePanel.margin.left}px;
+  transition: ${(props) => props.theme.transition};
 `;
 
 const SidePanelInner = styled.div`

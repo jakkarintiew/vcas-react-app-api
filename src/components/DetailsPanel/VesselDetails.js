@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 
 import VesselLineChart from "./VesselLineChart";
 
+import vessel_type_lookup from "data/vessel_type_lookup.json";
+
 const VesselDetails = (props) => {
   const activeVesselInitialState = {
     mmsi: null,
@@ -143,7 +145,17 @@ const VesselDetails = (props) => {
       <div className="p-1">
         <PropertyInfo label="MMSI" data={activeVesselID} />
         <PropertyInfo label="Ship Name" data={activeVessel.shipname} />
-        <PropertyInfo label="Ship Type" data={activeVessel.shiptype} />
+        <PropertyInfo
+          label="Ship Type"
+          data={
+            activeVesselID != null
+              ? vessel_type_lookup[activeVessel.shiptype] +
+              " (" +
+              activeVessel.shiptype +
+              ")"
+              : ""
+          }
+        />
         <PropertyInfo label="Speed" data={activeVessel.speed} />
         <PropertyInfo label="Course" data={activeVessel.course} />
         <PropertyInfo label="Heading" data={activeVessel.heading} />

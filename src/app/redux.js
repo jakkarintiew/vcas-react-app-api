@@ -115,6 +115,52 @@ const themeSlice = createSlice({
   },
 });
 
+const vesselTypeFiltersInitialState = [
+  { vesselType: "Reserved", filterState: true },
+  { vesselType: "Wing In Grnd", filterState: true },
+  { vesselType: "SAR Aircraft", filterState: true },
+  { vesselType: "Fishing", filterState: true },
+  { vesselType: "Tug", filterState: true },
+  { vesselType: "Dredger", filterState: true },
+  { vesselType: "Dive Vessel", filterState: true },
+  { vesselType: "Military Ops", filterState: true },
+  { vesselType: "Sailing Vessel", filterState: true },
+  { vesselType: "Pleasure Craft", filterState: true },
+  { vesselType: "High-Speed Craft", filterState: true },
+  { vesselType: "Pilot Vessel", filterState: true },
+  { vesselType: "SAR", filterState: true },
+  { vesselType: "Port Tender", filterState: true },
+  { vesselType: "Anti-Pollution", filterState: true },
+  { vesselType: "Law Enforce", filterState: true },
+  { vesselType: "Local Vessel", filterState: true },
+  { vesselType: "Medical Trans", filterState: true },
+  { vesselType: "Special Craft", filterState: true },
+  { vesselType: "Passenger", filterState: true },
+  { vesselType: "Cargo", filterState: true },
+  { vesselType: "Cargo - Hazard A (Major)", filterState: true },
+  { vesselType: "Cargo - Hazard B", filterState: true },
+  { vesselType: "Cargo - Hazard C (Minor)", filterState: true },
+  { vesselType: "Cargo - Hazard D (Recognizable)", filterState: true },
+  { vesselType: "Tanker", filterState: true },
+  { vesselType: "Tanker - Hazard A (Major)", filterState: true },
+  { vesselType: "Tanker - Hazard B", filterState: true },
+  { vesselType: "Tanker - Hazard C (Minor)", filterState: true },
+  { vesselType: "Tanker - Hazard D (Recognizable)", filterState: true },
+  { vesselType: "Other", filterState: true },
+  { vesselType: "Unkown", filterState: true },
+];
+
+const vesselTypeFiltersSlice = createSlice({
+  name: "vesselTypeFilters",
+  initialState: vesselTypeFiltersInitialState,
+  reducers: {
+    toggle_filter: (state, { payload }) => {
+      const index = state.findIndex((data) => data.vesselType === payload);
+      state[index].filterState = !state[index].filterState;
+    },
+  },
+});
+
 // export actions
 export const {
   toggleVesselView: toggleVesselViewActionCreator,
@@ -135,6 +181,10 @@ export const {
 export const { toggle: toggleThemeActionCreator } = themeSlice.actions;
 export const { set: setActiveVesselActionCreator } = activeVesselSlice.actions;
 
+export const {
+  toggle_filter: filterVesselTypeActionCreator,
+} = vesselTypeFiltersSlice.actions;
+
 // define reducers
 const reducer = {
   mapView: mapViewSlice.reducer,
@@ -142,6 +192,7 @@ const reducer = {
   layerVisibility: layerVisibilitySlice.reducer,
   darkThemeEnabled: themeSlice.reducer,
   activeVesselID: activeVesselSlice.reducer,
+  vesselTypeFilters: vesselTypeFiltersSlice.reducer,
 };
 
 // define middleware

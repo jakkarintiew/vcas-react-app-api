@@ -94,7 +94,7 @@ TabPanel.propTypes = {
 };
 
 const PanelContent = () => {
-  const [value, setValue] = React.useState(1);
+  const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -118,7 +118,8 @@ const PanelContent = () => {
                       verticalAlign: "middle",
                       fontSize: 16,
                     }}
-                  />{" "}
+                    className="mr-1"
+                  />
                   {panel.label}
                 </div>
               }
