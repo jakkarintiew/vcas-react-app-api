@@ -117,7 +117,7 @@ const VesselTypeFilter = () => {
       </SelectAllButton>
       <Scrollbars
         style={{
-          height: 200,
+          height: 150,
         }}
       >
         <ChipsContainer>

@@ -116,6 +116,7 @@ const themeSlice = createSlice({
 });
 
 const vesselTypeFiltersInitialState = [
+  { vesselType: "Not Available", filterState: true, visible: true },
   { vesselType: "Reserved", filterState: true, visible: true },
   { vesselType: "Wing In Grnd", filterState: true, visible: true },
   { vesselType: "SAR Aircraft", filterState: true, visible: true },
@@ -155,7 +156,6 @@ const vesselTypeFiltersInitialState = [
     visible: true,
   },
   { vesselType: "Other", filterState: true, visible: true },
-  { vesselType: "Unkown", filterState: true, visible: true },
 ];
 
 const vesselTypeFiltersSlice = createSlice({
