@@ -158,6 +158,12 @@ const vesselTypeFiltersSlice = createSlice({
       const index = state.findIndex((data) => data.vesselType === payload);
       state[index].filterState = !state[index].filterState;
     },
+    select_all: (state) => {
+      state.map((elem) => (elem.filterState = true));
+    },
+    deselect_all: (state) => {
+      state.map((elem) => (elem.filterState = false));
+    },
   },
 });
 
@@ -183,6 +189,8 @@ export const { set: setActiveVesselActionCreator } = activeVesselSlice.actions;
 
 export const {
   toggle_filter: filterVesselTypeActionCreator,
+  select_all: selectAllActionCreator,
+  deselect_all: deselectAllActionCreator,
 } = vesselTypeFiltersSlice.actions;
 
 // define reducers
