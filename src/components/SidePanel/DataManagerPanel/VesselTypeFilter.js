@@ -19,6 +19,7 @@ const FilterShelfContainer = styled.div`
   color: ${(props) => props.theme.textColor};
   padding: 6px;
   margin-bottom: 8px;
+  height: 250px;
 `;
 
 const ChipsContainer = styled.div`
@@ -76,8 +77,8 @@ const SelectAllButton = styled.button`
 const VesselTypeFilter = () => {
   // Redux states
   const dispatch = useDispatch();
-  const vesselTypeFilters = useSelector((state) => state.vesselTypeFilters);
-  const visibleTypes = vesselTypeFilters.filter((elem) => elem.visible);
+  const vesselTypeFilter = useSelector((state) => state.vesselTypeFilter);
+  const visibleTypes = vesselTypeFilter.filter((elem) => elem.visible);
 
   const toggleFilter = (vesselType) => {
     dispatch(filterVesselTypeActionCreator(vesselType));
@@ -117,7 +118,7 @@ const VesselTypeFilter = () => {
       </SelectAllButton>
       <Scrollbars
         style={{
-          height: 150,
+          height: 155,
         }}
       >
         <ChipsContainer>

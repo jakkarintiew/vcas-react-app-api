@@ -50,7 +50,8 @@ const MapContainer = (props) => {
     dispatch(storeActiveVesselViewStatesActionCreator(vesselViewState));
   };
 
-  const vesselTypeFilters = useSelector((state) => state.vesselTypeFilters);
+  const vesselTypeFilter = useSelector((state) => state.vesselTypeFilter);
+  const vesselRiskFilter = useSelector((state) => state.vesselRiskFilter);
 
   const VIEWS = [
     new MapView({
@@ -164,10 +165,14 @@ const MapContainer = (props) => {
   });
 
   const visibleVessels = props.data.filter((data) => {
-    const visibleTypes = vesselTypeFilters.map((vessel) => {
+    const visibleTypes = vesselTypeFilter.map((vessel) => {
       return vessel.filterState ? vessel.vesselType : null;
     });
-    return visibleTypes.includes(vessel_type_lookup[data.shiptype]);
+    return (
+      visibleTypes.includes(vessel_type_lookup[data.shiptype]) &&
+      data.risk >= vesselRiskFilter[0] &&
+      data.risk <= vesselRiskFilter[1]
+    );
   });
 
   const layers = [

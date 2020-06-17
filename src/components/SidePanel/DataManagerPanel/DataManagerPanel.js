@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 import VesselTypeFilter from "./VesselTypeFilter";
+import VesselRiskFilter from "./VesselRiskFilter";
 
 const StyledPanelContent = styled.div`
   background-color: ${(props) => props.theme.sidePanelBg};
@@ -14,6 +15,7 @@ const DataManagerPanel = () => {
   return (
     <StyledPanelContent>
       <VesselTypeFilter />
+      <VesselRiskFilter />
     </StyledPanelContent>
   );
 };

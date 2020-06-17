@@ -115,7 +115,7 @@ const themeSlice = createSlice({
   },
 });
 
-const vesselTypeFiltersInitialState = [
+const vesselTypeFilterInitialState = [
   { vesselType: "Not Available", filterState: true, visible: true },
   { vesselType: "Reserved", filterState: true, visible: true },
   { vesselType: "Wing In Grnd", filterState: true, visible: true },
@@ -158,18 +158,15 @@ const vesselTypeFiltersInitialState = [
   { vesselType: "Other", filterState: true, visible: true },
 ];
 
-const vesselTypeFiltersSlice = createSlice({
-  name: "vesselTypeFilters",
-  initialState: vesselTypeFiltersInitialState,
+const vesselTypeFilterSlice = createSlice({
+  name: "vesselTypeFilter",
+  initialState: vesselTypeFilterInitialState,
   reducers: {
     toggle_filter: (state, { payload }) => {
       const index = state.findIndex((data) => data.vesselType === payload);
       state[index].filterState = !state[index].filterState;
     },
     search_filter: (state, { payload }) => {
-      //   return state.filter((elem) =>
-      //     elem.vesselType.toLowerCase().includes(payload.toLowerCase())
-      //   );
       state.forEach((elem) => {
         if (elem.vesselType.toLowerCase().includes(payload.toLowerCase())) {
           elem.visible = true;
@@ -179,10 +176,21 @@ const vesselTypeFiltersSlice = createSlice({
       });
     },
     select_all: (state) => {
-      state.map((elem) => (elem.filterState = true));
+      state.forEach((elem) => (elem.filterState = true));
     },
     deselect_all: (state) => {
-      state.map((elem) => (elem.filterState = false));
+      state.forEach((elem) => (elem.filterState = false));
+    },
+  },
+});
+
+const vesselRiskFilterSlice = createSlice({
+  name: "vesselRiskFilter",
+  initialState: [0, 100],
+  reducers: {
+    set_range: (state, { payload }) => {
+      state[0] = payload[0];
+      state[1] = payload[1];
     },
   },
 });
@@ -212,7 +220,11 @@ export const {
   search_filter: searchFilterActionCreator,
   select_all: selectAllActionCreator,
   deselect_all: deselectAllActionCreator,
-} = vesselTypeFiltersSlice.actions;
+} = vesselTypeFilterSlice.actions;
+
+export const {
+  set_range: setVesselRiskFilterRangeActionCreator,
+} = vesselRiskFilterSlice.actions;
 
 // define reducers
 const reducer = {
@@ -221,7 +233,8 @@ const reducer = {
   layerVisibility: layerVisibilitySlice.reducer,
   darkThemeEnabled: themeSlice.reducer,
   activeVesselID: activeVesselSlice.reducer,
-  vesselTypeFilters: vesselTypeFiltersSlice.reducer,
+  vesselTypeFilter: vesselTypeFilterSlice.reducer,
+  vesselRiskFilter: vesselRiskFilterSlice.reducer,
 };
 
 // define middleware
