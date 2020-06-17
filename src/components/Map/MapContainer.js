@@ -51,7 +51,7 @@ const MapContainer = (props) => {
   };
 
   const vesselTypeFilter = useSelector((state) => state.vesselTypeFilter);
-  const vesselRiskFilter = useSelector((state) => state.vesselRiskFilter);
+  const vesselSliderFilter = useSelector((state) => state.vesselSliderFilter);
 
   const VIEWS = [
     new MapView({
@@ -170,8 +170,10 @@ const MapContainer = (props) => {
     });
     return (
       visibleTypes.includes(vessel_type_lookup[data.shiptype]) &&
-      data.risk >= vesselRiskFilter[0] &&
-      data.risk <= vesselRiskFilter[1]
+      data.risk >= vesselSliderFilter.risk[0] &&
+      data.risk <= vesselSliderFilter.risk[1] &&
+      data.speed >= vesselSliderFilter.speed[0] &&
+      data.speed <= vesselSliderFilter.speed[1] 
     );
   });
 

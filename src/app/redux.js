@@ -188,13 +188,17 @@ const vesselTypeFilterSlice = createSlice({
   },
 });
 
-const vesselRiskFilterSlice = createSlice({
-  name: "vesselRiskFilter",
-  initialState: [0, 100],
+const vesselSliderFilterSlice = createSlice({
+  name: "vesselSliderFilter",
+  initialState: { risk: [0, 100], speed: [0, 40] },
   reducers: {
-    set_range: (state, { payload }) => {
-      state[0] = payload[0];
-      state[1] = payload[1];
+    set_risk_range: (state, { payload }) => {
+      state.risk[0] = payload[0];
+      state.risk[1] = payload[1];
+    },
+    set_speed_range: (state, { payload }) => {
+      state.speed[0] = payload[0];
+      state.speed[1] = payload[1];
     },
   },
 });
@@ -227,8 +231,9 @@ export const {
 } = vesselTypeFilterSlice.actions;
 
 export const {
-  set_range: setVesselRiskFilterRangeActionCreator,
-} = vesselRiskFilterSlice.actions;
+  set_risk_range: setVesselRiskFilterRangeActionCreator,
+  set_speed_range: setVesselSpeedFilterRangeActionCreator,
+} = vesselSliderFilterSlice.actions;
 
 // define reducers
 const reducer = {
@@ -238,7 +243,7 @@ const reducer = {
   darkThemeEnabled: themeSlice.reducer,
   activeVesselID: activeVesselSlice.reducer,
   vesselTypeFilter: vesselTypeFilterSlice.reducer,
-  vesselRiskFilter: vesselRiskFilterSlice.reducer,
+  vesselSliderFilter: vesselSliderFilterSlice.reducer,
 };
 
 // define middleware

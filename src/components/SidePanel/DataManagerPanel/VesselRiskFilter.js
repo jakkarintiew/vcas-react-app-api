@@ -1,61 +1,68 @@
-import React, { useState } from "react";
+import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-
 import styled from "styled-components";
-import Slider from "@material-ui/core/Slider";
 
-import FilterHistogram from "./FilterHistogram";
+import {
+  setVesselRiskFilterRangeActionCreator,
+  setVesselSpeedFilterRangeActionCreator,
+} from "app/redux";
+import SliderFilter from "./SliderFilter";
 import data_vessels from "data/data_vessels.json";
-
-import { setVesselRiskFilterRangeActionCreator } from "app/redux";
 
 const FilterShelfContainer = styled.div`
   background-color: ${(props) => props.theme.labelColor};
   color: ${(props) => props.theme.textColor};
   padding: 6px;
   margin-bottom: 8px;
-  height: 250px;
+  max-height: 250px;
 `;
 
 const VesselRiskFilter = () => {
   // Redux state
   const dispatch = useDispatch();
-  const vesselRiskFilterRange = useSelector((state) => state.vesselRiskFilter);
+  const vesselSliderFilter = useSelector((state) => state.vesselSliderFilter);
   const setRiskRange = (newRange) => {
     dispatch(setVesselRiskFilterRangeActionCreator(newRange));
-    return;
+  };
+  const setSpeedRange = (newRange) => {
+    dispatch(setVesselSpeedFilterRangeActionCreator(newRange));
   };
 
-  const [sliderRange, setSliderRange] = useState(vesselRiskFilterRange);
+  const riskData = data_vessels.map(({ risk }) => risk);
+  const riskDomain = [0, 100];
+  const riskBinSize = 5;
 
-  const handleSliderChange = (event, value) => {
-    setSliderRange(value);
-    setRiskRange(value);
-  };
-
-  let risk_data = data_vessels.map(({ risk }) => risk);
+  const speedData = data_vessels.map(({ speed }) => speed);
+  const speedDomain = [0, 40];
+  const speedBinSize = 2.5;
 
   return (
-    <FilterShelfContainer>
-      <div className="px-1 mb-1">
-        <b>Vessel Risk Filter</b>
-      </div>
-      <div className="px-1">
-        <FilterHistogram
-          data={risk_data}
-          highlight={sliderRange}
-          className="p-0"
+    <div>
+      <FilterShelfContainer>
+        <div className="px-1 mb-1">
+          <b>Vessel Risk Filter</b>
+        </div>
+        <SliderFilter
+          data={riskData}
+          domain={riskDomain}
+          binSize={riskBinSize}
+          reduxRange={vesselSliderFilter.risk}
+          setReduxRange={setRiskRange}
         />
-      </div>
-      <div className="px-3">
-        <Slider
-          value={sliderRange}
-          onChange={handleSliderChange}
-          valueLabelDisplay="auto"
-          className="pt-2"
+      </FilterShelfContainer>
+      <FilterShelfContainer>
+        <div className="px-1 mb-1">
+          <b>Vessel Speed Filter</b>
+        </div>
+        <SliderFilter
+          data={speedData}
+          domain={speedDomain}
+          binSize={speedBinSize}
+          reduxRange={vesselSliderFilter.speed}
+          setReduxRange={setSpeedRange}
         />
-      </div>
-    </FilterShelfContainer>
+      </FilterShelfContainer>
+    </div>
   );
 };
 

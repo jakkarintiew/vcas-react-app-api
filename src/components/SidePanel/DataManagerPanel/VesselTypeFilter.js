@@ -19,7 +19,7 @@ const FilterShelfContainer = styled.div`
   color: ${(props) => props.theme.textColor};
   padding: 6px;
   margin-bottom: 8px;
-  height: 250px;
+  max-height: 250px;
 `;
 
 const ChipsContainer = styled.div`
@@ -65,6 +65,7 @@ const FilterInput = styled.input`
 
 const SelectAllButton = styled.button`
   background: ${(props) => props.theme.sidePanelBg};
+  box-shadow: ${(props) => props.theme.boxShadow};
   color: ${(props) => props.theme.textColor};
   font-size: 0.8em;
   border: none;

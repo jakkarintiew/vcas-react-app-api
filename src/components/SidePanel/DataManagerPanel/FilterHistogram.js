@@ -1,9 +1,9 @@
 import React from "react";
 import { Bar } from "react-chartjs-2";
 
-function histogram(data, size, range) {
-  let min = range[0];
-  let max = range[1];
+function histogram(data, size, domain) {
+  let min = domain[0];
+  let max = domain[1];
 
   // for (const item of data) {
   //   if (item < min) min = item;
@@ -31,10 +31,9 @@ function histogram(data, size, range) {
 }
 
 const FilterHistogram = (props) => {
-  const { data, highlight } = props;
+  const { data, domain, binSize, highlight } = props;
 
-  var binSize = 5;
-  var hist = histogram(data, binSize, [0, 100]);
+  var hist = histogram(data, binSize, domain);
 
   var chart_data = {
     labels: hist.map((elem) => elem.bin),
@@ -43,7 +42,7 @@ const FilterHistogram = (props) => {
         data: hist.map((elem) => elem.count),
         // backgroundColor: "#1FBAD6",
         backgroundColor: hist.map((elem) =>
-          elem.bin >= highlight[0] && elem.bin <= highlight[1]
+          elem.bin >= highlight[0] && elem.bin <= highlight[1] + binSize
             ? "#1FBAD6"
             : "#9e9e9e"
         ),
@@ -79,7 +78,7 @@ const FilterHistogram = (props) => {
 
   return (
     <div className="flex-1 min-h-0">
-      <Bar data={chart_data} height={100} options={options} />
+      <Bar data={chart_data} height={70} options={options} />
     </div>
   );
 };
