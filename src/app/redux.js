@@ -176,10 +176,14 @@ const vesselTypeFilterSlice = createSlice({
       });
     },
     select_all: (state) => {
-      state.forEach((elem) => (elem.filterState = true));
+      state.forEach((elem) => {
+        if (elem.visible) elem.filterState = true;
+      });
     },
     deselect_all: (state) => {
-      state.forEach((elem) => (elem.filterState = false));
+      state.forEach((elem) => {
+        if (elem.visible) elem.filterState = false;
+      });
     },
   },
 });
