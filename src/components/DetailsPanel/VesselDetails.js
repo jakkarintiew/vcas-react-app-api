@@ -150,9 +150,9 @@ const VesselDetails = (props) => {
           data={
             activeVesselID != null
               ? vessel_type_lookup[activeVessel.shiptype] +
-              " (" +
-              activeVessel.shiptype +
-              ")"
+                " (" +
+                activeVessel.shiptype +
+                ")"
               : ""
           }
         />
@@ -162,15 +162,9 @@ const VesselDetails = (props) => {
         <PropertyInfo label="Collision Risk" data={activeVessel.risk} />
       </div>
       <div className="flex flex-col flex-auto min-h-0">
-        <div className="flex-1 min-h-0">
-          <VesselLineChart data={speed_data} yMax={20} />
-        </div>
-        <div className="flex-1 min-h-0">
-          <VesselLineChart data={course_data} yMax={360} />
-        </div>
-        <div className="flex-1 min-h-0">
-          <VesselLineChart data={heading_data} yMax={360} />
-        </div>
+        <VesselLineChart data={speed_data} yMax={20} />
+        <VesselLineChart data={course_data} yMax={360} />
+        <VesselLineChart data={heading_data} yMax={360} />
       </div>
     </div>
   );
