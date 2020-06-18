@@ -64,12 +64,12 @@ const FilterInput = styled.input`
 `;
 
 const SelectAllButton = styled.button`
-  background: ${(props) => props.theme.sidePanelBg};
   box-shadow: ${(props) => props.theme.boxShadow};
-  color: ${(props) => props.theme.textColor};
+  background: ${(props) => props.theme.primaryBtnBgd};
+  color: ${(props) => props.theme.primaryBtnColor};
   font-size: 0.8em;
   border: none;
-  border-radius: 3px;
+  border-radius: 6px;
   :focus {
     outline: 0;
   }
