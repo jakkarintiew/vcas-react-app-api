@@ -16,7 +16,7 @@ const FilterInput = styled.input`
   background-color: ${(props) => props.theme.sidePanelBg};
   font-size: 0.8em;
   width: 50px;
-  height: 20px;
+  height: 25px;
   border: none;
   border-radius: 3px;
   :focus {
@@ -30,7 +30,7 @@ const ResetButton = styled.button`
   color: ${(props) => props.theme.textColor};
   font-size: 0.8em;
   border: none;
-  border-radius: 5px;
+  border-radius: 3px;
   :focus {
     outline: 0;
   }
@@ -72,9 +72,6 @@ const SliderFilter = (props) => {
   return (
     <div>
       <div className="px-1">
-        <ResetButton className="px-2 mb-2 mr-2" onClick={reset}>
-          Reset
-        </ResetButton>
         <FilterHistogram
           data={data}
           domain={domain}
@@ -91,12 +88,15 @@ const SliderFilter = (props) => {
             valueLabelDisplay="auto"
           />
         </div>
-        <div className="flex flex-row justify-between">
+        <div className="flex flex-row items-center justify-between">
           <FilterInput
             placeholder="Min"
             className="px-2"
             onChange={(e) => handleMinField(parseFloat(e.target.value))}
           />
+          <ResetButton className="px-2 m-2" onClick={reset}>
+            Reset
+          </ResetButton>
           <FilterInput
             placeholder="Max"
             className="px-2"

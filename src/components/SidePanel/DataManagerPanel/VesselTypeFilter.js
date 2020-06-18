@@ -34,17 +34,17 @@ const ChipsContainer = styled.div`
 
 const StyledChip = styled(Chip)`
   background: ${(props) =>
-    props.filterstate === "true" ? "#bbe5b8" : "c9c9c9"};
+    props.filterstate === "true" ? "#8de7f6" : "#c9c9c9"};
+  color: #4f4f4f;
   font-size: 0.7em;
   :focus {
     background: ${(props) =>
-      props.filterstate === "true" ? "#bbe5b8" : "c9c9c9"};
+      props.filterstate === "true" ? "#8de7f6" : "#c9c9c9"};
     opacity: 1;
   }
   :hover {
     background: ${(props) =>
-      props.filterstate === "true" ? "#bbe5b8" : "c9c9c9"};
-    opacity: 0.8;
+      props.filterstate === "true" ? "#99fffc" : "#c9c9c9"};
   }
   min-width: auto;
   min-height: auto;
@@ -69,7 +69,7 @@ const SelectAllButton = styled.button`
   color: ${(props) => props.theme.textColor};
   font-size: 0.8em;
   border: none;
-  border-radius: 5px;
+  border-radius: 3px;
   :focus {
     outline: 0;
   }

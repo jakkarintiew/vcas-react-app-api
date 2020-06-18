@@ -17,7 +17,7 @@ const FilterShelfContainer = styled.div`
   max-height: 250px;
 `;
 
-const VesselRiskFilter = () => {
+const VesselSliderFilters = () => {
   // Redux state
   const dispatch = useDispatch();
   const vesselSliderFilter = useSelector((state) => state.vesselSliderFilter);
@@ -66,4 +66,4 @@ const VesselRiskFilter = () => {
   );
 };
 
-export default VesselRiskFilter;
+export default VesselSliderFilters;
