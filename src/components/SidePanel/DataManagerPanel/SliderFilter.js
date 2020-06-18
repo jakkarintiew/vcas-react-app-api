@@ -90,6 +90,7 @@ const SliderFilter = (props) => {
         </div>
         <div className="flex flex-row items-center justify-between">
           <FilterInput
+            value={sliderRange[0]}
             placeholder="Min"
             className="px-2"
             onChange={(e) => handleMinField(parseFloat(e.target.value))}
@@ -98,6 +99,7 @@ const SliderFilter = (props) => {
             Reset
           </ResetButton>
           <FilterInput
+            value={sliderRange[1]}
             placeholder="Max"
             className="px-2"
             onChange={(e) => handleMaxField(parseFloat(e.target.value))}

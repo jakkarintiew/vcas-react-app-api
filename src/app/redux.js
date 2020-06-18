@@ -74,8 +74,8 @@ const panelOpenSlice = createSlice({
 });
 
 const layerVisibilityInitialState = {
-  mooringPolygon: { layerName: "Mooring Areas", visible: false },
-  anchorangePolygon: { layerName: "Anchorage Areas", visible: false },
+  mooringPolygon: { layerName: "Mooring Areas", visible: true },
+  anchorangePolygon: { layerName: "Anchorage Areas", visible: true },
   riskScreenGrid: { layerName: "Collision Risk Screen Grid", visible: false },
   riskHexagon: { layerName: "Collision Risk Hexagon Grid", visible: true },
   historicalPath: { layerName: "Historical Path", visible: true },
@@ -190,7 +190,7 @@ const vesselTypeFilterSlice = createSlice({
 
 const vesselSliderFilterSlice = createSlice({
   name: "vesselSliderFilter",
-  initialState: { risk: [0, 100], speed: [0, 30] },
+  initialState: { risk: [0, 100], speed: [0, 35] },
   reducers: {
     set_risk_range: (state, { payload }) => {
       state.risk[0] = payload[0];
