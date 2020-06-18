@@ -33,7 +33,7 @@ const VesselSliderFilters = () => {
   const riskBinSize = 5;
 
   const speedData = data_vessels.map(({ speed }) => speed);
-  const speedDomain = [0, 40];
+  const speedDomain = [0, 30];
   const speedBinSize = 2.5;
 
   return (
