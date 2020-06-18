@@ -60,6 +60,10 @@ const panelOpenInitialState = {
     panelName: "Details Panel",
     isOpen: false,
   },
+  timeSlider: {
+    panelName: "Time Slider",
+    isOpen: true,
+  },
 };
 
 const panelOpenSlice = createSlice({

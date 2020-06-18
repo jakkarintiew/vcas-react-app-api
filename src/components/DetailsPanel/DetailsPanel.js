@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import { togglePanelOpenActionCreator } from "app/redux";
 
+
 import VesselDetails from "./VesselDetails";
 import CollapseButton from "components/common/CollapseButton";
 import ArrowRight from "components/common/icons/arrow-right";
@@ -12,11 +13,12 @@ const StyledDetailsPanelContainer = styled.div`
   height: 100%;
   width: ${(props) => props.width + 2 * props.theme.sidePanel.margin.left}px;
   display: flex;
-  position: absolute;
+  position: relative;
   padding-top: ${(props) => props.theme.sidePanel.margin.top}px;
   padding-right: ${(props) => props.theme.sidePanel.margin.left}px;
   padding-bottom: ${(props) => props.theme.sidePanel.margin.bottom}px;
   padding-left: ${(props) => props.theme.sidePanel.margin.right}px;
+  transition: ${(props) => props.theme.transitionFast};
 `;
 
 const DetailsPanelInner = styled.div`
@@ -47,25 +49,23 @@ const DetailsPanel = (props) => {
     togglePanelOpen(panelKey);
   };
   return (
-    <div className="flex flex-row-reverse space-x-reverse">
-      <StyledDetailsPanelContainer width={panel.isOpen ? width : 0}>
-        {panel.isOpen && (
-          <DetailsPanelInner>
-            <VesselDetails data={props.data} />
-          </DetailsPanelInner>
-        )}
-        <CollapseButton onClick={handleOnClick} style={{ left: "-5px" }}>
-          <ArrowRight
-            height="12px"
-            style={{
-              transform: `rotate(${
-                panel.isOpen ? initialDegree : initialDegree + 180
-              }deg)`,
-            }}
-          />
-        </CollapseButton>
-      </StyledDetailsPanelContainer>
-    </div>
+    <StyledDetailsPanelContainer width={panel.isOpen ? width : 0}>
+      {panel.isOpen && (
+        <DetailsPanelInner>
+          <VesselDetails data={props.data} />
+        </DetailsPanelInner>
+      )}
+      <CollapseButton onClick={handleOnClick} style={{ left: "-5px" }}>
+        <ArrowRight
+          height="12px"
+          style={{
+            transform: `rotate(${
+              panel.isOpen ? initialDegree : initialDegree + 180
+            }deg)`,
+          }}
+        />
+      </CollapseButton>
+    </StyledDetailsPanelContainer>
   );
 };
 

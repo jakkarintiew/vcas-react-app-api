@@ -13,12 +13,12 @@ const StyledSidePanelContainer = styled.div`
   height: 100%;
   width: ${(props) => props.width + 2 * props.theme.sidePanel.margin.left}px;
   display: flex;
-  position: absolute;
+  position: relative;
   padding-top: ${(props) => props.theme.sidePanel.margin.top}px;
   padding-right: ${(props) => props.theme.sidePanel.margin.right}px;
   padding-bottom: ${(props) => props.theme.sidePanel.margin.bottom}px;
   padding-left: ${(props) => props.theme.sidePanel.margin.left}px;
-  transition: ${(props) => props.theme.transition};
+  transition: ${(props) => props.theme.transitionFast};
 `;
 
 const SidePanelInner = styled.div`
@@ -28,6 +28,7 @@ const SidePanelInner = styled.div`
   border-radius: 5px;
   height: 100%;
   width: ${(props) => props.theme.sidePanel.width}px;
+  transition: ${(props) => props.theme.transitionFast};
 `;
 
 const SidePanel = () => {

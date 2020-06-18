@@ -9,7 +9,7 @@ import { GlobalStyle } from "styles/global";
 import MapContainer from "components/Map/MapContainer";
 import SidePanel from "components/SidePanel/SidePanel";
 import DetailsPanel from "components/DetailsPanel/DetailsPanel";
-
+import TimeSlider from "components/TimeSlider/TimeSlider";
 import data_vessels from "data/data_vessels.json";
 
 const App = () => {
@@ -19,14 +19,15 @@ const App = () => {
       <StylesProvider injectFirst>
         <ThemeProvider theme={darkThemeEnabled ? darkTheme : lightTheme}>
           <GlobalStyle />
-          <div className="flex">
-            <div className="h-full">
-              <SidePanel />
+
+          <div className="h-screen w-screen flex justify-between overflow-hidden">
+            <SidePanel />
+            <div className="h-full w-full flex-1">
+              <div className="h-full flex flex-col-reverse space-y-reverse">
+                <TimeSlider />
+              </div>
             </div>
-            <div className="flex-grow h-full" />
-            <div className="h-full">
-              <DetailsPanel data={data_vessels} />
-            </div>
+            <DetailsPanel data={data_vessels} />
           </div>
 
           <MapContainer

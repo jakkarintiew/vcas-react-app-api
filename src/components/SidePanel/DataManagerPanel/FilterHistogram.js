@@ -53,7 +53,7 @@ const FilterHistogram = (props) => {
     responsive: true,
     maintainAspectRatio: false,
     animation: {
-      duration: 0,
+      duration: 300,
     },
     legend: {
       display: false,
