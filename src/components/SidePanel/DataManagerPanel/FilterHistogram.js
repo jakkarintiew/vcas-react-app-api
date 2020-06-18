@@ -42,7 +42,7 @@ const FilterHistogram = (props) => {
         data: hist.map((elem) => elem.count),
         backgroundColor: hist.map((elem) =>
           elem.bin >= highlight[0] && elem.bin <= highlight[1] + binSize
-            ? "#00d0f5"
+            ? "#29a9ff"
             : "#c9c9c9"
         ),
       },

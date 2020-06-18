@@ -1,15 +1,47 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { withStyles } from "@material-ui/core/styles";
 import Slider from "@material-ui/core/Slider";
+
 import FilterHistogram from "./FilterHistogram";
 
-const StyledSlider = styled(Slider)`
-  color: ${(props) => props.theme.labelTextColor};
-  min-height: 0px;
-  height: 5px;
-  padding-top: 0px;
-  padding-bottom: 3px;
-`;
+// const StyledSlider = styled(Slider)`
+//   color: #29a9ff;
+//   min-height: 0px;
+//   height: 5px;
+//   padding-top: 0px;
+//   padding-bottom: 3px;
+// `;
+
+const StyledSlider = withStyles({
+  root: {
+    color: "#29a9ff",
+    height: 4,
+    paddingTop: 1,
+    paddingBottom: 0,
+  },
+  thumb: {
+    height: 12,
+    width: 12,
+    backgroundColor: "#fff",
+    border: "2px solid currentColor",
+    marginTop: -5,
+    marginLeft: -8,
+    "&:focus, &:hover, &$active": {
+      boxShadow: "inherit",
+    },
+  },
+  active: {},
+  track: {
+    height: 4,
+    borderRadius: 2,
+  },
+  rail: {
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: "#c9c9c9",
+  },
+})(Slider);
 
 const FilterInput = styled.input`
   color: ${(props) => props.theme.textColor};
@@ -86,7 +118,7 @@ const SliderFilter = (props) => {
             min={domain[0]}
             max={domain[1]}
             onChange={handleSliderChange}
-            valueLabelDisplay="auto"
+            valueLabelDisplay="off"
           />
         </div>
         <div className="flex flex-row items-center justify-between">

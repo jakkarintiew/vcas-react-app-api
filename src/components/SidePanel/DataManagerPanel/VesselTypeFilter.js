@@ -34,17 +34,16 @@ const ChipsContainer = styled.div`
 
 const StyledChip = styled(Chip)`
   background: ${(props) =>
-    props.filterstate === "true" ? "#8de7f6" : "#c9c9c9"};
-  color: #4f4f4f;
+    props.filterstate === "true" ? "#29a9ff" : "#c9c9c9"};
+  color: ${(props) => (props.filterstate === "true" ? "#ffffff" : "#808080")};
   font-size: 0.7em;
   :focus {
     background: ${(props) =>
-      props.filterstate === "true" ? "#8de7f6" : "#c9c9c9"};
-    opacity: 1;
+      props.filterstate === "true" ? "#29a9ff" : "#c9c9c9"};
   }
   :hover {
     background: ${(props) =>
-      props.filterstate === "true" ? "#99fffc" : "#c9c9c9"};
+      props.filterstate === "true" ? "#42baff" : "#e3e3e3"};
   }
   min-width: auto;
   min-height: auto;
@@ -129,7 +128,11 @@ const VesselTypeFilter = () => {
                 <StyledChip
                   size="small"
                   icon={
-                    vessel.filterState ? <DoneIcon /> : <NotInterestedIcon />
+                    vessel.filterState ? (
+                      <DoneIcon style={{ color: "#ffffff" }} />
+                    ) : (
+                      <NotInterestedIcon style={{color: "#808080"}} />
+                    )
                   }
                   label={vessel.vesselType}
                   onClick={handleChipClick(vessel.vesselType)}
