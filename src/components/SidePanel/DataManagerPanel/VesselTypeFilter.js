@@ -106,6 +106,7 @@ const VesselTypeFilter = () => {
         <b>Vessel Type Filters</b>
       </div>
       <FilterInput
+        type="search"
         placeholder="Search vessel type..."
         className="px-2 mb-1 w-full"
         onChange={(e) => searchFilter(e.target.value)}
@@ -131,7 +132,7 @@ const VesselTypeFilter = () => {
                     vessel.filterState ? (
                       <DoneIcon style={{ color: "#ffffff" }} />
                     ) : (
-                      <NotInterestedIcon style={{color: "#808080"}} />
+                      <NotInterestedIcon style={{ color: "#808080" }} />
                     )
                   }
                   label={vessel.vesselType}

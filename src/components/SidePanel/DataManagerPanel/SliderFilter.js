@@ -26,7 +26,7 @@ const StyledSlider = withStyles({
     backgroundColor: "#fff",
     border: "2px solid currentColor",
     marginTop: -5,
-    marginLeft: -8,
+    marginLeft: -6,
     "&:focus, &:hover, &$active": {
       boxShadow: "inherit",
     },
@@ -72,34 +72,55 @@ const ResetButton = styled.button`
 const SliderFilter = (props) => {
   const { data, domain, binSize, reduxRange, setReduxRange } = props;
   const [sliderRange, setSliderRange] = useState(reduxRange);
+  const [inputRange, setInputRange] = useState(reduxRange);
 
   const handleSliderChange = (event, value) => {
     setSliderRange(value);
+    setInputRange(value);
     setReduxRange(value);
   };
 
   const handleMinField = (min) => {
     const oldRange = sliderRange;
     const max = oldRange[1];
+
     if (min >= domain[1]) min = domain[1];
-    if (min <= domain[0] || isNaN(min)) min = domain[0];
-    if (min >= max) min = max;
-    setSliderRange([min, max]);
-    setReduxRange([min, max]);
+    if (min < domain[0]) min = domain[0];
+    if (isNaN(min)) min = "";
+
+    setInputRange([min, max]);
+
+    if (min <= max) {
+      setSliderRange([min, max]);
+      setReduxRange([min, max]);
+    } else {
+      setSliderRange([oldRange[0], max]);
+      setReduxRange([oldRange[0], max]);
+    }
   };
 
   const handleMaxField = (max) => {
     const oldRange = sliderRange;
     const min = oldRange[0];
+
     if (max <= domain[0]) max = domain[0];
-    if (max > domain[1] || isNaN(max)) max = domain[1];
-    if (max <= min) max = min;
-    setSliderRange([min, max]);
-    setReduxRange([min, max]);
+    if (max > domain[1]) max = domain[1];
+    if (isNaN(max)) max = "";
+
+    setInputRange([min, max]);
+
+    if (max >= min) {
+      setSliderRange([min, max]);
+      setReduxRange([min, max]);
+    } else {
+      setSliderRange([min, oldRange[1]]);
+      setReduxRange([min, oldRange[1]]);
+    }
   };
 
   const reset = () => {
     setSliderRange(domain);
+    setInputRange(domain);
     setReduxRange(domain);
   };
   return (
@@ -123,7 +144,7 @@ const SliderFilter = (props) => {
         </div>
         <div className="flex flex-row items-center justify-between">
           <FilterInput
-            value={sliderRange[0]}
+            value={inputRange[0]}
             placeholder="Min"
             className="px-2"
             onChange={(e) => handleMinField(parseFloat(e.target.value))}
@@ -132,7 +153,7 @@ const SliderFilter = (props) => {
             Reset
           </ResetButton>
           <FilterInput
-            value={sliderRange[1]}
+            value={inputRange[1]}
             placeholder="Max"
             className="px-2"
             onChange={(e) => handleMaxField(parseFloat(e.target.value))}
