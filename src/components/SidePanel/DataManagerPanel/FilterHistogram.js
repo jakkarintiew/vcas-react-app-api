@@ -36,9 +36,13 @@ const FilterHistogram = (props) => {
   var hist = histogram(data, binSize, domain);
 
   var chart_data = {
-    labels: hist.map((elem) => elem.bin),
+    labels: hist.map(
+      (elem) =>
+        "[" + elem.bin.toString() + "," + (elem.bin + binSize).toString() + ")"
+    ),
     datasets: [
       {
+        label: "Count",
         data: hist.map((elem) => elem.count),
         backgroundColor: hist.map((elem) =>
           elem.bin >= highlight[0] && elem.bin <= highlight[1]
@@ -77,7 +81,7 @@ const FilterHistogram = (props) => {
 
   return (
     <div className="flex-1 min-h-0">
-      <Bar data={chart_data} height={70} options={options} />
+      <Bar data={chart_data} height={90} options={options} />
     </div>
   );
 };
