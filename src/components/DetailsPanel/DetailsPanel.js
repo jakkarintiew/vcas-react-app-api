@@ -3,10 +3,16 @@ import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import { togglePanelOpenActionCreator } from "app/redux";
 
-
 import VesselDetails from "./VesselDetails";
 import CollapseButton from "components/common/CollapseButton";
 import ArrowRight from "components/common/icons/arrow-right";
+
+const RightPanelBox = styled.div`
+  height: 100%;
+  width: ${(props) =>
+    props.theme.sidePanel.width + 2 * props.theme.sidePanel.margin.left}px;
+  position: relative;
+`;
 
 const StyledDetailsPanelContainer = styled.div`
   z-index: 99;
@@ -30,7 +36,7 @@ const DetailsPanelInner = styled.div`
   width: ${(props) => props.theme.sidePanel.width}px;
 `;
 
-const DetailsPanel = (props) => {
+const DetailsPanel = ({ data }) => {
   // Redux states
   const dispatch = useDispatch();
   const panelOpen = useSelector((state) => state.panelOpen);
@@ -48,24 +54,27 @@ const DetailsPanel = (props) => {
   const handleOnClick = (event) => {
     togglePanelOpen(panelKey);
   };
+
   return (
-    <StyledDetailsPanelContainer width={panel.isOpen ? width : 0}>
-      {panel.isOpen && (
-        <DetailsPanelInner>
-          <VesselDetails data={props.data} />
-        </DetailsPanelInner>
-      )}
-      <CollapseButton onClick={handleOnClick} style={{ left: "-5px" }}>
-        <ArrowRight
-          height="12px"
-          style={{
-            transform: `rotate(${
-              panel.isOpen ? initialDegree : initialDegree + 180
-            }deg)`,
-          }}
-        />
-      </CollapseButton>
-    </StyledDetailsPanelContainer>
+    <RightPanelBox className="flex flex-row-reverse space-x-reverse">
+      <StyledDetailsPanelContainer width={panel.isOpen ? width : 0}>
+        {panel.isOpen && (
+          <DetailsPanelInner>
+            <VesselDetails />
+          </DetailsPanelInner>
+        )}
+        <CollapseButton onClick={handleOnClick} style={{ left: "-5px" }}>
+          <ArrowRight
+            height="12px"
+            style={{
+              transform: `rotate(${
+                panel.isOpen ? initialDegree : initialDegree + 180
+              }deg)`,
+            }}
+          />
+        </CollapseButton>
+      </StyledDetailsPanelContainer>
+    </RightPanelBox>
   );
 };
 

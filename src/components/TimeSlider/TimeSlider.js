@@ -5,15 +5,24 @@ import styled from "styled-components";
 import { withStyles } from "@material-ui/core/styles";
 import Slider from "@material-ui/core/Slider";
 
-import { togglePanelOpenActionCreator } from "app/redux";
+import {
+  togglePanelOpenActionCreator,
+  setCurrentFrameActionCreator,
+} from "app/redux";
 import CollapseButton from "components/common/CollapseButton";
 import ArrowRight from "components/common/icons/arrow-right";
+
+const BottomPanelBox = styled.div`
+  width: 100%;
+  height: ${(props) => props.height + 2 * props.theme.sidePanel.margin.top}px;
+  position: relative;
+`;
 
 const StyledTimeSliderContainer = styled.div`
   z-index: 99;
   bottom: 5px;
   height: ${(props) => props.height + 2 * props.theme.sidePanel.margin.top}px;
-  max-width: 65vw;
+  max-width: 100%;
   display: flex;
   position: relative;
   padding-top: ${(props) => props.theme.sidePanel.margin.top}px;
@@ -38,12 +47,12 @@ const StyledSlider = withStyles({
     height: 8,
   },
   thumb: {
-    height: 24,
-    width: 24,
+    height: 16,
+    width: 16,
     backgroundColor: "#fff",
     border: "2px solid currentColor",
-    marginTop: -8,
-    marginLeft: -6,
+    marginTop: -4,
+    // marginLeft: -6,
     "&:focus, &:hover, &$active": {
       boxShadow: "inherit",
     },
@@ -64,8 +73,13 @@ const TimeSlider = () => {
   // Redux states
   const dispatch = useDispatch();
   const panelOpen = useSelector((state) => state.panelOpen);
+
   const togglePanelOpen = (panelKey) => {
     dispatch(togglePanelOpenActionCreator(panelKey));
+  };
+  const currentFrame = useSelector((state) => state.currentFrame);
+  const setCurrentFrame = (frame) => {
+    dispatch(setCurrentFrameActionCreator(frame));
   };
 
   // Component constants
@@ -75,42 +89,45 @@ const TimeSlider = () => {
   const panel =
     panelOpen[Object.keys(panelOpen).find((key) => key === panelKey)];
 
-  const totalFrames = 240;
+  const totalFrames = 100;
   const handleOnClick = (event) => {
     togglePanelOpen(panelKey);
   };
 
-  const [frame, setFrame] = useState(0);
+  const [sliaderValue, setSliaderValue] = useState(currentFrame);
   const handleSliderChange = (event, value) => {
-    setFrame(value);
+    setSliaderValue(value);
+    setCurrentFrame(value);
   };
 
   return (
-    <StyledTimeSliderContainer height={panel.isOpen ? height : 0}>
-      {panel.isOpen && (
-        <TimeSliderInner>
-          <div className="px-10">
-            <StyledSlider
-              value={frame}
-              min={0}
-              max={totalFrames}
-              onChange={handleSliderChange}
-              valueLabelDisplay="auto"
-            />
-          </div>
-        </TimeSliderInner>
-      )}
-      <CollapseButton onClick={handleOnClick} style={{ top: "-5px" }}>
-        <ArrowRight
-          height="12px"
-          style={{
-            transform: `rotate(${
-              panel.isOpen ? initialDegree : initialDegree + 180
-            }deg)`,
-          }}
-        />
-      </CollapseButton>
-    </StyledTimeSliderContainer>
+    <BottomPanelBox className="h-full flex flex-col-reverse space-y-reverse">
+      <StyledTimeSliderContainer height={panel.isOpen ? height : 0}>
+        {panel.isOpen && (
+          <TimeSliderInner>
+            <div className="px-10">
+              <StyledSlider
+                value={sliaderValue}
+                min={0}
+                max={totalFrames}
+                onChange={handleSliderChange}
+                valueLabelDisplay="auto"
+              />
+            </div>
+          </TimeSliderInner>
+        )}
+        <CollapseButton onClick={handleOnClick} style={{ top: "-5px" }}>
+          <ArrowRight
+            height="12px"
+            style={{
+              transform: `rotate(${
+                panel.isOpen ? initialDegree : initialDegree + 180
+              }deg)`,
+            }}
+          />
+        </CollapseButton>
+      </StyledTimeSliderContainer>
+    </BottomPanelBox>
   );
 };
 

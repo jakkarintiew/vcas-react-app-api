@@ -8,6 +8,14 @@ import PanelContent from "./PanelContent";
 import CollapseButton from "components/common/CollapseButton";
 import ArrowRight from "components/common/icons/arrow-right";
 
+const LeftPanelBox = styled.div`
+  height: 100%;
+  width: ${(props) =>
+    props.theme.sidePanel.width + 2 * props.theme.sidePanel.margin.left}px;
+  display: flex;
+  position: relative;
+`;
+
 const StyledSidePanelContainer = styled.div`
   z-index: 99;
   height: 100%;
@@ -28,7 +36,6 @@ const SidePanelInner = styled.div`
   border-radius: 5px;
   height: 100%;
   width: ${(props) => props.theme.sidePanel.width}px;
-  transition: ${(props) => props.theme.transitionFast};
 `;
 
 const SidePanel = () => {
@@ -51,7 +58,7 @@ const SidePanel = () => {
   };
 
   return (
-    <div>
+    <LeftPanelBox>
       <StyledSidePanelContainer width={panel.isOpen ? width : 0}>
         {panel.isOpen && (
           <SidePanelInner>
@@ -70,7 +77,7 @@ const SidePanel = () => {
           />
         </CollapseButton>
       </StyledSidePanelContainer>
-    </div>
+    </LeftPanelBox>
   );
 };
 

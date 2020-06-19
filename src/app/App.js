@@ -10,10 +10,13 @@ import MapContainer from "components/Map/MapContainer";
 import SidePanel from "components/SidePanel/SidePanel";
 import DetailsPanel from "components/DetailsPanel/DetailsPanel";
 import TimeSlider from "components/TimeSlider/TimeSlider";
-import data_vessels from "data/data_vessels.json";
+
+// import vesselData from "data/data_vessels.json";
 
 const App = () => {
+  // Redux states
   const darkThemeEnabled = useSelector((state) => state.darkThemeEnabled);
+
   return (
     <div>
       <StylesProvider injectFirst>
@@ -23,18 +26,15 @@ const App = () => {
           <div className="h-screen w-screen flex justify-between overflow-hidden">
             <SidePanel />
             <div className="h-full w-full flex-1">
-              <div className="h-full flex flex-col-reverse space-y-reverse">
-                <TimeSlider />
-              </div>
+              <TimeSlider />
             </div>
-            <DetailsPanel data={data_vessels} />
+            <DetailsPanel />
           </div>
 
           <MapContainer
             mapStyle={
               darkThemeEnabled ? darkTheme.mapStyle : lightTheme.mapStyle
             }
-            data={data_vessels}
           />
         </ThemeProvider>
       </StylesProvider>

@@ -27,6 +27,7 @@ import MapTooltip from "./MapTooltip";
 import data_anchorages from "data/seamark_anchorages.json";
 import data_dredged_areas from "data/seamark_dredged_areas.json";
 import vessel_type_lookup from "data/vessel_type_lookup.json";
+import vesselData from "data/data_vessels.json";
 
 const MapContainer = (props) => {
   // Set your mapbox access token here
@@ -34,6 +35,8 @@ const MapContainer = (props) => {
 
   // Redux states
   const dispatch = useDispatch();
+
+  // const vesselData = useSelector((state) => state.vesselData);
 
   const layerVisibility = useSelector((state) => state.layerVisibility);
 
@@ -92,14 +95,14 @@ const MapContainer = (props) => {
 
   // Component states
   const [activeVessel, setActiveVessel] = useState(
-    props.data.filter((data) => {
+    vesselData.filter((data) => {
       return data.mmsi === activeVesselID;
     })
   );
 
   const _clickVesselEvent = (mmsi) => {
     setActiveVesselID(mmsi);
-    const newActiveVessel = props.data.filter((data) => {
+    const newActiveVessel = vesselData.filter((data) => {
       return data.mmsi === mmsi;
     });
 
@@ -160,11 +163,11 @@ const MapContainer = (props) => {
     return () => cancelAnimationFrame(requestRef.current);
   });
 
-  const riskyVessels = props.data.filter((data) => {
+  const riskyVessels = vesselData.filter((data) => {
     return data.risk > 50;
   });
 
-  const visibleVessels = props.data.filter((data) => {
+  const visibleVessels = vesselData.filter((data) => {
     const visibleTypes = vesselTypeFilter.map((vessel) => {
       return vessel.filterState ? vessel.vesselType : null;
     });
@@ -173,7 +176,7 @@ const MapContainer = (props) => {
       data.risk >= vesselSliderFilter.risk[0] &&
       data.risk <= vesselSliderFilter.risk[1] &&
       data.speed >= vesselSliderFilter.speed[0] &&
-      data.speed <= vesselSliderFilter.speed[1] 
+      data.speed <= vesselSliderFilter.speed[1]
     );
   });
 
