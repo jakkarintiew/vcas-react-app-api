@@ -207,6 +207,14 @@ const vesselSliderFilterSlice = createSlice({
   },
 });
 
+const currentFrameSlice = createSlice({
+  name: "currentFrame",
+  initialState: 0,
+  reducers: {
+    set: (state, { payload }) => payload,
+  },
+});
+
 // export actions
 export const {
   toggleVesselView: toggleVesselViewActionCreator,
@@ -225,6 +233,7 @@ export const {
 } = layerVisibilitySlice.actions;
 
 export const { toggle: toggleThemeActionCreator } = themeSlice.actions;
+
 export const { set: setActiveVesselActionCreator } = activeVesselSlice.actions;
 
 export const {
@@ -239,6 +248,8 @@ export const {
   set_speed_range: setVesselSpeedFilterRangeActionCreator,
 } = vesselSliderFilterSlice.actions;
 
+export const { set: setCurrentFrameActionCreator } = currentFrameSlice.actions;
+
 // define reducers
 const reducer = {
   mapView: mapViewSlice.reducer,
@@ -248,6 +259,7 @@ const reducer = {
   activeVesselID: activeVesselSlice.reducer,
   vesselTypeFilter: vesselTypeFilterSlice.reducer,
   vesselSliderFilter: vesselSliderFilterSlice.reducer,
+  currentFrame: currentFrameSlice.reducer,
 };
 
 // define middleware
