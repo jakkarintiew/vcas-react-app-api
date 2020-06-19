@@ -13,16 +13,16 @@ function histogram(data, size, domain) {
   const bins = Math.floor((max - min + 1) / size);
 
   var histogram = [];
-  for (let i = 0; i < bins; i++) {
+  for (let i = min; i < bins; i++) {
     histogram.push({
-      bin: (i + 1) * size,
+      bin: i * size,
       count: 0,
     });
   }
 
   for (const item of data) {
     const index = histogram.findIndex(
-      (elem) => elem.bin === Math.ceil((item - min) / size) * size
+      (elem) => elem.bin === Math.floor((item - min) / size) * size
     );
     histogram[index].count++;
   }
@@ -41,7 +41,7 @@ const FilterHistogram = (props) => {
       {
         data: hist.map((elem) => elem.count),
         backgroundColor: hist.map((elem) =>
-          elem.bin >= highlight[0] && elem.bin <= highlight[1] + binSize
+          elem.bin >= highlight[0] && elem.bin <= highlight[1]
             ? "#29a9ff"
             : "#c9c9c9"
         ),
@@ -53,7 +53,7 @@ const FilterHistogram = (props) => {
     responsive: true,
     maintainAspectRatio: false,
     animation: {
-      duration: 300,
+      duration: 0,
     },
     legend: {
       display: false,
