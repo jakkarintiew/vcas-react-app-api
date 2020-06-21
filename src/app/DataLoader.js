@@ -3,7 +3,7 @@ import assert from "assert";
 // import { initDB, useIndexedDB } from "react-indexed-db";
 
 const DEFAULT_BATCH_SIZE = 3;
-const MAX_FRAMES = 50;
+const MAX_FRAMES = 120;
 const METADATA_PATH =
   "https://raw.githubusercontent.com/jakkarintiew/FramesData/master/frames/frames_metadata.json";
 const FRAMES_DIR =
@@ -30,7 +30,7 @@ export default class DataLoader {
       this.numberOfFrames = data.frames.length;
       console.log("Start loading...");
       this.startLoad();
-      console.log(this.frames);
+      // console.log(this.frames);
       console.log("Running callback");
       callback(this.frames);
     });

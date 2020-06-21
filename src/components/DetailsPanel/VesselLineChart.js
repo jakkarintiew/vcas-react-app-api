@@ -5,7 +5,7 @@ const VesselLineChart = (props) => {
   var data = props.data;
   var options = {
     animation: {
-      duration: 150,
+      duration: 0,
     },
     maintainAspectRatio: false,
     scales: {
