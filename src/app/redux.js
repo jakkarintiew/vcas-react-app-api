@@ -1,8 +1,9 @@
 import {
   configureStore,
   createSlice,
-  getDefaultMiddleware,
+  // getDefaultMiddleware,
 } from "@reduxjs/toolkit";
+import thunk from "redux-thunk";
 
 const INITIAL_VIEWSTATES = {
   main: {
@@ -215,6 +216,19 @@ const currentFrameSlice = createSlice({
   },
 });
 
+const framesSlice = createSlice({
+  name: "frames",
+  initialState: [],
+  reducers: {
+    append: (state, { payload }) => {
+      state.push(payload);
+    },
+    clear: (state) => {
+      state = [];
+    },
+  },
+});
+
 // export actions
 export const {
   toggleVesselView: toggleVesselViewActionCreator,
@@ -250,6 +264,11 @@ export const {
 
 export const { set: setCurrentFrameActionCreator } = currentFrameSlice.actions;
 
+export const {
+  append: appendFrameActionCreator,
+  clear: clearFramesActionCreator,
+} = framesSlice.actions;
+
 // define reducers
 const reducer = {
   mapView: mapViewSlice.reducer,
@@ -260,11 +279,12 @@ const reducer = {
   vesselTypeFilter: vesselTypeFilterSlice.reducer,
   vesselSliderFilter: vesselSliderFilterSlice.reducer,
   currentFrame: currentFrameSlice.reducer,
+  frames: framesSlice.reducer,
 };
 
 // define middleware
-const middleware = [...getDefaultMiddleware()];
-
+// const middleware = [...getDefaultMiddleware({ serializableCheck: false })];
+const middleware = [thunk];
 // export store
 export default configureStore({
   reducer,

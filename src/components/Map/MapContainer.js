@@ -27,16 +27,13 @@ import MapTooltip from "./MapTooltip";
 import data_anchorages from "data/seamark_anchorages.json";
 import data_dredged_areas from "data/seamark_dredged_areas.json";
 import vessel_type_lookup from "data/vessel_type_lookup.json";
-import vesselData from "data/data_vessels.json";
 
-const MapContainer = (props) => {
+const MapContainer = ({ data, mapStyle }) => {
   // Set your mapbox access token here
   const MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
   // Redux states
   const dispatch = useDispatch();
-
-  // const vesselData = useSelector((state) => state.vesselData);
 
   const layerVisibility = useSelector((state) => state.layerVisibility);
 
@@ -94,15 +91,15 @@ const MapContainer = (props) => {
   };
 
   // Component states
-  const [activeVessel, setActiveVessel] = useState(
-    vesselData.filter((data) => {
-      return data.mmsi === activeVesselID;
-    })
-  );
+  // const [activeVessel, setActiveVessel] = useState(
+  //   data.filter((data) => {
+  //     return data.mmsi === activeVesselID;
+  //   })
+  // );
 
   const _clickVesselEvent = (mmsi) => {
     setActiveVesselID(mmsi);
-    const newActiveVessel = vesselData.filter((data) => {
+    const newActiveVessel = data.filter((data) => {
       return data.mmsi === mmsi;
     });
 
@@ -129,7 +126,7 @@ const MapContainer = (props) => {
       main: vesselViewState,
       minimap: { ...vesselViewState, zoom: 10, pitch: 0, bearing: 0 },
     });
-    setActiveVessel(newActiveVessel);
+    // setActiveVessel(newActiveVessel);
   };
 
   const [tooltipInfo, setTooltipInfo] = useState({
@@ -163,11 +160,11 @@ const MapContainer = (props) => {
     return () => cancelAnimationFrame(requestRef.current);
   });
 
-  const riskyVessels = vesselData.filter((data) => {
+  const riskyVessels = data.filter((data) => {
     return data.risk > 50;
   });
 
-  const visibleVessels = vesselData.filter((data) => {
+  const visibleVessels = data.filter((data) => {
     const visibleTypes = vesselTypeFilter.map((vessel) => {
       return vessel.filterState ? vessel.vesselType : null;
     });
@@ -178,6 +175,10 @@ const MapContainer = (props) => {
       data.speed >= vesselSliderFilter.speed[0] &&
       data.speed <= vesselSliderFilter.speed[1]
     );
+  });
+
+  const activeVessel = data.filter((data) => {
+    return data.mmsi === activeVesselID;
   });
 
   const layers = [
@@ -402,7 +403,7 @@ const MapContainer = (props) => {
       >
         <StaticMap
           reuseMaps
-          mapStyle={props.mapStyle}
+          mapStyle={mapStyle}
           preventStyleDiffing={true}
           mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
         ></StaticMap>
@@ -410,7 +411,7 @@ const MapContainer = (props) => {
           <View id="minimap">
             <StaticMap
               reuseMaps
-              mapStyle={props.mapStyle}
+              mapStyle={mapStyle}
               preventStyleDiffing={true}
               mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
             />

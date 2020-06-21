@@ -60,7 +60,7 @@ const DetailsPanel = ({ data }) => {
       <StyledDetailsPanelContainer width={panel.isOpen ? width : 0}>
         {panel.isOpen && (
           <DetailsPanelInner>
-            <VesselDetails />
+            <VesselDetails data={data} />
           </DetailsPanelInner>
         )}
         <CollapseButton onClick={handleOnClick} style={{ left: "-5px" }}>

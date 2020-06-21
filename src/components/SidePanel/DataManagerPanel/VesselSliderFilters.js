@@ -8,8 +8,6 @@ import {
 } from "app/redux";
 import SliderFilter from "./SliderFilter";
 
-import vesselData from "data/data_vessels.json";
-
 const FilterShelfContainer = styled.div`
   background-color: ${(props) => props.theme.labelColor};
   color: ${(props) => props.theme.textColor};
@@ -18,11 +16,10 @@ const FilterShelfContainer = styled.div`
   max-height: 250px;
 `;
 
-const VesselSliderFilters = () => {
+const VesselSliderFilters = ({ data }) => {
   // Redux state
   const dispatch = useDispatch();
   const vesselSliderFilter = useSelector((state) => state.vesselSliderFilter);
-  // const vesselData = useSelector((state) => state.vesselData);
 
   const setRiskRange = (newRange) => {
     dispatch(setVesselRiskFilterRangeActionCreator(newRange));
@@ -31,11 +28,11 @@ const VesselSliderFilters = () => {
     dispatch(setVesselSpeedFilterRangeActionCreator(newRange));
   };
 
-  const riskData = vesselData.map(({ risk }) => risk);
+  const riskData = data.map(({ risk }) => risk);
   const riskDomain = [0, 100];
   const riskBinSize = 5;
 
-  const speedData = vesselData.map(({ speed }) => speed);
+  const speedData = data.map(({ speed }) => speed);
   const speedDomain = [0, 35];
   const speedBinSize = 2.5;
 

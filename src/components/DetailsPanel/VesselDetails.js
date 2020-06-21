@@ -4,9 +4,9 @@ import { useSelector } from "react-redux";
 
 import VesselLineChart from "./VesselLineChart";
 import vessel_type_lookup from "data/vessel_type_lookup.json";
-import vesselData from "data/data_vessels.json";
+// import vesselData from "data/data_vessels.json";
 
-const VesselDetails = () => {
+const VesselDetails = ({ data }) => {
   const activeVesselInitialState = {
     mmsi: null,
     timestamp: null,
@@ -30,18 +30,17 @@ const VesselDetails = () => {
     future_timestamps: [0],
   };
   const activeVesselID = useSelector((state) => state.activeVesselID);
-  // const vesselData = useSelector((state) => state.vesselData);
 
   const [activeVessel, setActiveVessel] = useState(activeVesselInitialState);
 
   useEffect(() => {
     if (activeVesselID != null) {
-      const activeVessel = vesselData.filter((data) => {
+      const activeVessel = data.filter((data) => {
         return data.mmsi === activeVesselID;
       })[0];
       setActiveVessel(activeVessel);
     }
-  }, [activeVesselID]);
+  }, [activeVesselID, data]);
 
   const speed_data = {
     datasets: [

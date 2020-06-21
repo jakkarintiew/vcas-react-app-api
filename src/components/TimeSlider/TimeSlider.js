@@ -89,14 +89,14 @@ const TimeSlider = () => {
   const panel =
     panelOpen[Object.keys(panelOpen).find((key) => key === panelKey)];
 
-  const totalFrames = 100;
+  const totalFrames = 50;
   const handleOnClick = (event) => {
     togglePanelOpen(panelKey);
   };
 
-  const [sliaderValue, setSliaderValue] = useState(currentFrame);
+  const [sliderValue, setSliderValue] = useState(currentFrame);
   const handleSliderChange = (event, value) => {
-    setSliaderValue(value);
+    setSliderValue(value);
     setCurrentFrame(value);
   };
 
@@ -107,9 +107,9 @@ const TimeSlider = () => {
           <TimeSliderInner>
             <div className="px-10">
               <StyledSlider
-                value={sliaderValue}
+                value={sliderValue}
                 min={0}
-                max={totalFrames}
+                max={totalFrames - 1}
                 onChange={handleSliderChange}
                 valueLabelDisplay="auto"
               />

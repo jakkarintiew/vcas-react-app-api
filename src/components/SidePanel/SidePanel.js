@@ -38,7 +38,7 @@ const SidePanelInner = styled.div`
   width: ${(props) => props.theme.sidePanel.width}px;
 `;
 
-const SidePanel = () => {
+const SidePanel = ({data}) => {
   // Redux states
   const dispatch = useDispatch();
   const panelOpen = useSelector((state) => state.panelOpen);
@@ -63,7 +63,7 @@ const SidePanel = () => {
         {panel.isOpen && (
           <SidePanelInner>
             <PanelHeader />
-            <PanelContent />
+            <PanelContent data={data}/>
           </SidePanelInner>
         )}
         <CollapseButton onClick={handleOnClick} style={{ right: "-5px" }}>

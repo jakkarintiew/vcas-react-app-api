@@ -93,7 +93,7 @@ TabPanel.propTypes = {
   value: PropTypes.any.isRequired,
 };
 
-const PanelContent = () => {
+const PanelContent = ({ data }) => {
   const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -130,7 +130,11 @@ const PanelContent = () => {
 
       {panels.map((panel) => (
         <TabPanel key={panel.value} value={value} index={panel.value}>
-          <panel.panelComponent />
+          {panel.id === "data" ? (
+            <panel.panelComponent data={data} />
+          ) : (
+            <panel.panelComponent />
+          )}
         </TabPanel>
       ))}
     </div>
