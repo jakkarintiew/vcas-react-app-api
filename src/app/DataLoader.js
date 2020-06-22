@@ -3,11 +3,11 @@ import assert from "assert";
 // import { initDB, useIndexedDB } from "react-indexed-db";
 
 const DEFAULT_BATCH_SIZE = 3;
-const MAX_FRAMES = 120;
+const MAX_FRAMES = 30;
 const METADATA_PATH =
-  "https://raw.githubusercontent.com/jakkarintiew/FramesData/master/frames/frames_metadata.json";
+  "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/frames_metadata.json";
 const FRAMES_DIR =
-  "https://raw.githubusercontent.com/jakkarintiew/FramesData/master/frames/";
+  "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/";
 
 // initDB(DBConfig);
 

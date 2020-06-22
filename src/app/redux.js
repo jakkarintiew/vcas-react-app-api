@@ -85,8 +85,8 @@ const layerVisibilityInitialState = {
   riskHexagon: { layerName: "Collision Risk Hexagon Grid", visible: true },
   historicalPath: { layerName: "Historical Path", visible: true },
   futurePath: { layerName: "Future Path", visible: true },
-  historicalTrip: { layerName: "Historical Trip", visible: false },
-  futureTrip: { layerName: "Future Trip", visible: false },
+  // historicalTrip: { layerName: "Historical Trip", visible: false },
+  // futureTrip: { layerName: "Future Trip", visible: false },
   vesselIcon: { layerName: "Vessels", visible: true },
 };
 

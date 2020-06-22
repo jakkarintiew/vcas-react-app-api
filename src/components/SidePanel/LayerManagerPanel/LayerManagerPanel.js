@@ -34,8 +34,8 @@ const LayerManagerPanel = () => {
           </div>
           <LayerVisibilityToggle layerName={"Historical Path"} />
           <LayerVisibilityToggle layerName={"Future Path"} />
-          <LayerVisibilityToggle layerName={"Historical Trip"} />
-          <LayerVisibilityToggle layerName={"Future Trip"} />
+          {/* <LayerVisibilityToggle layerName={"Historical Trip"} />
+          <LayerVisibilityToggle layerName={"Future Trip"} /> */}
         </LayerGroupContainer>
         <LayerGroupContainer>
           <div className="px ml-1 mb-2">

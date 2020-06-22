@@ -1,11 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
+// import React, { useState, useEffect, useRef } from "react";
+
 import "mapbox-gl/dist/mapbox-gl.css";
 import StaticMap from "react-map-gl";
 import DeckGL from "@deck.gl/react";
 import {
   IconLayer,
   PathLayer,
-  TripsLayer,
+  // TripsLayer,
   ScreenGridLayer,
   HexagonLayer,
   PolygonLayer,
@@ -142,23 +144,22 @@ const MapContainer = ({ data, mapStyle }) => {
     return hoveredObject && <MapTooltip tooltipInfo={tooltipInfo} />;
   };
 
-  const [time, setTime] = useState(1546272005);
-  const requestRef = useRef();
-  const animate = () => {
-    const loopLength = 86400; // seconds in a day
-    const animationSpeed = 86400 / 30; // unit time per second
-    const timestamp = Date.now() / 1000;
-    const loopTime = loopLength / animationSpeed;
+  // const [time, setTime] = useState(1546272005);
+  // const requestRef = useRef();
+  // const animate = () => {
+  //   const loopLength = 86400; // seconds in a day
+  //   const animationSpeed = 86400 / 30; // unit time per second
+  //   const timestamp = Date.now() / 1000;
+  //   const loopTime = loopLength / animationSpeed;
 
-    setTime(1546272005 + ((timestamp % loopTime) / loopTime) * loopLength);
-    // The 'state' will always be the initial value here
-    requestRef.current = requestAnimationFrame(animate);
-  };
-
-  useEffect(() => {
-    requestRef.current = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(requestRef.current);
-  });
+  //   setTime(1546272005 + ((timestamp % loopTime) / loopTime) * loopLength);
+  //   // The 'state' will always be the initial value here
+  //   requestRef.current = requestAnimationFrame(animate);
+  // };
+  // useEffect(() => {
+  //   requestRef.current = requestAnimationFrame(animate);
+  //   return () => cancelAnimationFrame(requestRef.current);
+  // });
 
   const riskyVessels = data.filter((data) => {
     return data.risk > 50;
@@ -290,38 +291,38 @@ const MapContainer = ({ data, mapStyle }) => {
         widthMinPixels: 8,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
       }),
-    activeVesselID != null &&
-      layerVisibility.historicalTrip.visible &&
-      new TripsLayer({
-        id: "historical-trips-layer",
-        data: activeVessel,
-        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
-        getPath: (d) => d.historical_path,
-        getTimestamps: (d) => d.historical_timestamps,
-        getColor: [255, 120, 89],
-        opacity: 1,
-        widthMinPixels: 10,
-        rounded: true,
-        trailLength: 5000,
-        currentTime: time,
-        shadowEnabled: false,
-      }),
-    activeVesselID != null &&
-      layerVisibility.futureTrip.visible &&
-      new TripsLayer({
-        id: "future-trips-layer",
-        data: activeVessel,
-        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
-        getPath: (d) => d.future_path,
-        getTimestamps: (d) => d.future_timestamps,
-        getColor: [80, 255, 120],
-        opacity: 1,
-        widthMinPixels: 10,
-        rounded: true,
-        trailLength: 5000,
-        currentTime: time,
-        shadowEnabled: false,
-      }),
+    // activeVesselID != null &&
+    //   layerVisibility.historicalTrip.visible &&
+    //   new TripsLayer({
+    //     id: "historical-trips-layer",
+    //     data: activeVessel,
+    //     coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+    //     getPath: (d) => d.historical_path,
+    //     getTimestamps: (d) => d.historical_timestamps,
+    //     getColor: [255, 120, 89],
+    //     opacity: 1,
+    //     widthMinPixels: 10,
+    //     rounded: true,
+    //     trailLength: 5000,
+    //     currentTime: time,
+    //     shadowEnabled: false,
+    //   }),
+    // activeVesselID != null &&
+    //   layerVisibility.futureTrip.visible &&
+    //   new TripsLayer({
+    //     id: "future-trips-layer",
+    //     data: activeVessel,
+    //     coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+    //     getPath: (d) => d.future_path,
+    //     getTimestamps: (d) => d.future_timestamps,
+    //     getColor: [80, 255, 120],
+    //     opacity: 1,
+    //     widthMinPixels: 10,
+    //     rounded: true,
+    //     trailLength: 5000,
+    //     currentTime: time,
+    //     shadowEnabled: false,
+    //   }),
     layerVisibility.vesselIcon.visible &&
       new IconLayer({
         id: "vessel-icon-layer",

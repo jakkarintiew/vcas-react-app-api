@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import styled from "styled-components";
 import { withStyles } from "@material-ui/core/styles";
 import Slider from "@material-ui/core/Slider";
+import IconButton from "@material-ui/core/IconButton";
+import PlayCircleFilledIcon from "@material-ui/icons/PlayCircleFilled";
+import PauseCircleFilledIcon from "@material-ui/icons/PauseCircleFilled";
 
 import {
   togglePanelOpenActionCreator,
@@ -33,12 +36,23 @@ const StyledTimeSliderContainer = styled.div`
 `;
 
 const TimeSliderInner = styled.div`
-  box-shadow: ${(props) => props.theme.panelBoxShadow};
   align-items: stretch;
+  box-shadow: ${(props) => props.theme.panelBoxShadow};
   background-color: ${(props) => props.theme.sidePanelBg};
-  border-radius: 5px;
   height: 100%;
   width: 100%;
+`;
+
+const StyledIconButton = styled(IconButton)`
+  color: ${(props) => props.theme.textColor};
+  opacity: 0.6;
+  border: none;
+  :focus {
+    outline: 0;
+  }
+  :hover {
+    opacity: 1;
+  }
 `;
 
 const StyledSlider = withStyles({
@@ -89,7 +103,7 @@ const TimeSlider = () => {
   const panel =
     panelOpen[Object.keys(panelOpen).find((key) => key === panelKey)];
 
-  const totalFrames = 120;
+  const totalFrames = 30;
   const handleOnClick = (event) => {
     togglePanelOpen(panelKey);
   };
@@ -100,12 +114,40 @@ const TimeSlider = () => {
     setCurrentFrame(value);
   };
 
+  const [playing, setPlaying] = useState(false);
+  const togglePlayPause = (event) => {
+    setPlaying(!playing);
+  };
+
+  useEffect(() => {
+    let interval = null;
+    const timePerFrame = 100; // ms
+    if (playing) {
+      interval = setInterval(() => {
+        if (sliderValue === totalFrames - 1) {
+          setSliderValue(0);
+          setCurrentFrame(0);
+        } else {
+          setSliderValue((sliderValue) => sliderValue + 1);
+          setCurrentFrame(sliderValue);
+        }
+      }, timePerFrame);
+    } else if (!playing && sliderValue !== 0) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playing, sliderValue]);
+
   return (
     <BottomPanelBox className="h-full flex flex-col-reverse space-y-reverse">
       <StyledTimeSliderContainer height={panel.isOpen ? height : 0}>
         {panel.isOpen && (
           <TimeSliderInner>
-            <div className="px-10">
+            <div className="items-center flex flex-row p-2">
+              <StyledIconButton onClick={togglePlayPause}>
+                {playing ? <PauseCircleFilledIcon /> : <PlayCircleFilledIcon />}
+              </StyledIconButton>
               <StyledSlider
                 value={sliderValue}
                 min={0}
