@@ -121,7 +121,7 @@ const TimeSlider = () => {
 
   useEffect(() => {
     let interval = null;
-    const timePerFrame = 100; // ms
+    const timePerFrame = 300; // ms
     if (playing) {
       interval = setInterval(() => {
         if (sliderValue === totalFrames - 1) {
