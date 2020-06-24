@@ -19,11 +19,11 @@ const FilterShelfContainer = styled.div`
   color: ${(props) => props.theme.textColor};
   padding: 6px;
   margin-bottom: 8px;
-  max-height: 250px;
+  height: 250px;
 `;
 
 const ChipsContainer = styled.div`
-  min-height: auto;
+  height: 100%;
   display: flex;
   flex-wrap: wrap;
   justify-content: left;
@@ -36,7 +36,7 @@ const StyledChip = styled(Chip)`
   background: ${(props) =>
     props.filterstate === "true" ? "#29a9ff" : "#c9c9c9"};
   color: ${(props) => (props.filterstate === "true" ? "#ffffff" : "#808080")};
-  font-size: 0.7em;
+  font-size: 0.6em;
   :focus {
     background: ${(props) =>
       props.filterstate === "true" ? "#29a9ff" : "#c9c9c9"};
@@ -101,7 +101,7 @@ const VesselTypeFilter = () => {
   };
 
   return (
-    <FilterShelfContainer>
+    <FilterShelfContainer className="flex flex-col items-stretch">
       <div className="px-1 mb-1">
         <b>Vessel Type Filters</b>
       </div>
@@ -111,21 +111,19 @@ const VesselTypeFilter = () => {
         className="px-2 mb-1 w-full"
         onChange={(e) => searchFilter(e.target.value)}
       />
-      <SelectAllButton className="px-2 mb-2 mr-2" onClick={selectAll}>
-        Select All
-      </SelectAllButton>
-      <SelectAllButton className="px-2 mb-2 mr-2" onClick={deselectAll}>
-        Deselect All
-      </SelectAllButton>
-      <Scrollbars
-        style={{
-          height: 155,
-        }}
-      >
+      <div>
+        <SelectAllButton className="px-2 mb-2 mr-2" onClick={selectAll}>
+          Select All
+        </SelectAllButton>
+        <SelectAllButton className="px-2 mb-2 mr-2" onClick={deselectAll}>
+          Deselect All
+        </SelectAllButton>
+      </div>
+      <Scrollbars style={{ height: "100%" }}>
         <ChipsContainer>
           {visibleTypes.map((vessel) => {
             return (
-              <li key={vessel.vesselType} className="pr-1">
+              <li key={vessel.vesselType} className="mr-1">
                 <StyledChip
                   size="small"
                   icon={

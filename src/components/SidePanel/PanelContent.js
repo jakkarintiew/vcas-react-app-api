@@ -8,6 +8,8 @@ import StorageIcon from "@material-ui/icons/Storage";
 import LayersIcon from "@material-ui/icons/Layers";
 import EditLocationIcon from "@material-ui/icons/EditLocation";
 
+import { Scrollbars } from "react-custom-scrollbars";
+
 import DataManagerPanel from "./DataManagerPanel/DataManagerPanel";
 import LayerManagerPanel from "./LayerManagerPanel/LayerManagerPanel";
 import MapManagerPanel from "./MapManagerPanel/MapManagerPanel";
@@ -71,7 +73,6 @@ const StyledTab = styled(Tab)`
 `;
 
 const StyledPanelContainer = styled.div`
-  background-color: ${(props) => props.theme.sidePanelBg};
   width: 100%;
   height: 100%;
   padding: ${(props) => props.theme.sidePanelInnerPadding}px;
@@ -79,14 +80,12 @@ const StyledPanelContainer = styled.div`
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
-
   return (
     <StyledPanelContainer role="tabpanel" hidden={value !== index} {...other}>
       {children}
     </StyledPanelContainer>
   );
 }
-
 TabPanel.propTypes = {
   children: PropTypes.node,
   index: PropTypes.any.isRequired,
@@ -100,7 +99,7 @@ const PanelContent = ({ data }) => {
   };
 
   return (
-    <div>
+    <div className="flex-1 flex flex-col items-stretch">
       <StyledTabsContainer position="static">
         <StyledTabs
           value={value}
@@ -128,18 +127,20 @@ const PanelContent = ({ data }) => {
         </StyledTabs>
       </StyledTabsContainer>
 
-      {panels.map(
-        (panel) =>
-          panel.value === value && (
-            <TabPanel key={panel.value} value={value} index={panel.value}>
-              {panel.id === "data" ? (
-                <panel.panelComponent data={data} />
-              ) : (
-                <panel.panelComponent />
-              )}
-            </TabPanel>
-          )
-      )}
+      <Scrollbars style={{ height: "100%" }}>
+        {panels.map(
+          (panel) =>
+            panel.value === value && (
+              <TabPanel key={panel.value} value={value} index={panel.value}>
+                {panel.id === "data" ? (
+                  <panel.panelComponent data={data} />
+                ) : (
+                  <panel.panelComponent />
+                )}
+              </TabPanel>
+            )
+        )}
+      </Scrollbars>
     </div>
   );
 };
