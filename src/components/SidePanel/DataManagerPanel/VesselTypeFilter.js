@@ -19,7 +19,7 @@ const FilterShelfContainer = styled.div`
   color: ${(props) => props.theme.textColor};
   padding: 6px;
   margin-bottom: 8px;
-  height: 250px;
+  height: 200px;
 `;
 
 const ChipsContainer = styled.div`
