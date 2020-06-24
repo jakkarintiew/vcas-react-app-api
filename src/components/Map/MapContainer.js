@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 // import React, { useState, useEffect, useRef } from "react";
 
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -54,6 +54,7 @@ const MapContainer = ({ data, mapStyle }) => {
 
   const vesselTypeFilter = useSelector((state) => state.vesselTypeFilter);
   const vesselSliderFilter = useSelector((state) => state.vesselSliderFilter);
+  const currentFrame = useSelector((state) => state.currentFrame);
 
   const VIEWS = [
     new MapView({
@@ -99,20 +100,7 @@ const MapContainer = ({ data, mapStyle }) => {
   //   })
   // );
 
-  const _clickVesselEvent = (mmsi) => {
-    setActiveVesselID(mmsi);
-    const newActiveVessel = data.filter((data) => {
-      return data.mmsi === mmsi;
-    });
-
-    const vesselViewState = {
-      longitude: newActiveVessel[0].longitude,
-      latitude: newActiveVessel[0].latitude,
-      zoom: 14,
-      pitch: 60,
-      bearing: newActiveVessel[0].heading,
-    };
-
+  const updateVesselViewState = (vesselViewState) => {
     if (mapView.vesselViewEnabled) {
       setViewStates({
         main: vesselViewState,
@@ -128,7 +116,21 @@ const MapContainer = ({ data, mapStyle }) => {
       main: vesselViewState,
       minimap: { ...vesselViewState, zoom: 10, pitch: 0, bearing: 0 },
     });
-    // setActiveVessel(newActiveVessel);
+  };
+
+  const _clickVesselEvent = (mmsi) => {
+    setActiveVesselID(mmsi);
+    const newActiveVessel = data.filter((data) => {
+      return data.mmsi === mmsi;
+    });
+    const vesselViewState = {
+      longitude: newActiveVessel[0].longitude,
+      latitude: newActiveVessel[0].latitude,
+      zoom: 14,
+      pitch: 60,
+      bearing: newActiveVessel[0].heading,
+    };
+    updateVesselViewState(vesselViewState);
   };
 
   const [tooltipInfo, setTooltipInfo] = useState({
@@ -181,6 +183,20 @@ const MapContainer = ({ data, mapStyle }) => {
   const activeVessel = data.filter((data) => {
     return data.mmsi === activeVesselID;
   });
+
+  useEffect(() => {
+    if (activeVessel.length === 1) {
+      const vesselViewState = {
+        longitude: activeVessel[0].longitude,
+        latitude: activeVessel[0].latitude,
+        zoom: 14,
+        pitch: 60,
+        bearing: activeVessel[0].heading,
+      };
+      updateVesselViewState(vesselViewState);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentFrame]);
 
   const layers = [
     layerVisibility.riskScreenGrid.visible &&

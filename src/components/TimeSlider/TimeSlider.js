@@ -103,7 +103,7 @@ const TimeSlider = () => {
   const panel =
     panelOpen[Object.keys(panelOpen).find((key) => key === panelKey)];
 
-  const totalFrames = 30;
+  const totalFrames = 120;
   const handleOnClick = (event) => {
     togglePanelOpen(panelKey);
   };

@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+// import useSWR from "swr";
+// import fetch from "unfetch";
+
 import { StylesProvider } from "@material-ui/styles";
 import { ThemeProvider } from "styled-components";
 import { useSelector } from "react-redux";
@@ -13,15 +16,35 @@ import TimeSlider from "components/TimeSlider/TimeSlider";
 
 import DataLoader from "./DataLoader";
 
+// const MAX_FRAMES = 120;
+// const METADATA_PATH =
+//   "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/frames_metadata.json";
+// const FRAMES_DIR =
+//   "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/";
+
 const App = () => {
   // Redux states
   const darkThemeEnabled = useSelector((state) => state.darkThemeEnabled);
   const currentFrame = useSelector((state) => state.currentFrame);
 
   const [error, setError] = useState(null);
-  const [frames, setFrames] = useState([]);
   const [data, setData] = useState([]);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [frames, setFrames] = useState({});
+
+  // const fetcher = (url) => fetch(url).then((r) => r.json());
+  // const { data, error } = useSWR(
+  //   FRAMES_DIR + `${currentFrame}_frame.json`,
+  //   fetcher
+  // );
+
+  // const loadRemainingFrames = async () => {
+  //   for (let i = 0; i < MAX_FRAMES; i++) {
+  //     const response = fetch(FRAMES_DIR + `${i}_frame.json`)
+  //       .then((response) => response.json())
+  //       .then((data) => setFrames(...frames, { [i]: data }));
+  //     console.log(frames);
+  //   }
+  // };
 
   // Note: the empty deps array [] means
   // this useEffect will run once
@@ -31,18 +54,17 @@ const App = () => {
     dataLoader.loadFrame(0).then(
       (data) => {
         setData(data);
-        setIsLoaded(true);
         console.log("Loading remaining frames...");
         dataLoader.connect(runAfterConnect);
       },
       (error) => {
-        setIsLoaded(true);
         setError(error);
       }
     );
   }, []);
 
   function runAfterConnect(loadedFrames) {
+    console.log("Running callback");
     setFrames(loadedFrames);
   }
 
@@ -51,11 +73,9 @@ const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFrame]);
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  } else if (!isLoaded) {
-    return <div>Loading...</div>;
-  } else {
+  if (error) return <div>Error: {error.message}</div>;
+  if (!data) return <div>Loading...</div>;
+  else {
     return (
       <div>
         <StylesProvider injectFirst>
