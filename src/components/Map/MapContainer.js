@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 // import React, { useState, useEffect, useRef } from "react";
 
 import "mapbox-gl/dist/mapbox-gl.css";
-import StaticMap from "react-map-gl";
+import StaticMap, { TRANSITION_EVENTS } from "react-map-gl";
 import DeckGL from "@deck.gl/react";
 import {
   IconLayer,
@@ -86,7 +86,9 @@ const MapContainer = ({ data, mapStyle }) => {
   ].filter(Boolean);
 
   const _onViewStateChange = ({ viewState, viewId }) => {
-    const newViewStates = { ...mapView.viewStates };
+    const newViewStates = {
+      ...mapView.viewStates,
+    };
     // Update a single view
     newViewStates[viewId] = viewState;
     // Save the view state and trigger rerender
@@ -103,7 +105,7 @@ const MapContainer = ({ data, mapStyle }) => {
   const updateVesselViewState = (vesselViewState) => {
     if (mapView.vesselViewEnabled) {
       setViewStates({
-        main: vesselViewState,
+        main: { ...vesselViewState },
         minimap: { ...vesselViewState, pitch: 0, bearing: 0 },
       });
     } else {
@@ -113,7 +115,7 @@ const MapContainer = ({ data, mapStyle }) => {
       });
     }
     storeActiveVesselViewStates({
-      main: vesselViewState,
+      main: { ...vesselViewState },
       minimap: { ...vesselViewState, zoom: 10, pitch: 0, bearing: 0 },
     });
   };
@@ -129,6 +131,9 @@ const MapContainer = ({ data, mapStyle }) => {
       zoom: 14,
       pitch: 60,
       bearing: newActiveVessel[0].heading,
+      transitionDuration: 500,
+      transitionInterruption: TRANSITION_EVENTS.UPDATE,
+      transitionInterpolator: new FlyToInterpolator(),
     };
     updateVesselViewState(vesselViewState);
   };
@@ -192,6 +197,9 @@ const MapContainer = ({ data, mapStyle }) => {
         zoom: 14,
         pitch: 60,
         bearing: activeVessel[0].heading,
+        transitionDuration: 500,
+        transitionInterruption: TRANSITION_EVENTS.UPDATE,
+        transitionInterpolator: new FlyToInterpolator(),
       };
       updateVesselViewState(vesselViewState);
     }
@@ -407,13 +415,9 @@ const MapContainer = ({ data, mapStyle }) => {
         viewState={{
           main: {
             ...mapView.viewStates.main,
-            transitionDuration: "auto",
-            transitionInterpolator: new FlyToInterpolator({ speed: 2 }),
           },
           minimap: {
             ...mapView.viewStates.minimap,
-            transitionDuration: "auto",
-            transitionInterpolator: new FlyToInterpolator({ speed: 2 }),
           },
         }}
         onViewStateChange={_onViewStateChange}
