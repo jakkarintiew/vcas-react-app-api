@@ -91,10 +91,61 @@ const TimeSlider = () => {
   const togglePanelOpen = (panelKey) => {
     dispatch(togglePanelOpenActionCreator(panelKey));
   };
-  const currentFrame = useSelector((state) => state.currentFrame);
+  const currentFrame = useSelector((state) => state.frames.currentFrame);
+  const metadata = useSelector((state) => state.frames.metadata);
+  const loadedFrames = useSelector((state) => state.frames.loadedFrames);
+
   const setCurrentFrame = (frame) => {
     dispatch(setCurrentFrameActionCreator(frame));
   };
+
+  const [marks, setMarks] = useState([]);
+
+  useEffect(() => {
+    const convertUnix = (timestamp) => {
+      var date = new Date(timestamp * 1000);
+      var hours = date.getHours();
+      var minutes = "0" + date.getMinutes();
+      // var seconds = "0" + date.getSeconds();
+
+      // Will display time in 10:30:23 format
+      var formattedTime = hours + ":" + minutes.substr(-2);
+      return formattedTime;
+    };
+    if (Object.keys(metadata.frames).length > 0) {
+      const firstMarkValue = Math.floor(
+        Object.keys(metadata.frames).length / 5
+      );
+      console.log(firstMarkValue);
+      const filteredFrames = metadata.frames.filter((data) => {
+        return data.frame % firstMarkValue === 0;
+      });
+      setMarks([
+        ...filteredFrames.map((frame) => ({
+          value: frame.frame,
+          label: convertUnix(frame.timestamp),
+        })),
+      ]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const convertUnix = (timestamp) => {
+    var date = new Date(timestamp * 1000);
+    var hours = date.getHours();
+    var minutes = "0" + date.getMinutes();
+    // var seconds = "0" + date.getSeconds();
+
+    // Will display time in 10:30:23 format
+    var formattedTime = hours + ":" + minutes.substr(-2);
+    return formattedTime;
+  };
+
+  function valueLabelFormat(value) {
+    const index = metadata.frames.findIndex((data) => data.frame === value);
+    const valueLabel = convertUnix(metadata.frames[index].timestamp);
+    return valueLabel;
+  }
 
   // Component constants
   const initialDegree = 90;
@@ -103,7 +154,7 @@ const TimeSlider = () => {
   const panel =
     panelOpen[Object.keys(panelOpen).find((key) => key === panelKey)];
 
-  const totalFrames = 120;
+  const totalFrames = loadedFrames;
   const handleOnClick = (event) => {
     togglePanelOpen(panelKey);
   };
@@ -144,17 +195,21 @@ const TimeSlider = () => {
       <StyledTimeSliderContainer height={panel.isOpen ? height : 0}>
         {panel.isOpen && (
           <TimeSliderInner>
-            <div className="items-center flex flex-row p-2">
+            <div className="items-stretch flex flex-row p-2">
               <StyledIconButton onClick={togglePlayPause}>
                 {playing ? <PauseCircleFilledIcon /> : <PlayCircleFilledIcon />}
               </StyledIconButton>
-              <StyledSlider
-                value={sliderValue}
-                min={0}
-                max={totalFrames - 1}
-                onChange={handleSliderChange}
-                valueLabelDisplay="auto"
-              />
+              <div className="px-5 flex-auto -mb-6">
+                <StyledSlider
+                  value={sliderValue}
+                  min={0}
+                  max={totalFrames - 1}
+                  onChange={handleSliderChange}
+                  valueLabelDisplay="auto"
+                  marks={marks}
+                  valueLabelFormat={valueLabelFormat}
+                />
+              </div>
             </div>
           </TimeSliderInner>
         )}

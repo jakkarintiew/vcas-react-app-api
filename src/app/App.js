@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
-// import useSWR from "swr";
-// import fetch from "unfetch";
-
+import axios from "axios";
 import { StylesProvider } from "@material-ui/styles";
 import { ThemeProvider } from "styled-components";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 import { lightTheme, darkTheme } from "styles/themes";
 import { GlobalStyle } from "styles/global";
@@ -14,67 +12,87 @@ import SidePanel from "components/SidePanel/SidePanel";
 import DetailsPanel from "components/DetailsPanel/DetailsPanel";
 import TimeSlider from "components/TimeSlider/TimeSlider";
 
-import DataLoader from "./DataLoader";
+import {
+  setMetadataActionCreator,
+  setLoadedFramesActionCreator,
+} from "app/redux";
 
-// const MAX_FRAMES = 120;
-// const METADATA_PATH =
-//   "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/frames_metadata.json";
-// const FRAMES_DIR =
-//   "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/";
+const METADATA_PATH =
+  "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/frames_metadata.json";
+const FRAMES_DIR =
+  "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/";
 
 const App = () => {
   // Redux states
+  const dispatch = useDispatch();
   const darkThemeEnabled = useSelector((state) => state.darkThemeEnabled);
-  const currentFrame = useSelector((state) => state.currentFrame);
+  const metadata = useSelector((state) => state.frames.metadata);
+  const currentFrame = useSelector((state) => state.frames.currentFrame);
+  // const loadedFrames = useSelector((state) => state.frames.loadedFrames);
 
-  const [error, setError] = useState(null);
-  const [data, setData] = useState([]);
-  const [frames, setFrames] = useState({});
-
-  // const fetcher = (url) => fetch(url).then((r) => r.json());
-  // const { data, error } = useSWR(
-  //   FRAMES_DIR + `${currentFrame}_frame.json`,
-  //   fetcher
-  // );
-
-  // const loadRemainingFrames = async () => {
-  //   for (let i = 0; i < MAX_FRAMES; i++) {
-  //     const response = fetch(FRAMES_DIR + `${i}_frame.json`)
-  //       .then((response) => response.json())
-  //       .then((data) => setFrames(...frames, { [i]: data }));
-  //     console.log(frames);
-  //   }
+  // const setCurrentFrame = (frame) => {
+  //   dispatch(setCurrentFrameActionCreator(frame));
   // };
 
-  // Note: the empty deps array [] means
-  // this useEffect will run once
-  // similar to componentDidMount()
+  const [data, setData] = useState([]);
+  const [frames, setFrames] = useState({});
+  const [error, setError] = useState(null);
+
+  // Load first frame + metadata; ran once
   useEffect(() => {
-    const dataLoader = new DataLoader();
-    dataLoader.loadFrame(0).then(
-      (data) => {
-        setData(data);
-        console.log("Loading remaining frames...");
-        dataLoader.connect(runAfterConnect);
-      },
-      (error) => {
+    const setMetadata = (metadata) => {
+      dispatch(setMetadataActionCreator(metadata));
+    };
+    const getFirstFrame = async () => {
+      try {
+        const frame = await axios.get(FRAMES_DIR + `${0}_frame.json`);
+        const resultMetadata = await axios.get(METADATA_PATH);
+        setFrames((prevFrames) => ({ ...prevFrames, 0: frame.data }));
+        setData(frame.data);
+        setMetadata(resultMetadata.data);
+      } catch (error) {
         setError(error);
       }
-    );
+    };
+    getFirstFrame();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function runAfterConnect(loadedFrames) {
-    console.log("Running callback");
-    setFrames(loadedFrames);
-  }
+  // Once metadata loaded, load remaining frames
+  useEffect(() => {
+    const getRemainingFrames = () => {
+      const totalFrames = metadata.frames.length;
+      for (let index = 1; index < totalFrames; index++) {
+        axios.get(FRAMES_DIR + `${index}_frame.json`).then((frame) => {
+          setFrames((prevFrames) => ({ ...prevFrames, [index]: frame.data }));
+        });
+      }
+    };
+    if (metadata.frames.length) {
+      getRemainingFrames();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [metadata]);
 
+  // When frames are updated, update progress
+  useEffect(() => {
+    const setLoadedFrames = (framesLength) => {
+      dispatch(setLoadedFramesActionCreator(framesLength));
+    };
+    if (Object.keys(frames).length > 0) {
+      setLoadedFrames(Object.keys(frames).length);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [frames]);
+
+  // When current frame is updated, update data
   useEffect(() => {
     setData(frames[currentFrame]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFrame]);
 
   if (error) return <div>Error: {error.message}</div>;
-  if (!data) return <div>Loading...</div>;
+  if (!data || metadata.frames.length === 0) return <div>Loading...</div>;
   else {
     return (
       <div>

@@ -208,23 +208,28 @@ const vesselSliderFilterSlice = createSlice({
   },
 });
 
-const currentFrameSlice = createSlice({
-  name: "currentFrame",
-  initialState: 0,
-  reducers: {
-    set: (state, { payload }) => payload,
+const framesInitialState = {
+  metadata: {
+    startTime: 0,
+    endTime: 0,
+    frames: [],
   },
-});
+  currentFrame: 0,
+  loadedFrames: 0,
+};
 
 const framesSlice = createSlice({
   name: "frames",
-  initialState: [],
+  initialState: framesInitialState,
   reducers: {
-    append: (state, { payload }) => {
-      state.push(payload);
+    setMetadata: (state, { payload }) => {
+      state.metadata = payload;
     },
-    clear: (state) => {
-      state = [];
+    setCurrentFrame: (state, { payload }) => {
+      state.currentFrame = payload;
+    },
+    setLoadedFrames: (state, { payload }) => {
+      state.loadedFrames = payload;
     },
   },
 });
@@ -262,11 +267,10 @@ export const {
   set_speed_range: setVesselSpeedFilterRangeActionCreator,
 } = vesselSliderFilterSlice.actions;
 
-export const { set: setCurrentFrameActionCreator } = currentFrameSlice.actions;
-
 export const {
-  append: appendFrameActionCreator,
-  clear: clearFramesActionCreator,
+  setMetadata: setMetadataActionCreator,
+  setCurrentFrame: setCurrentFrameActionCreator,
+  setLoadedFrames: setLoadedFramesActionCreator,
 } = framesSlice.actions;
 
 // define reducers
@@ -278,7 +282,6 @@ const reducer = {
   activeVesselID: activeVesselSlice.reducer,
   vesselTypeFilter: vesselTypeFilterSlice.reducer,
   vesselSliderFilter: vesselSliderFilterSlice.reducer,
-  currentFrame: currentFrameSlice.reducer,
   frames: framesSlice.reducer,
 };
 
