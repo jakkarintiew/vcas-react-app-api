@@ -128,15 +128,18 @@ const PanelContent = ({ data }) => {
         </StyledTabs>
       </StyledTabsContainer>
 
-      {panels.map((panel) => (
-        <TabPanel key={panel.value} value={value} index={panel.value}>
-          {panel.id === "data" ? (
-            <panel.panelComponent data={data} />
-          ) : (
-            <panel.panelComponent />
-          )}
-        </TabPanel>
-      ))}
+      {panels.map(
+        (panel) =>
+          panel.value === value && (
+            <TabPanel key={panel.value} value={value} index={panel.value}>
+              {panel.id === "data" ? (
+                <panel.panelComponent data={data} />
+              ) : (
+                <panel.panelComponent />
+              )}
+            </TabPanel>
+          )
+      )}
     </div>
   );
 };
