@@ -14,8 +14,8 @@ import {
   deselectAllActionCreator,
 } from "app/redux";
 
-const FilterShelfContainer = styled.div`
-  background-color: ${(props) => props.theme.labelColor};
+const FilterWidgetContainer = styled.div`
+  background-color: ${(props) => props.theme.sidePanelHeaderBg};
   color: ${(props) => props.theme.textColor};
   padding: 6px;
   margin-bottom: 8px;
@@ -101,7 +101,7 @@ const VesselTypeFilter = () => {
   };
 
   return (
-    <FilterShelfContainer className="flex flex-col items-stretch">
+    <FilterWidgetContainer className="flex flex-col items-stretch">
       <div className="px-1 mb-1">
         <b>Vessel Type Filters</b>
       </div>
@@ -119,7 +119,12 @@ const VesselTypeFilter = () => {
           Deselect All
         </SelectAllButton>
       </div>
-      <Scrollbars style={{ height: "100%" }}>
+      <Scrollbars
+        autoHide
+        autoHideDuration={200}
+        autoHideTimeout={200}
+        style={{ height: "100%" }}
+      >
         <ChipsContainer>
           {visibleTypes.map((vessel) => {
             return (
@@ -144,7 +149,7 @@ const VesselTypeFilter = () => {
           })}
         </ChipsContainer>
       </Scrollbars>
-    </FilterShelfContainer>
+    </FilterWidgetContainer>
   );
 };
 

@@ -11,7 +11,7 @@ const StyledPanelContent = styled.div`
 `;
 
 const LayerGroupContainer = styled.div`
-  background-color: ${(props) => props.theme.labelColor};
+  background-color: ${(props) => props.theme.sidePanelHeaderBg};
   color: ${(props) => props.theme.textColor};
   width: 100%;
   padding: 6px;

@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 import VesselTypeFilter from "./VesselTypeFilter";
 import VesselSliderFilters from "./VesselSliderFilters";
+import DataSourceControl from "./DataSourceControl";
 
 const StyledPanelContent = styled.div`
   background-color: ${(props) => props.theme.sidePanelBg};
@@ -14,6 +15,7 @@ const StyledPanelContent = styled.div`
 const DataManagerPanel = ({ data }) => {
   return (
     <StyledPanelContent>
+      <DataSourceControl />
       <VesselTypeFilter />
       <VesselSliderFilters data={data} />
     </StyledPanelContent>

@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 const ControlContainer = styled.div`
-  background-color: ${(props) => props.theme.labelColor};
+  background-color: ${(props) => props.theme.sidePanelHeaderBg};
   color: ${(props) => props.theme.labelTextColor};
   width: 100%;
   height: 40px;

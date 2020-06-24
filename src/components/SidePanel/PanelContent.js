@@ -127,7 +127,12 @@ const PanelContent = ({ data }) => {
         </StyledTabs>
       </StyledTabsContainer>
 
-      <Scrollbars style={{ height: "100%" }}>
+      <Scrollbars
+        autoHide
+        autoHideDuration={200}
+        autoHideTimeout={200}
+        style={{ height: "100%" }}
+      >
         {panels.map(
           (panel) =>
             panel.value === value && (

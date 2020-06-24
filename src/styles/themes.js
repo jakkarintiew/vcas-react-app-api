@@ -15,9 +15,9 @@ export const fontFamily = `ff-clan-web-pro, 'Helvetica Neue', Helvetica, sans-se
 export const fontWeight = 400;
 export const fontSize = "0.875em";
 export const lineHeight = 1.71429;
-export const labelColor = "#303030";
+export const labelColor = "#424242";
 export const labelHoverColor = "#C6C6C6";
-export const labelColorLT = "#f0F0F0";
+export const labelColorLT = "#EEEEEE";
 
 export const labelTextColor = "#f7f7f7";
 export const labelTextColorLT = "#3A414C";
@@ -239,7 +239,7 @@ export const checkboxBoxBgdChecked = primaryBtnBgd;
 
 // Side Panel
 export const sidePanelHeaderBg = "#303030";
-export const sidePanelInnerPadding = 16;
+export const sidePanelInnerPadding = 10;
 export const sidePanelBg = "#212121";
 export const sidePanelScrollBarWidth = 10;
 export const sidePanelScrollBarHeight = 10;
@@ -458,7 +458,7 @@ export const lightTheme = {
   sidePanelBg: "#FFFFFF",
   selectColor: selectColorLT,
   titleTextColor: "#000000",
-  sidePanelHeaderBg: "#F7F7F7",
+  sidePanelHeaderBg: "#f2f2f2",
   subtextColorActive: activeColorLT,
   tooltipBg: "#1869B5",
   tooltipColor: "#FFFFFF",

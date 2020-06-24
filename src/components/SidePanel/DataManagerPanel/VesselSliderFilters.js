@@ -8,12 +8,12 @@ import {
 } from "app/redux";
 import SliderFilter from "./SliderFilter";
 
-const FilterShelfContainer = styled.div`
-  background-color: ${(props) => props.theme.labelColor};
+const FilterWidgetContainer = styled.div`
+  background-color: ${(props) => props.theme.sidePanelHeaderBg};
   color: ${(props) => props.theme.textColor};
   padding: 6px;
   margin-bottom: 8px;
-  height: 200px;
+  max-height: 200px;
 `;
 
 const VesselSliderFilters = ({ data }) => {
@@ -38,7 +38,7 @@ const VesselSliderFilters = ({ data }) => {
 
   return (
     <div>
-      <FilterShelfContainer>
+      <FilterWidgetContainer>
         <div className="px-1 mb-1">
           <b>Vessel Risk Filter</b>
         </div>
@@ -49,8 +49,8 @@ const VesselSliderFilters = ({ data }) => {
           reduxRange={vesselSliderFilter.risk}
           setReduxRange={setRiskRange}
         />
-      </FilterShelfContainer>
-      <FilterShelfContainer>
+      </FilterWidgetContainer>
+      <FilterWidgetContainer>
         <div className="px-1 mb-1">
           <b>Vessel Speed Filter</b>
         </div>
@@ -61,7 +61,7 @@ const VesselSliderFilters = ({ data }) => {
           reduxRange={vesselSliderFilter.speed}
           setReduxRange={setSpeedRange}
         />
-      </FilterShelfContainer>
+      </FilterWidgetContainer>
     </div>
   );
 };
