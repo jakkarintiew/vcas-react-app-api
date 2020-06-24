@@ -15,7 +15,7 @@ export const fontFamily = `ff-clan-web-pro, 'Helvetica Neue', Helvetica, sans-se
 export const fontWeight = 400;
 export const fontSize = "0.875em";
 export const lineHeight = 1.71429;
-export const labelColor = "#303846";
+export const labelColor = "#303030";
 export const labelHoverColor = "#C6C6C6";
 export const labelColorLT = "#f0F0F0";
 
@@ -33,7 +33,7 @@ export const subtextColorActive = "#FFFFFF";
 export const titleTextColor = "#FFFFFF";
 export const textColorHl = "#F0F0F0";
 export const textColorHlLT = "#000000";
-export const activeColor = "#1FBAD6";
+export const activeColor = "#0288D1";
 export const activeColorLT = "#2473BD";
 export const activeColorHover = "#108188";
 export const errorColor = "#F9042C";
@@ -238,16 +238,16 @@ export const checkboxBoxBgd = "white";
 export const checkboxBoxBgdChecked = primaryBtnBgd;
 
 // Side Panel
-export const sidePanelHeaderBg = "#29323C";
+export const sidePanelHeaderBg = "#303030";
 export const sidePanelInnerPadding = 16;
-export const sidePanelBg = "#242730";
+export const sidePanelBg = "#212121";
 export const sidePanelScrollBarWidth = 10;
 export const sidePanelScrollBarHeight = 10;
 export const sideBarCloseBtnBgd = secondaryBtnBgd;
-export const sideBarCloseBtnColor = "#29323C";
+export const sideBarCloseBtnColor = "#303030";
 export const sideBarCloseBtnBgdHover = secondaryBtnActBgd;
 
-export const panelBackground = "#29323C";
+export const panelBackground = "#212121";
 export const panelBackgroundHover = "#3A4552";
 export const panelActiveBg = "#3A4552";
 export const panelActiveBgLT = "#6A7485";
