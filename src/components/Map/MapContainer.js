@@ -54,7 +54,7 @@ const MapContainer = ({ data, mapStyle }) => {
 
   const vesselTypeFilter = useSelector((state) => state.vesselTypeFilter);
   const vesselSliderFilter = useSelector((state) => state.vesselSliderFilter);
-  const currentFrame = useSelector((state) => state.currentFrame);
+  const currentFrame = useSelector((state) => state.frames.currentFrame);
 
   const VIEWS = [
     new MapView({
