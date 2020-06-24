@@ -74,12 +74,10 @@ const StyledSlider = withStyles({
   active: {},
   track: {
     height: 8,
-    borderRadius: 4,
   },
   rail: {
     height: 8,
-    borderRadius: 4,
-    backgroundColor: "#c9c9c9",
+    backgroundColor: "#00d672",
   },
 })(Slider);
 
@@ -120,6 +118,7 @@ const TimeSlider = () => {
       const filteredFrames = metadata.frames.filter((data) => {
         return data.frame % firstMarkValue === 0;
       });
+      filteredFrames.push(metadata.frames[metadata.frames.length - 1]);
       setMarks([
         ...filteredFrames.map((frame) => ({
           value: frame.frame,
@@ -199,7 +198,7 @@ const TimeSlider = () => {
               <StyledIconButton onClick={togglePlayPause}>
                 {playing ? <PauseCircleFilledIcon /> : <PlayCircleFilledIcon />}
               </StyledIconButton>
-              <div className="px-5 flex-auto -mb-6">
+              <div className="px-5 flex-auto -mb-6 overflow-hidden">
                 <StyledSlider
                   value={sliderValue}
                   min={0}
