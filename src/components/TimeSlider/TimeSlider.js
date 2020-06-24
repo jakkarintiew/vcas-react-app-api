@@ -198,7 +198,7 @@ const TimeSlider = () => {
               <StyledIconButton onClick={togglePlayPause}>
                 {playing ? <PauseCircleFilledIcon /> : <PlayCircleFilledIcon />}
               </StyledIconButton>
-              <div className="px-5 flex-auto -mb-6 overflow-hidden">
+              <div className="px-5 flex-auto -mb-6">
                 <StyledSlider
                   value={sliderValue}
                   min={0}
