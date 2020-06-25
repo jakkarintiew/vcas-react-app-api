@@ -110,11 +110,8 @@ const TimeSlider = () => {
       var formattedTime = hours + ":" + minutes.substr(-2);
       return formattedTime;
     };
-    if (Object.keys(metadata.frames).length > 0) {
-      const firstMarkValue = Math.floor(
-        Object.keys(metadata.frames).length / 5
-      );
-      console.log(firstMarkValue);
+    if (metadata.frames.length > 0) {
+      const firstMarkValue = Math.floor(metadata.frames.length / 5);
       const filteredFrames = metadata.frames.filter((data) => {
         return data.frame % firstMarkValue === 0;
       });

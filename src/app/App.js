@@ -45,11 +45,15 @@ const App = () => {
     };
     const getFirstFrame = async () => {
       try {
-        const frame = await axios.get(FRAMES_DIR + `${0}_frame.json`);
-        const resultMetadata = await axios.get(METADATA_PATH);
-        setFrames((prevFrames) => ({ ...prevFrames, 0: frame.data }));
-        setData(frame.data);
-        setMetadata(resultMetadata.data);
+        const promiseFrame = axios.get(FRAMES_DIR + `${0}_frame.json`);
+        const promiseMetadata = axios.get(METADATA_PATH);
+        const [firstFrame, metadata] = await Promise.all([
+          promiseFrame,
+          promiseMetadata,
+        ]);
+        setFrames((prevFrames) => ({ ...prevFrames, 0: firstFrame.data }));
+        setData(firstFrame.data);
+        setMetadata(metadata.data);
       } catch (error) {
         setError(error);
       }
@@ -60,17 +64,28 @@ const App = () => {
 
   // Once metadata loaded, load remaining frames
   useEffect(() => {
+    const getFrame = async (index) => {
+      const promiseFrame = await axios.get(FRAMES_DIR + `${index}_frame.json`);
+      console.log(index);
+      setFrames((prevFrames) => ({
+        ...prevFrames,
+        [index]: promiseFrame.data,
+      }));
+    };
+
     const getRemainingFrames = () => {
       const totalFrames = metadata.frames.length;
+      const promiseFrames = [];
       for (let index = 1; index < totalFrames; index++) {
-        axios.get(FRAMES_DIR + `${index}_frame.json`).then((frame) => {
-          setFrames((prevFrames) => ({ ...prevFrames, [index]: frame.data }));
-        });
+        promiseFrames.push(getFrame(index));
       }
+      Promise.all(promiseFrames);
     };
+
     if (metadata.frames.length) {
       getRemainingFrames();
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [metadata]);
 
