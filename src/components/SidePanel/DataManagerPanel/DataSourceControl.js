@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import DateTimePicker from "react-datetime-picker";
 
 const DataSourceWidgetContainer = styled.div`
   background-color: ${(props) => props.theme.sidePanelHeaderBg};
@@ -14,16 +15,63 @@ const StyledLabel = styled.div`
   font-size: 0.75em;
   font-weight: 500;
   padding: 3px 5px 3px 5px;
-  width: 40%;
+  height: 25px;
+  width: 100px;
 `;
 
 const StyledInput = styled.input`
   color: ${(props) => props.theme.textColor};
   background-color: ${(props) => props.theme.sidePanelBg};
   font-size: 0.75em;
+  height: 25px;
+  padding: 2px;
   border: none;
   :focus {
     outline: 0;
+  }
+`;
+
+const StyledDateTimePicker = styled(function ({ className, onChange, value }) {
+  return (
+    <DateTimePicker
+      className={"flex-auto " + className}
+      autoFocus={false}
+      calendarIcon={null}
+      disableClock={true}
+      format={"yyyy/MM/dd H:mm:ss"}
+      calendarClassName={className}
+      onChange={onChange}
+      value={value}
+    />
+  );
+})`
+  font-size: 0.75em;
+
+  .react-datetime-picker__wrapper {
+    background-color: ${(props) => props.theme.sidePanelBg};
+    color: ${(props) => props.theme.textColor};
+    border: none;
+  }
+
+  .react-datetime-picker__inputGroup__input {
+    color: ${(props) => props.theme.textColor};
+    :focus {
+      outline: 0;
+    }
+  }
+
+  .react-datetime-picker__inputGroup__input:invalid {
+    background-color: ${(props) => props.theme.sidePanelBg};
+  }
+
+  .react-datetime-picker__calendar .react-calendar {
+    padding: 2px;
+    margin: 0px;
+    font-size: 0.8em;
+    box-shadow: ${(props) => props.theme.panelBoxShadow};
+    background-color: ${(props) => props.theme.sidePanelBg};
+    color: ${(props) => props.theme.textColor};
+    border: none;
   }
 `;
 
@@ -62,23 +110,11 @@ const DataSourceControl = () => {
       </div>
       <div className="mb-1 flex flex-row items-stretch">
         <StyledLabel className="flex-none">Start Time</StyledLabel>
-        <StyledInput
-          value={startTime}
-          onChange={(event) => setStartTime(event.target.value)}
-          type="search"
-          placeholder="e.g. 01 Jan 2019 12:00"
-          className="pl-2"
-        />
+        <StyledDateTimePicker onChange={setStartTime} value={startTime} />
       </div>
       <div className="mb-1 flex flex-row items-stretch">
         <StyledLabel className="flex-none">End Time</StyledLabel>
-        <StyledInput
-          value={endTime}
-          onChange={(event) => setEndTime(event.target.value)}
-          type="search"
-          placeholder="e.g. 03 Jan 2019 03:00"
-          className="pl-2"
-        />
+        <StyledDateTimePicker onChange={setEndTime} value={endTime} />
       </div>
       <div className="mb-1 flex flex-row items-stretch">
         <StyledLabel className="flex-none">Refresh Interval</StyledLabel>
@@ -87,7 +123,7 @@ const DataSourceControl = () => {
           onChange={(event) => setInterval(event.target.value)}
           type="search"
           placeholder="Set interval in seconds..."
-          className="pl-2"
+          className="pl-2 flex-auto"
         />
       </div>
       <div className="py-1">
