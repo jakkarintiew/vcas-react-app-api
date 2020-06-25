@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import PropertyInfo from "./PropertyInfo";
-import { useSelector } from "react-redux";
-import { Scrollbars } from "react-custom-scrollbars";
+// import { Scrollbars } from "react-custom-scrollbars";
 
 import VesselLineChart from "./VesselLineChart";
 import vessel_type_lookup from "data/vessel_type_lookup.json";

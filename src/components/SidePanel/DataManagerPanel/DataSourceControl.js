@@ -64,6 +64,31 @@ const StyledDateTimePicker = styled(function ({ className, onChange, value }) {
     background-color: ${(props) => props.theme.sidePanelBg};
   }
 
+  .react-datetime-picker__button {
+    border: 0;
+    background: transparent;
+    padding: 4px 6px;
+    :focus {
+      outline: 0;
+    }
+  }
+  .react-datetime-picker__button:enabled {
+    cursor: pointer;
+  }
+  .react-datetime-picker__button__icon {
+    height: 12px;
+    stroke: ${(props) => props.theme.textColor};
+  }
+  .react-datetime-picker__button:enabled:hover
+    .react-datetime-picker__button__icon {
+    stroke: ${(props) => props.theme.textColor};
+  }
+  ,
+  .react-datetime-picker__button:enabled:focus
+    .react-datetime-picker__button__icon {
+    stroke: ${(props) => props.theme.textColor};
+  }
+
   .react-datetime-picker__calendar .react-calendar {
     padding: 2px;
     margin: 0px;

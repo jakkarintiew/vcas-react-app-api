@@ -28,11 +28,6 @@ const App = () => {
   const darkThemeEnabled = useSelector((state) => state.darkThemeEnabled);
   const metadata = useSelector((state) => state.frames.metadata);
   const currentFrame = useSelector((state) => state.frames.currentFrame);
-  // const loadedFrames = useSelector((state) => state.frames.loadedFrames);
-
-  // const setCurrentFrame = (frame) => {
-  //   dispatch(setCurrentFrameActionCreator(frame));
-  // };
 
   const [data, setData] = useState([]);
   const [frames, setFrames] = useState({});
