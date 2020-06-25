@@ -36,10 +36,23 @@ const DetailsPanelInner = styled.div`
   width: ${(props) => props.theme.sidePanel.width}px;
 `;
 
+const PlaceholderContainer = styled.div`
+  background-color: ${(props) => props.theme.sidePanelBg};
+  color: ${(props) => props.theme.textColor};
+  font-size: 1.2em;
+  text-align: center;
+  padding: 10px;
+`;
+
 const DetailsPanel = ({ data }) => {
   // Redux states
   const dispatch = useDispatch();
   const panelOpen = useSelector((state) => state.panelOpen);
+  const activeVesselID = useSelector((state) => state.activeVesselID);
+  const activeVessel = data.filter((vessel) => {
+    return vessel.mmsi === activeVesselID;
+  });
+
   const togglePanelOpen = (panelKey) => {
     dispatch(togglePanelOpenActionCreator(panelKey));
   };
@@ -60,7 +73,15 @@ const DetailsPanel = ({ data }) => {
       <StyledDetailsPanelContainer width={panel.isOpen ? width : 0}>
         {panel.isOpen && (
           <DetailsPanelInner>
-            <VesselDetails data={data} />
+            {activeVessel.length === 1 ? (
+              <VesselDetails activeVessel={activeVessel[0]} />
+            ) : (
+              <div className="flex content-center flex-wrap flex-auto h-full p-5">
+                <PlaceholderContainer className="flex-auto">
+                  No active vessel selected
+                </PlaceholderContainer>
+              </div>
+            )}
           </DetailsPanelInner>
         )}
         <CollapseButton onClick={handleOnClick} style={{ left: "-5px" }}>

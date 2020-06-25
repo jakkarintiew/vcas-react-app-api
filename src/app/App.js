@@ -66,7 +66,6 @@ const App = () => {
   useEffect(() => {
     const getFrame = async (index) => {
       const promiseFrame = await axios.get(FRAMES_DIR + `${index}_frame.json`);
-      console.log(index);
       setFrames((prevFrames) => ({
         ...prevFrames,
         [index]: promiseFrame.data,

@@ -1,48 +1,13 @@
 import React, { useState, useEffect } from "react";
 import PropertyInfo from "./PropertyInfo";
 import { useSelector } from "react-redux";
+import { Scrollbars } from "react-custom-scrollbars";
 
 import VesselLineChart from "./VesselLineChart";
 import vessel_type_lookup from "data/vessel_type_lookup.json";
-// import vesselData from "data/data_vessels.json";
 
-const VesselDetails = ({ data }) => {
-  const activeVesselInitialState = {
-    mmsi: null,
-    timestamp: null,
-    shipname: "",
-    shiptype: "",
-    latitude: "",
-    longitude: null,
-    speed: null,
-    course: null,
-    heading: null,
-    risk: null,
-    historical_path: [0],
-    future_path: [0],
-    historical_speed: [0],
-    future_speed: [0],
-    historical_course: [0],
-    future_course: [0],
-    historical_heading: [0],
-    future_heading: [0],
-    historical_timestamps: [0],
-    future_timestamps: [0],
-  };
-  const activeVesselID = useSelector((state) => state.activeVesselID);
-
-  const [activeVessel, setActiveVessel] = useState(activeVesselInitialState);
-
-  useEffect(() => {
-    if (activeVesselID != null) {
-      const activeVessel = data.filter((data) => {
-        return data.mmsi === activeVesselID;
-      })[0];
-      setActiveVessel(activeVessel);
-    }
-  }, [activeVesselID, data]);
-
-  const speed_data = {
+const VesselDetails = ({ activeVessel }) => {
+  const speedChartData = {
     datasets: [
       {
         label: "Historical Speed",
@@ -75,7 +40,7 @@ const VesselDetails = ({ data }) => {
     ],
   };
 
-  const course_data = {
+  const courseChartData = {
     datasets: [
       {
         label: "Historical Course",
@@ -108,7 +73,7 @@ const VesselDetails = ({ data }) => {
     ],
   };
 
-  const heading_data = {
+  const headingChartData = {
     datasets: [
       {
         label: "Historical Heading",
@@ -141,31 +106,27 @@ const VesselDetails = ({ data }) => {
     ],
   };
 
+  const shipType =
+    vessel_type_lookup[activeVessel.shiptype] +
+    " (" +
+    activeVessel.shiptype +
+    ")";
+
   return (
     <div className="p-3 h-full flex flex-col">
       <div className="p-1">
-        <PropertyInfo label="MMSI" data={activeVesselID} />
+        <PropertyInfo label="MMSI" data={activeVessel.mmsi} />
         <PropertyInfo label="Ship Name" data={activeVessel.shipname} />
-        <PropertyInfo
-          label="Ship Type"
-          data={
-            activeVesselID != null
-              ? vessel_type_lookup[activeVessel.shiptype] +
-                " (" +
-                activeVessel.shiptype +
-                ")"
-              : ""
-          }
-        />
+        <PropertyInfo label="Ship Type" data={shipType} />
         <PropertyInfo label="Speed" data={activeVessel.speed} />
         <PropertyInfo label="Course" data={activeVessel.course} />
         <PropertyInfo label="Heading" data={activeVessel.heading} />
         <PropertyInfo label="Collision Risk" data={activeVessel.risk} />
       </div>
       <div className="flex flex-col flex-auto min-h-0">
-        <VesselLineChart data={speed_data} yMax={20} />
-        <VesselLineChart data={course_data} yMax={360} />
-        <VesselLineChart data={heading_data} yMax={360} />
+        <VesselLineChart data={speedChartData} yMax={20} />
+        <VesselLineChart data={courseChartData} yMax={360} />
+        <VesselLineChart data={headingChartData} yMax={360} />
       </div>
     </div>
   );
