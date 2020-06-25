@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import { togglePanelOpenActionCreator } from "app/redux";
@@ -6,6 +8,9 @@ import { togglePanelOpenActionCreator } from "app/redux";
 import VesselDetails from "./VesselDetails";
 import CollapseButton from "components/common/CollapseButton";
 import ArrowRight from "components/common/icons/arrow-right";
+
+const FRAMES_DIR =
+  "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/";
 
 const RightPanelBox = styled.div`
   height: 100%;
@@ -57,6 +62,21 @@ const DetailsPanel = ({ data }) => {
     dispatch(togglePanelOpenActionCreator(panelKey));
   };
 
+  const [pathData, setPathData] = useState([]);
+  useEffect(() => {
+    const getPathData = async () => {
+      const path = await axios.get(
+        FRAMES_DIR + `paths/${activeVesselID}/0_frame_${activeVesselID}.json`
+      );
+      setPathData(path.data);
+    };
+    if (activeVesselID) {
+      getPathData();
+      console.log(activeVesselID);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeVesselID]);
+
   // Component constants
   const initialDegree = 0;
   const width = 300;
@@ -73,8 +93,11 @@ const DetailsPanel = ({ data }) => {
       <StyledDetailsPanelContainer width={panel.isOpen ? width : 0}>
         {panel.isOpen && (
           <DetailsPanelInner>
-            {activeVessel.length === 1 ? (
-              <VesselDetails activeVessel={activeVessel[0]} />
+            {pathData.length > 0 ? (
+              <VesselDetails
+                activeVessel={activeVessel[0]}
+                pathData={pathData[0]}
+              />
             ) : (
               <div className="flex content-center flex-wrap flex-auto h-full p-5">
                 <PlaceholderContainer className="flex-auto">

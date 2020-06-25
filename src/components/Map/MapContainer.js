@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-// import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 import StaticMap, { TRANSITION_EVENTS } from "react-map-gl";
@@ -7,7 +7,6 @@ import DeckGL from "@deck.gl/react";
 import {
   IconLayer,
   PathLayer,
-  // TripsLayer,
   ScreenGridLayer,
   HexagonLayer,
   PolygonLayer,
@@ -30,20 +29,20 @@ import data_anchorages from "data/seamark_anchorages.json";
 import data_dredged_areas from "data/seamark_dredged_areas.json";
 import vessel_type_lookup from "data/vessel_type_lookup.json";
 
+const FRAMES_DIR =
+  "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/";
+
 const MapContainer = ({ data, mapStyle }) => {
   // Set your mapbox access token here
   const MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
   // Redux states
   const dispatch = useDispatch();
-
   const layerVisibility = useSelector((state) => state.layerVisibility);
-
   const activeVesselID = useSelector((state) => state.activeVesselID);
   const setActiveVesselID = (activeVesselID) => {
     dispatch(setActiveVesselActionCreator(activeVesselID));
   };
-
   const mapView = useSelector((state) => state.mapView);
   const setViewStates = (newViewState) => {
     dispatch(setViewStatesActionCreator(newViewState));
@@ -51,7 +50,6 @@ const MapContainer = ({ data, mapStyle }) => {
   const storeActiveVesselViewStates = (vesselViewState) => {
     dispatch(storeActiveVesselViewStatesActionCreator(vesselViewState));
   };
-
   const vesselTypeFilter = useSelector((state) => state.vesselTypeFilter);
   const vesselSliderFilter = useSelector((state) => state.vesselSliderFilter);
   const currentFrame = useSelector((state) => state.frames.currentFrame);
@@ -85,7 +83,7 @@ const MapContainer = ({ data, mapStyle }) => {
       }),
   ].filter(Boolean);
 
-  const _onViewStateChange = ({ viewState, viewId }) => {
+  const onViewStateChange = ({ viewState, viewId }) => {
     const newViewStates = {
       ...mapView.viewStates,
     };
@@ -94,13 +92,6 @@ const MapContainer = ({ data, mapStyle }) => {
     // Save the view state and trigger rerender
     setViewStates(newViewStates);
   };
-
-  // Component states
-  // const [activeVessel, setActiveVessel] = useState(
-  //   data.filter((data) => {
-  //     return data.mmsi === activeVesselID;
-  //   })
-  // );
 
   const updateVesselViewState = (vesselViewState) => {
     if (mapView.vesselViewEnabled) {
@@ -120,7 +111,9 @@ const MapContainer = ({ data, mapStyle }) => {
     });
   };
 
-  const _clickVesselEvent = (mmsi) => {
+  const [pathData, setPathData] = useState([]);
+
+  const clickVesselEvent = async (mmsi) => {
     setActiveVesselID(mmsi);
     const newActiveVessel = data.filter((data) => {
       return data.mmsi === mmsi;
@@ -136,6 +129,10 @@ const MapContainer = ({ data, mapStyle }) => {
       transitionInterpolator: new FlyToInterpolator(),
     };
     updateVesselViewState(vesselViewState);
+    const firstPathFrame = await axios.get(
+      FRAMES_DIR + `paths/${mmsi}/0_frame_${mmsi}.json`
+    );
+    setPathData(firstPathFrame.data);
   };
 
   const [tooltipInfo, setTooltipInfo] = useState({
@@ -146,27 +143,10 @@ const MapContainer = ({ data, mapStyle }) => {
     coordinate: [0.0, 0.0],
   });
 
-  const _renderTooltip = () => {
+  const renderTooltip = () => {
     const { hoveredObject } = tooltipInfo;
     return hoveredObject && <MapTooltip tooltipInfo={tooltipInfo} />;
   };
-
-  // const [time, setTime] = useState(1546272005);
-  // const requestRef = useRef();
-  // const animate = () => {
-  //   const loopLength = 86400; // seconds in a day
-  //   const animationSpeed = 86400 / 30; // unit time per second
-  //   const timestamp = Date.now() / 1000;
-  //   const loopTime = loopLength / animationSpeed;
-
-  //   setTime(1546272005 + ((timestamp % loopTime) / loopTime) * loopLength);
-  //   // The 'state' will always be the initial value here
-  //   requestRef.current = requestAnimationFrame(animate);
-  // };
-  // useEffect(() => {
-  //   requestRef.current = requestAnimationFrame(animate);
-  //   return () => cancelAnimationFrame(requestRef.current);
-  // });
 
   const riskyVessels = data.filter((data) => {
     return data.risk > 50;
@@ -293,7 +273,7 @@ const MapContainer = ({ data, mapStyle }) => {
       layerVisibility.historicalPath.visible &&
       new PathLayer({
         id: "historical-path-layer",
-        data: activeVessel,
+        data: pathData,
         getPath: (d) => d.historical_path,
         getColor: [100, 100, 120],
         opacity: 1,
@@ -306,7 +286,7 @@ const MapContainer = ({ data, mapStyle }) => {
       layerVisibility.futurePath.visible &&
       new PathLayer({
         id: "future-path-layer",
-        data: activeVessel,
+        data: pathData,
         getPath: (d) => d.future_path,
         getColor: (d) => [80, 200, 192],
         getWidth: 10,
@@ -315,38 +295,6 @@ const MapContainer = ({ data, mapStyle }) => {
         widthMinPixels: 8,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
       }),
-    // activeVesselID != null &&
-    //   layerVisibility.historicalTrip.visible &&
-    //   new TripsLayer({
-    //     id: "historical-trips-layer",
-    //     data: activeVessel,
-    //     coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
-    //     getPath: (d) => d.historical_path,
-    //     getTimestamps: (d) => d.historical_timestamps,
-    //     getColor: [255, 120, 89],
-    //     opacity: 1,
-    //     widthMinPixels: 10,
-    //     rounded: true,
-    //     trailLength: 5000,
-    //     currentTime: time,
-    //     shadowEnabled: false,
-    //   }),
-    // activeVesselID != null &&
-    //   layerVisibility.futureTrip.visible &&
-    //   new TripsLayer({
-    //     id: "future-trips-layer",
-    //     data: activeVessel,
-    //     coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
-    //     getPath: (d) => d.future_path,
-    //     getTimestamps: (d) => d.future_timestamps,
-    //     getColor: [80, 255, 120],
-    //     opacity: 1,
-    //     widthMinPixels: 10,
-    //     rounded: true,
-    //     trailLength: 5000,
-    //     currentTime: time,
-    //     shadowEnabled: false,
-    //   }),
     layerVisibility.vesselIcon.visible &&
       new IconLayer({
         id: "vessel-icon-layer",
@@ -373,7 +321,7 @@ const MapContainer = ({ data, mapStyle }) => {
             pointerY: info.y,
             coordinate: info.coordinate,
           }),
-        onClick: (info) => _clickVesselEvent(info.object.mmsi),
+        onClick: (info) => clickVesselEvent(info.object.mmsi),
       }),
     activeVesselID != null &&
       layerVisibility.vesselIcon.visible &&
@@ -406,41 +354,39 @@ const MapContainer = ({ data, mapStyle }) => {
   ].filter(Boolean);
 
   return (
-    <div>
-      <DeckGL
-        views={VIEWS}
-        layers={layers}
-        controller={true}
-        getCursor={() => "crosshair"}
-        viewState={{
-          main: {
-            ...mapView.viewStates.main,
-          },
-          minimap: {
-            ...mapView.viewStates.minimap,
-          },
-        }}
-        onViewStateChange={_onViewStateChange}
-      >
-        <StaticMap
-          reuseMaps
-          mapStyle={mapStyle}
-          preventStyleDiffing={true}
-          mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
-        ></StaticMap>
-        {mapView.miniMapViewEnabled && (
-          <View id="minimap">
-            <StaticMap
-              reuseMaps
-              mapStyle={mapStyle}
-              preventStyleDiffing={true}
-              mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
-            />
-          </View>
-        )}
-        {_renderTooltip()}
-      </DeckGL>
-    </div>
+    <DeckGL
+      views={VIEWS}
+      layers={layers}
+      controller={true}
+      getCursor={() => "crosshair"}
+      viewState={{
+        main: {
+          ...mapView.viewStates.main,
+        },
+        minimap: {
+          ...mapView.viewStates.minimap,
+        },
+      }}
+      onViewStateChange={onViewStateChange}
+    >
+      <StaticMap
+        reuseMaps
+        mapStyle={mapStyle}
+        preventStyleDiffing={true}
+        mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
+      ></StaticMap>
+      {mapView.miniMapViewEnabled && (
+        <View id="minimap">
+          <StaticMap
+            reuseMaps
+            mapStyle={mapStyle}
+            preventStyleDiffing={true}
+            mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
+          />
+        </View>
+      )}
+      {renderTooltip()}
+    </DeckGL>
   );
 };
 
