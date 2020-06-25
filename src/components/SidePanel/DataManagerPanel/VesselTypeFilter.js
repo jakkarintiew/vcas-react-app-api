@@ -23,13 +23,12 @@ const FilterWidgetContainer = styled.div`
 `;
 
 const ChipsContainer = styled.div`
-  height: 100%;
   display: flex;
   flex-wrap: wrap;
   justify-content: left;
   list-style: none;
   margin: 0px;
-  padding: 1px;
+  padding: 0px;
 `;
 
 const StyledChip = styled(Chip)`
@@ -47,6 +46,7 @@ const StyledChip = styled(Chip)`
   }
   min-width: auto;
   min-height: auto;
+  margin: 1px;
   height: 20px;
   transition: ${(props) => props.theme.transition};
 `;
@@ -54,7 +54,7 @@ const StyledChip = styled(Chip)`
 const FilterInput = styled.input`
   color: ${(props) => props.theme.textColor};
   background-color: ${(props) => props.theme.sidePanelBg};
-  font-size: 0.8em;
+  font-size: 0.75em;
   border: none;
   border-radius: 3px;
   :focus {
@@ -66,7 +66,7 @@ const SelectAllButton = styled.button`
   box-shadow: ${(props) => props.theme.boxShadow};
   background: ${(props) => props.theme.primaryBtnBgd};
   color: ${(props) => props.theme.primaryBtnColor};
-  font-size: 0.8em;
+  font-size: 0.75em;
   border: none;
   border-radius: 6px;
   :focus {
@@ -128,7 +128,7 @@ const VesselTypeFilter = () => {
         <ChipsContainer>
           {visibleTypes.map((vessel) => {
             return (
-              <li key={vessel.vesselType} className="mr-1">
+              <li key={vessel.vesselType}>
                 <StyledChip
                   size="small"
                   icon={

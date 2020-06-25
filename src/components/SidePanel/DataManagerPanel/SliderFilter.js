@@ -46,9 +46,8 @@ const StyledSlider = withStyles({
 const FilterInput = styled.input`
   color: ${(props) => props.theme.textColor};
   background-color: ${(props) => props.theme.sidePanelBg};
-  font-size: 0.8em;
+  font-size: 0.75em;
   width: 50px;
-  height: 25px;
   border: none;
   border-radius: 3px;
   :focus {
@@ -60,8 +59,7 @@ const ResetButton = styled.button`
   box-shadow: ${(props) => props.theme.boxShadow};
   background: ${(props) => props.theme.primaryBtnBgd};
   color: ${(props) => props.theme.primaryBtnColor};
-  height: 25px;
-  font-size: 0.8em;
+  font-size: 0.75em;
   border: none;
   border-radius: 6px;
   :focus {
