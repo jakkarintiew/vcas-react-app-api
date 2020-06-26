@@ -34,10 +34,9 @@ const App = () => {
   const [vesselsData, setVesselsData] = useState([]);
   const [frames, setFrames] = useState({});
   const [activeVesselsData, setActiveVesselsData] = useState([]);
-  const [error, setError] = useState(null);
-
   const [pathData, setPathData] = useState([]);
   const [pathFrames, setPathFrames] = useState([]);
+  const [error, setError] = useState(null);
 
   // Load first frame + metadata; ran once
   useEffect(() => {
@@ -122,11 +121,13 @@ const App = () => {
   // When active vessel is updated
   useEffect(() => {
     if (vesselsData && activeVesselID) {
-      const newActiveVessel = vesselsData.filter((vessel) => {
-        return vessel.mmsi === activeVesselID;
-      });
-
-      setActiveVesselsData(newActiveVessel);
+      setPathData([]);
+      setPathFrames([]);
+      setActiveVesselsData(
+        vesselsData.filter((vessel) => {
+          return vessel.mmsi === activeVesselID;
+        })
+      );
 
       const getFirstPathFrames = async () => {
         try {

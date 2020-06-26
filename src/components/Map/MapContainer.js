@@ -24,9 +24,9 @@ import {
 
 import MapTooltip from "./MapTooltip";
 
-import data_anchorages from "data/seamark_anchorages.json";
-import data_dredged_areas from "data/seamark_dredged_areas.json";
-import vessel_type_lookup from "data/vessel_type_lookup.json";
+import dataAnchorages from "data/seamark_anchorages.json";
+import dataMooringAreas from "data/seamark_dredged_areas.json";
+import vesselTypeLookup from "data/vessel_type_lookup.json";
 
 const MapContainer = ({
   vesselsData,
@@ -150,7 +150,7 @@ const MapContainer = ({
       return vessel.filterState ? vessel.vesselType : null;
     });
     return (
-      visibleTypes.includes(vessel_type_lookup[vessel.shiptype]) &&
+      visibleTypes.includes(vesselTypeLookup[vessel.shiptype]) &&
       vessel.risk >= vesselSliderFilter.risk[0] &&
       vessel.risk <= vesselSliderFilter.risk[1] &&
       vessel.speed >= vesselSliderFilter.speed[0] &&
@@ -199,7 +199,7 @@ const MapContainer = ({
     layerVisibility.mooringPolygon.visible &&
       new PolygonLayer({
         id: "dredged-polygon-layer",
-        data: data_dredged_areas,
+        data: dataMooringAreas,
         stroked: true,
         filled: true,
         lineWidthMinPixels: 1,
@@ -222,7 +222,7 @@ const MapContainer = ({
     layerVisibility.anchorangePolygon.visible &&
       new PolygonLayer({
         id: "anchorages-polygon-layer",
-        data: data_anchorages,
+        data: dataAnchorages,
         stroked: true,
         filled: true,
         lineWidthMinPixels: 1,
@@ -245,7 +245,7 @@ const MapContainer = ({
     layerVisibility.anchorangePolygon.visible &&
       new TextLayer({
         id: "anchorages-text-layer",
-        data: data_anchorages,
+        data: dataAnchorages,
         pickable: true,
         getPosition: (d) => d.centroid,
         getText: (d) => d.name,
@@ -259,6 +259,7 @@ const MapContainer = ({
         getAlignmentBaseline: "center",
       }),
     activeVesselsData.length > 0 &&
+      pathData.length > 0 &&
       layerVisibility.historicalPath.visible &&
       new PathLayer({
         id: "historical-path-layer",
@@ -272,6 +273,7 @@ const MapContainer = ({
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
       }),
     activeVesselsData.length > 0 &&
+      pathData.length > 0 &&
       layerVisibility.futurePath.visible &&
       new PathLayer({
         id: "future-path-layer",
