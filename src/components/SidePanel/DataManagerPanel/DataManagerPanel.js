@@ -12,12 +12,12 @@ const StyledPanelContent = styled.div`
   color: ${(props) => props.theme.textColor};
 `;
 
-const DataManagerPanel = ({ data }) => {
+const DataManagerPanel = ({ vesselsData }) => {
   return (
     <StyledPanelContent>
       <DataSourceControl />
       <VesselTypeFilter />
-      <VesselSliderFilters data={data} />
+      <VesselSliderFilters vesselsData={vesselsData} />
     </StyledPanelContent>
   );
 };

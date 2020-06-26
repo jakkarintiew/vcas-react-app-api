@@ -16,7 +16,7 @@ const FilterWidgetContainer = styled.div`
   max-height: 200px;
 `;
 
-const VesselSliderFilters = ({ data }) => {
+const VesselSliderFilters = ({ vesselsData }) => {
   // Redux state
   const dispatch = useDispatch();
   const vesselSliderFilter = useSelector((state) => state.vesselSliderFilter);
@@ -28,11 +28,11 @@ const VesselSliderFilters = ({ data }) => {
     dispatch(setVesselSpeedFilterRangeActionCreator(newRange));
   };
 
-  const riskData = data.map(({ risk }) => risk);
+  const riskData = vesselsData.map(({ risk }) => risk);
   const riskDomain = [0, 100];
   const riskBinSize = 5;
 
-  const speedData = data.map(({ speed }) => speed);
+  const speedData = vesselsData.map(({ speed }) => speed);
   const speedDomain = [0, 35];
   const speedBinSize = 2.5;
 

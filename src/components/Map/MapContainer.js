@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 import StaticMap, { TRANSITION_EVENTS } from "react-map-gl";
@@ -29,17 +28,18 @@ import data_anchorages from "data/seamark_anchorages.json";
 import data_dredged_areas from "data/seamark_dredged_areas.json";
 import vessel_type_lookup from "data/vessel_type_lookup.json";
 
-const FRAMES_DIR =
-  "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/";
-
-const MapContainer = ({ data, mapStyle }) => {
+const MapContainer = ({
+  vesselsData,
+  activeVesselsData,
+  pathData,
+  mapStyle,
+}) => {
   // Set your mapbox access token here
   const MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
   // Redux states
   const dispatch = useDispatch();
   const layerVisibility = useSelector((state) => state.layerVisibility);
-  const activeVesselID = useSelector((state) => state.activeVesselID);
   const setActiveVesselID = (activeVesselID) => {
     dispatch(setActiveVesselActionCreator(activeVesselID));
   };
@@ -52,7 +52,6 @@ const MapContainer = ({ data, mapStyle }) => {
   };
   const vesselTypeFilter = useSelector((state) => state.vesselTypeFilter);
   const vesselSliderFilter = useSelector((state) => state.vesselSliderFilter);
-  const currentFrame = useSelector((state) => state.frames.currentFrame);
 
   const VIEWS = [
     new MapView({
@@ -111,12 +110,10 @@ const MapContainer = ({ data, mapStyle }) => {
     });
   };
 
-  const [pathData, setPathData] = useState([]);
-
-  const clickVesselEvent = async (mmsi) => {
+  const clickVesselEvent = (mmsi) => {
     setActiveVesselID(mmsi);
-    const newActiveVessel = data.filter((data) => {
-      return data.mmsi === mmsi;
+    const newActiveVessel = vesselsData.filter((vessel) => {
+      return vessel.mmsi === mmsi;
     });
     const vesselViewState = {
       longitude: newActiveVessel[0].longitude,
@@ -129,10 +126,6 @@ const MapContainer = ({ data, mapStyle }) => {
       transitionInterpolator: new FlyToInterpolator(),
     };
     updateVesselViewState(vesselViewState);
-    const firstPathFrame = await axios.get(
-      FRAMES_DIR + `paths/${mmsi}/0_frame_${mmsi}.json`
-    );
-    setPathData(firstPathFrame.data);
   };
 
   const [tooltipInfo, setTooltipInfo] = useState({
@@ -148,35 +141,31 @@ const MapContainer = ({ data, mapStyle }) => {
     return hoveredObject && <MapTooltip tooltipInfo={tooltipInfo} />;
   };
 
-  const riskyVessels = data.filter((data) => {
-    return data.risk > 50;
+  const riskyVessels = vesselsData.filter((vessel) => {
+    return vessel.risk > 50;
   });
 
-  const visibleVessels = data.filter((data) => {
+  const visibleVessels = vesselsData.filter((vessel) => {
     const visibleTypes = vesselTypeFilter.map((vessel) => {
       return vessel.filterState ? vessel.vesselType : null;
     });
     return (
-      visibleTypes.includes(vessel_type_lookup[data.shiptype]) &&
-      data.risk >= vesselSliderFilter.risk[0] &&
-      data.risk <= vesselSliderFilter.risk[1] &&
-      data.speed >= vesselSliderFilter.speed[0] &&
-      data.speed <= vesselSliderFilter.speed[1]
+      visibleTypes.includes(vessel_type_lookup[vessel.shiptype]) &&
+      vessel.risk >= vesselSliderFilter.risk[0] &&
+      vessel.risk <= vesselSliderFilter.risk[1] &&
+      vessel.speed >= vesselSliderFilter.speed[0] &&
+      vessel.speed <= vesselSliderFilter.speed[1]
     );
   });
 
-  const activeVessel = data.filter((data) => {
-    return data.mmsi === activeVesselID;
-  });
-
   useEffect(() => {
-    if (activeVessel.length === 1) {
+    if (activeVesselsData.length > 0) {
       const vesselViewState = {
-        longitude: activeVessel[0].longitude,
-        latitude: activeVessel[0].latitude,
+        longitude: activeVesselsData[0].longitude,
+        latitude: activeVesselsData[0].latitude,
         zoom: 14,
         pitch: 60,
-        bearing: activeVessel[0].heading,
+        bearing: activeVesselsData[0].heading,
         transitionDuration: 500,
         transitionInterruption: TRANSITION_EVENTS.UPDATE,
         transitionInterpolator: new FlyToInterpolator(),
@@ -184,7 +173,7 @@ const MapContainer = ({ data, mapStyle }) => {
       updateVesselViewState(vesselViewState);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentFrame]);
+  }, [activeVesselsData]);
 
   const layers = [
     layerVisibility.riskScreenGrid.visible &&
@@ -269,7 +258,7 @@ const MapContainer = ({ data, mapStyle }) => {
         getTextAnchor: "middle",
         getAlignmentBaseline: "center",
       }),
-    activeVesselID != null &&
+    activeVesselsData.length > 0 &&
       layerVisibility.historicalPath.visible &&
       new PathLayer({
         id: "historical-path-layer",
@@ -282,7 +271,7 @@ const MapContainer = ({ data, mapStyle }) => {
         widthMinPixels: 8,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
       }),
-    activeVesselID != null &&
+    activeVesselsData.length > 0 &&
       layerVisibility.futurePath.visible &&
       new PathLayer({
         id: "future-path-layer",
@@ -323,11 +312,11 @@ const MapContainer = ({ data, mapStyle }) => {
           }),
         onClick: (info) => clickVesselEvent(info.object.mmsi),
       }),
-    activeVesselID != null &&
+    activeVesselsData.length > 0 &&
       layerVisibility.vesselIcon.visible &&
       new IconLayer({
         id: "active-vessel-icon-layer",
-        data: activeVessel,
+        data: activeVesselsData,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
         iconAtlas: require("img/vessel_marker_active.png"),
         iconMapping: {
