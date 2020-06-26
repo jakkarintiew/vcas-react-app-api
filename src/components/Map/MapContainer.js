@@ -259,7 +259,6 @@ const MapContainer = ({
         getAlignmentBaseline: "center",
       }),
     activeVesselsData.length > 0 &&
-      pathData.length > 0 &&
       layerVisibility.historicalPath.visible &&
       new PathLayer({
         id: "historical-path-layer",
@@ -273,7 +272,6 @@ const MapContainer = ({
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
       }),
     activeVesselsData.length > 0 &&
-      pathData.length > 0 &&
       layerVisibility.futurePath.visible &&
       new PathLayer({
         id: "future-path-layer",
