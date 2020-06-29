@@ -62,7 +62,7 @@ const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Once metadata loaded, load remaining frames
+  // Once metadata loaded, load remaining vessel frames
   useEffect(() => {
     const getFrame = async (index) => {
       try {
@@ -118,7 +118,7 @@ const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFrame]);
 
-  // When active vessel is updated
+  // When active vessel is updated, load path data and frames
   useEffect(() => {
     if (vesselsData && activeVesselID) {
       setPathData([]);

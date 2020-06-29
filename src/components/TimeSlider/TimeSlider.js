@@ -3,6 +3,8 @@ import { useSelector, useDispatch } from "react-redux";
 
 import styled from "styled-components";
 import { withStyles } from "@material-ui/core/styles";
+// import LinearProgress from "@material-ui/core/LinearProgress";
+
 import Slider from "@material-ui/core/Slider";
 import IconButton from "@material-ui/core/IconButton";
 import PlayCircleFilledIcon from "@material-ui/icons/PlayCircleFilled";
@@ -14,6 +16,10 @@ import {
 } from "app/redux";
 import CollapseButton from "components/common/CollapseButton";
 import ArrowRight from "components/common/icons/arrow-right";
+
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Typography from "@material-ui/core/Typography";
+import Box from "@material-ui/core/Box";
 
 const BottomPanelBox = styled.div`
   width: 100%;
@@ -81,6 +87,57 @@ const StyledSlider = withStyles({
   },
 })(Slider);
 
+function CircularProgressWithLabel(props) {
+  return (
+    <Box
+      position="relative"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      top={15}
+    >
+      <StyledCircularProgress variant="indeterminate" {...props} />
+      <Box
+        top={10}
+        left={0}
+        bottom={0}
+        right={0}
+        position="absolute"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Typography
+          variant="caption"
+          component="div"
+          color="textSecondary"
+        >{`${Math.round(props.value)}%`}</Typography>
+      </Box>
+    </Box>
+  );
+}
+
+const StyledCircularProgress = withStyles({
+  root: {
+    marginTop: 10,
+    color: "#00d672",
+    animationDuration: "550ms",
+  },
+})(CircularProgress);
+
+// const StyledLinearProgress = withStyles({
+//   root: {
+//     height: 8,
+//     marginTop: 20,
+//   },
+//   colorPrimary: {
+//     backgroundColor: "#808080",
+//   },
+//   bar: {
+//     backgroundColor: "#00d672",
+//   },
+// })(LinearProgress);
+
 const TimeSlider = () => {
   // Redux states
   const dispatch = useDispatch();
@@ -111,7 +168,7 @@ const TimeSlider = () => {
       return formattedTime;
     };
     if (metadata.frames.length > 0) {
-      const firstMarkValue = Math.floor(metadata.frames.length / 5);
+      const firstMarkValue = Math.floor(metadata.frames.length / 4);
       const filteredFrames = metadata.frames.filter((data) => {
         return data.frame % firstMarkValue === 0;
       });
@@ -150,7 +207,9 @@ const TimeSlider = () => {
   const panel =
     panelOpen[Object.keys(panelOpen).find((key) => key === panelKey)];
 
-  const totalFrames = loadedFrames;
+  // const totalFrames = loadedFrames;
+  const totalFrames = metadata.frames.length;
+
   const handleOnClick = (event) => {
     togglePanelOpen(panelKey);
   };
@@ -191,22 +250,39 @@ const TimeSlider = () => {
       <StyledTimeSliderContainer height={panel.isOpen ? height : 0}>
         {panel.isOpen && (
           <TimeSliderInner>
-            <div className="items-stretch flex flex-row p-2">
-              <StyledIconButton onClick={togglePlayPause}>
-                {playing ? <PauseCircleFilledIcon /> : <PlayCircleFilledIcon />}
-              </StyledIconButton>
-              <div className="px-5 flex-auto -mb-6">
-                <StyledSlider
-                  value={sliderValue}
-                  min={0}
-                  max={totalFrames - 1}
-                  onChange={handleSliderChange}
-                  valueLabelDisplay="auto"
-                  marks={marks}
-                  valueLabelFormat={valueLabelFormat}
-                />
+            {loadedFrames < totalFrames ? (
+              <CircularProgressWithLabel
+                value={(loadedFrames / totalFrames) * 100}
+              />
+            ) : (
+              <div className="items-stretch flex flex-row p-2">
+                <StyledIconButton onClick={togglePlayPause}>
+                  {playing ? (
+                    <PauseCircleFilledIcon />
+                  ) : (
+                    <PlayCircleFilledIcon />
+                  )}
+                </StyledIconButton>
+
+                <div className="px-5 flex-auto -mb-6">
+                  {/* {loadedFrames < totalFrames ? (
+                  <StyledLinearProgress
+                    variant="indeterminate"
+                    value={(loadedFrames / totalFrames) * 100}
+                  />
+                ) : ()} */}
+                  <StyledSlider
+                    value={sliderValue}
+                    min={0}
+                    max={totalFrames - 1}
+                    onChange={handleSliderChange}
+                    valueLabelDisplay="auto"
+                    marks={marks}
+                    valueLabelFormat={valueLabelFormat}
+                  />
+                </div>
               </div>
-            </div>
+            )}
           </TimeSliderInner>
         )}
         <CollapseButton onClick={handleOnClick} style={{ top: "-5px" }}>
