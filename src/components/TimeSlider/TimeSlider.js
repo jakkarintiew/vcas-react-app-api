@@ -87,7 +87,15 @@ const StyledSlider = withStyles({
   },
 })(Slider);
 
-function CircularProgressWithLabel(props) {
+const StyledCircularProgress = withStyles({
+  root: {
+    marginTop: 10,
+    color: "#00d672",
+    animationDuration: "550ms",
+  },
+})(CircularProgress);
+
+const CircularProgressWithLabel = (props) => {
   return (
     <Box
       position="relative"
@@ -115,15 +123,7 @@ function CircularProgressWithLabel(props) {
       </Box>
     </Box>
   );
-}
-
-const StyledCircularProgress = withStyles({
-  root: {
-    marginTop: 10,
-    color: "#00d672",
-    animationDuration: "550ms",
-  },
-})(CircularProgress);
+};
 
 // const StyledLinearProgress = withStyles({
 //   root: {

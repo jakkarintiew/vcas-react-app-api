@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { StylesProvider } from "@material-ui/styles";
 import { ThemeProvider } from "styled-components";
+import { StylesProvider } from "@material-ui/styles";
+import { withStyles } from "@material-ui/core/styles";
+import CircularProgress from "@material-ui/core/CircularProgress";
+
 import { useSelector, useDispatch } from "react-redux";
 
 import { lightTheme, darkTheme } from "styles/themes";
@@ -21,6 +24,13 @@ const METADATA_PATH =
   "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/frames_metadata.json";
 const FRAMES_DIR =
   "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/";
+
+const ScreenCircularProgress = withStyles({
+  root: {
+    color: "#00d672",
+    animationDuration: "100ms",
+  },
+})(CircularProgress);
 
 const App = () => {
   // Redux states
@@ -182,13 +192,18 @@ const App = () => {
 
   if (error) return <div>Error: {error.message}</div>;
   if (!vesselsData || metadata.frames.length === 0)
-    return <div>Loading...</div>;
+    return (
+      <div className="flex h-screen">
+        <div className="m-auto ">
+          <ScreenCircularProgress />
+        </div>
+      </div>
+    );
   else {
     return (
       <StylesProvider injectFirst>
         <ThemeProvider theme={darkThemeEnabled ? darkTheme : lightTheme}>
           <GlobalStyle />
-
           <div className="h-screen w-screen flex justify-between overflow-hidden">
             <SidePanel vesselsData={vesselsData} />
             <div className="h-full w-full flex-1">
