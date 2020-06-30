@@ -89,9 +89,14 @@ const StyledSlider = withStyles({
 
 const StyledCircularProgress = withStyles({
   root: {
-    marginTop: 10,
     color: "#00d672",
-    animationDuration: "550ms",
+    marginTop: 10,
+    animationDuration: "0ms",
+  },
+  static: {
+    color: "#00d672",
+    marginTop: 10,
+    animationDuration: "0ms",
   },
 })(CircularProgress);
 
@@ -104,7 +109,7 @@ const CircularProgressWithLabel = (props) => {
       justifyContent="center"
       top={15}
     >
-      <StyledCircularProgress variant="indeterminate" {...props} />
+      <StyledCircularProgress variant="static" {...props} />
       <Box
         top={10}
         left={0}
@@ -245,15 +250,19 @@ const TimeSlider = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playing, sliderValue]);
 
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    setProgress((loadedFrames / totalFrames) * 100);
+  }, [loadedFrames, totalFrames]);
+
   return (
     <BottomPanelBox className="h-full flex flex-col-reverse space-y-reverse">
       <StyledTimeSliderContainer height={panel.isOpen ? height : 0}>
         {panel.isOpen && (
           <TimeSliderInner>
             {loadedFrames < totalFrames ? (
-              <CircularProgressWithLabel
-                value={(loadedFrames / totalFrames) * 100}
-              />
+              <CircularProgressWithLabel value={progress} />
             ) : (
               <div className="items-stretch flex flex-row p-2">
                 <StyledIconButton onClick={togglePlayPause}>

@@ -26,9 +26,9 @@ const FRAMES_DIR =
   "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/";
 
 const ScreenCircularProgress = withStyles({
-  root: {
+  indeterminate: {
     color: "#00d672",
-    animationDuration: "100ms",
+    animationDuration: "500ms",
   },
 })(CircularProgress);
 
@@ -109,7 +109,11 @@ const App = () => {
     const setLoadedFrames = (framesLength) => {
       dispatch(setLoadedFramesActionCreator(framesLength));
     };
-    if (Object.keys(frames).length > 0) {
+    if (
+      (Object.keys(frames).length > 0 &&
+        Object.keys(frames).length % 24 === 0) ||
+      Object.keys(frames).length === metadata.frames.length
+    ) {
       setLoadedFrames(Object.keys(frames).length);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
