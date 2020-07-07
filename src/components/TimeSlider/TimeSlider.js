@@ -93,11 +93,6 @@ const StyledCircularProgress = withStyles({
     marginTop: 10,
     animationDuration: "0ms",
   },
-  static: {
-    color: "#00d672",
-    marginTop: 10,
-    animationDuration: "0ms",
-  },
 })(CircularProgress);
 
 const CircularProgressWithLabel = (props) => {
@@ -109,7 +104,7 @@ const CircularProgressWithLabel = (props) => {
       justifyContent="center"
       top={15}
     >
-      <StyledCircularProgress variant="static" {...props} />
+      <StyledCircularProgress {...props} />
       <Box
         top={10}
         left={0}

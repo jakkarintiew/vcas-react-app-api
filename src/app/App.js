@@ -132,6 +132,8 @@ const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFrame]);
 
+  const [pathDataNew, setPathDataNew] = useState([]);
+
   // When active vessel is updated, load path data and frames
   useEffect(() => {
     if (vesselsData && activeVesselID) {
@@ -143,53 +145,67 @@ const App = () => {
         })
       );
 
-      const getFirstPathFrames = async () => {
+      const getPathData = async () => {
         try {
-          const firstPathFrame = await axios.get(
-            FRAMES_DIR +
-              `paths/${activeVesselID}/${currentFrame}_frame_${activeVesselID}.json`
+          const path = await axios.get(
+            FRAMES_DIR + `paths_new/${activeVesselID}_path.json`
           );
-          setPathData(firstPathFrame.data);
-          setPathFrames((prevFrames) => ({
-            ...prevFrames,
-            [currentFrame]: firstPathFrame.data,
-          }));
+          setPathDataNew(path.data);
         } catch (error) {
           console.log(error);
         }
       };
-      getFirstPathFrames();
-      const getPathFrame = async (index) => {
-        try {
-          const promiseFrame = await axios.get(
-            FRAMES_DIR +
-              `paths/${activeVesselID}/${index}_frame_${activeVesselID}.json`
-          );
-          setPathFrames((prevFrames) => ({
-            ...prevFrames,
-            [index]: promiseFrame.data,
-          }));
-        } catch {
-          // do nothing
-        }
-      };
-      const getRemainingPathFrames = async () => {
-        const promiseFrames = [];
-        const totalFrames = metadata.frames.length;
 
-        // search ahead
-        for (let index = currentFrame + 1; index < totalFrames; index++) {
-          promiseFrames.push(getPathFrame(index));
-        }
+      // const getFirstPathFrames = async () => {
+      //   try {
+      //     const firstPathFrame = await axios.get(
+      //       FRAMES_DIR +
+      //         `paths/${activeVesselID}/${currentFrame}_frame_${activeVesselID}.json`
+      //     );
+      //     setPathData(firstPathFrame.data);
+      //     setPathFrames((prevFrames) => ({
+      //       ...prevFrames,
+      //       [currentFrame]: firstPathFrame.data,
+      //     }));
+      //   } catch (error) {
+      //     console.log(error);
+      //   }
+      // };
+      // getFirstPathFrames();
 
-        // search back
-        for (let index = currentFrame - 1; index >= 0; index--) {
-          promiseFrames.push(getPathFrame(index));
-        }
+      // const getPathFrame = async (index) => {
+      //   try {
+      //     const promiseFrame = await axios.get(
+      //       FRAMES_DIR +
+      //         `paths/${activeVesselID}/${index}_frame_${activeVesselID}.json`
+      //     );
+      //     setPathFrames((prevFrames) => ({
+      //       ...prevFrames,
+      //       [index]: promiseFrame.data,
+      //     }));
+      //   } catch {
+      //     // do nothing
+      //   }
+      // };
+      // const getRemainingPathFrames = async () => {
+      //   const promiseFrames = [];
+      //   const totalFrames = metadata.frames.length;
 
-        Promise.all(promiseFrames.map((p) => p.catch((error) => null)));
-      };
-      getRemainingPathFrames();
+      //   // search ahead
+      //   for (let index = currentFrame + 1; index < totalFrames; index++) {
+      //     promiseFrames.push(getPathFrame(index));
+      //   }
+
+      //   // search back
+      //   for (let index = currentFrame - 1; index >= 0; index--) {
+      //     promiseFrames.push(getPathFrame(index));
+      //   }
+
+      //   Promise.all(promiseFrames.map((p) => p.catch((error) => null)));
+      // };
+      // getRemainingPathFrames();
+
+      getPathData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeVesselID]);
@@ -216,7 +232,7 @@ const App = () => {
             <DetailsPanel
               vesselsData={vesselsData}
               activeVesselsData={activeVesselsData}
-              pathData={pathData}
+              pathData={pathDataNew}
             />
           </div>
 
@@ -224,6 +240,7 @@ const App = () => {
             vesselsData={vesselsData}
             activeVesselsData={activeVesselsData}
             pathData={pathData}
+            pathDataNew={pathDataNew}
             mapStyle={
               darkThemeEnabled ? darkTheme.mapStyle : lightTheme.mapStyle
             }
