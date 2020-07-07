@@ -44,8 +44,8 @@ const App = () => {
   const [vesselsData, setVesselsData] = useState([]);
   const [frames, setFrames] = useState({});
   const [activeVesselsData, setActiveVesselsData] = useState([]);
-  const [pathData, setPathData] = useState([]);
-  const [pathFrames, setPathFrames] = useState([]);
+  // const [pathData, setPathData] = useState([]);
+  // const [pathFrames, setPathFrames] = useState([]);
   const [error, setError] = useState(null);
 
   // Load first frame + metadata; ran once
@@ -123,7 +123,7 @@ const App = () => {
   useEffect(() => {
     setVesselsData(frames[currentFrame]);
     if (activeVesselID) {
-      setPathData(pathFrames[currentFrame]);
+      // setPathData(pathFrames[currentFrame]);
       const newActiveVessel = frames[currentFrame].filter((vessel) => {
         return vessel.mmsi === activeVesselID;
       });
@@ -137,8 +137,8 @@ const App = () => {
   // When active vessel is updated, load path data and frames
   useEffect(() => {
     if (vesselsData && activeVesselID) {
-      setPathData([]);
-      setPathFrames([]);
+      // setPathData([]);
+      // setPathFrames([]);
       setActiveVesselsData(
         vesselsData.filter((vessel) => {
           return vessel.mmsi === activeVesselID;
@@ -210,6 +210,142 @@ const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeVesselID]);
 
+  const pathDataInitialState = [
+    {
+      path: [],
+      timestamps: [],
+      speed: [],
+      heading: [],
+      course: [],
+      risk: [],
+    },
+  ];
+  const [futurePathData, setFuturePathData] = useState(pathDataInitialState);
+  const [historicalPathData, setHistoricalPathData] = useState(
+    pathDataInitialState
+  );
+
+  useEffect(() => {
+    let currentIndex = pathDataNew.findIndex(
+      (obj) => obj.frame === currentFrame
+    );
+    let filteredPath;
+    if (
+      pathDataNew.length > 0 &&
+      currentFrame <= pathDataNew[pathDataNew.length - 1].frame &&
+      currentFrame >= pathDataNew[0].frame &&
+      currentIndex !== -1
+    ) {
+      for (let index = currentIndex; index <= pathDataNew.length - 1; index++) {
+        if (currentIndex === pathDataNew.length - 1) {
+          setFuturePathData(pathDataInitialState);
+          break;
+        } else if (index === pathDataNew.length - 1) {
+          filteredPath = pathDataNew.filter((elem) => {
+            return (
+              elem.frame >= currentFrame &&
+              elem.frame <= pathDataNew[index].frame
+            );
+          });
+          setFuturePathData([
+            {
+              path: filteredPath.map((frame) => [
+                frame.longitude,
+                frame.latitude,
+              ]),
+              timestamps: filteredPath.map((frame) => frame.timestamp),
+              speed: filteredPath.map((frame) => frame.speed),
+              heading: filteredPath.map((frame) => frame.heading),
+              course: filteredPath.map((frame) => frame.course),
+              risk: filteredPath.map((frame) => frame.risk),
+            },
+          ]);
+          break;
+        } else if (
+          pathDataNew[index + 1].frame - pathDataNew[index].frame >
+          1
+        ) {
+          filteredPath = pathDataNew.filter((elem) => {
+            return (
+              elem.frame >= currentFrame &&
+              elem.frame <= pathDataNew[index].frame
+            );
+          });
+          setFuturePathData([
+            {
+              path: filteredPath.map((frame) => [
+                frame.longitude,
+                frame.latitude,
+              ]),
+              timestamps: filteredPath.map((frame) => frame.timestamp),
+              speed: filteredPath.map((frame) => frame.speed),
+              heading: filteredPath.map((frame) => frame.heading),
+              course: filteredPath.map((frame) => frame.course),
+              risk: filteredPath.map((frame) => frame.risk),
+            },
+          ]);
+          break;
+        }
+      }
+
+      for (let index = currentIndex; index >= 0; index--) {
+        if (currentIndex === 0) {
+          setHistoricalPathData(pathDataInitialState);
+          break;
+        } else if (index === 0) {
+          filteredPath = pathDataNew.filter((elem) => {
+            return (
+              elem.frame >= pathDataNew[index].frame &&
+              elem.frame <= currentFrame
+            );
+          });
+          setHistoricalPathData([
+            {
+              path: filteredPath.map((frame) => [
+                frame.longitude,
+                frame.latitude,
+              ]),
+              timestamps: filteredPath.map((frame) => frame.timestamp),
+              speed: filteredPath.map((frame) => frame.speed),
+              heading: filteredPath.map((frame) => frame.heading),
+              course: filteredPath.map((frame) => frame.course),
+              risk: filteredPath.map((frame) => frame.risk),
+            },
+          ]);
+          break;
+        } else if (
+          pathDataNew[index].frame - pathDataNew[index - 1].frame >
+          1
+        ) {
+          filteredPath = pathDataNew.filter((elem) => {
+            return (
+              elem.frame >= pathDataNew[index].frame &&
+              elem.frame <= currentFrame
+            );
+          });
+          setHistoricalPathData([
+            {
+              path: filteredPath.map((frame) => [
+                frame.longitude,
+                frame.latitude,
+              ]),
+              timestamps: filteredPath.map((frame) => frame.timestamp),
+              speed: filteredPath.map((frame) => frame.speed),
+              heading: filteredPath.map((frame) => frame.heading),
+              course: filteredPath.map((frame) => frame.course),
+              risk: filteredPath.map((frame) => frame.risk),
+            },
+          ]);
+          break;
+        }
+      }
+    } else {
+      setFuturePathData(pathDataInitialState);
+      setHistoricalPathData(pathDataInitialState);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathDataNew, currentFrame]);
+
   if (error) return <div>Error: {error.message}</div>;
   if (!vesselsData || metadata.frames.length === 0)
     return (
@@ -232,15 +368,16 @@ const App = () => {
             <DetailsPanel
               vesselsData={vesselsData}
               activeVesselsData={activeVesselsData}
-              pathData={pathDataNew}
+              historicalPathData={historicalPathData}
+              futurePathData={futurePathData}
             />
           </div>
 
           <MapContainer
             vesselsData={vesselsData}
             activeVesselsData={activeVesselsData}
-            pathData={pathData}
-            pathDataNew={pathDataNew}
+            historicalPathData={historicalPathData}
+            futurePathData={futurePathData}
             mapStyle={
               darkThemeEnabled ? darkTheme.mapStyle : lightTheme.mapStyle
             }

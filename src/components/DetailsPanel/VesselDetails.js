@@ -7,7 +7,11 @@ import PropertyInfo from "./PropertyInfo";
 import VesselLineChart from "./VesselLineChart";
 import vessel_type_lookup from "data/vessel_type_lookup.json";
 
-const VesselDetails = ({ activeVessel, pathData }) => {
+const VesselDetails = ({
+  activeVessel,
+  historicalPathData,
+  futurePathData,
+}) => {
   const speedChartData = {
     datasets: [
       {
@@ -18,9 +22,9 @@ const VesselDetails = ({ activeVessel, pathData }) => {
         borderColor: "rgba(225, 105, 40, 0.5)",
         pointRadius: 1,
         data: [
-          ...pathData.historical_timestamps.map((x, i) => ({
-            x: pathData.historical_timestamps[i] * 1000,
-            y: pathData.historical_speed[i],
+          ...historicalPathData.timestamps.map((x, i) => ({
+            x: historicalPathData.timestamps[i] * 1000,
+            y: historicalPathData.speed[i],
           })),
         ],
       },
@@ -32,9 +36,9 @@ const VesselDetails = ({ activeVessel, pathData }) => {
         borderColor: "rgba(54, 225, 215, 0.5)",
         pointRadius: 1,
         data: [
-          ...pathData.future_timestamps.map((x, i) => ({
-            x: pathData.future_timestamps[i] * 1000,
-            y: pathData.future_speed[i],
+          ...futurePathData.timestamps.map((x, i) => ({
+            x: futurePathData.timestamps[i] * 1000,
+            y: futurePathData.speed[i],
           })),
         ],
       },
@@ -51,9 +55,9 @@ const VesselDetails = ({ activeVessel, pathData }) => {
         borderColor: "rgba(225, 105, 40, 0.5)",
         pointRadius: 1,
         data: [
-          ...pathData.historical_timestamps.map((x, i) => ({
-            x: pathData.historical_timestamps[i] * 1000,
-            y: pathData.historical_course[i],
+          ...historicalPathData.timestamps.map((x, i) => ({
+            x: historicalPathData.timestamps[i] * 1000,
+            y: historicalPathData.course[i],
           })),
         ],
       },
@@ -65,9 +69,9 @@ const VesselDetails = ({ activeVessel, pathData }) => {
         borderColor: "rgba(54, 225, 215, 0.5)",
         pointRadius: 1,
         data: [
-          ...pathData.future_timestamps.map((x, i) => ({
-            x: pathData.future_timestamps[i] * 1000,
-            y: pathData.future_course[i],
+          ...futurePathData.timestamps.map((x, i) => ({
+            x: futurePathData.timestamps[i] * 1000,
+            y: futurePathData.course[i],
           })),
         ],
       },
@@ -84,9 +88,9 @@ const VesselDetails = ({ activeVessel, pathData }) => {
         borderColor: "rgba(225, 105, 40, 0.5)",
         pointRadius: 1,
         data: [
-          ...pathData.historical_timestamps.map((x, i) => ({
-            x: pathData.historical_timestamps[i] * 1000,
-            y: pathData.historical_heading[i],
+          ...historicalPathData.timestamps.map((x, i) => ({
+            x: historicalPathData.timestamps[i] * 1000,
+            y: historicalPathData.heading[i],
           })),
         ],
       },
@@ -98,9 +102,9 @@ const VesselDetails = ({ activeVessel, pathData }) => {
         borderColor: "rgba(54, 225, 215, 0.5)",
         pointRadius: 1,
         data: [
-          ...pathData.future_timestamps.map((x, i) => ({
-            x: pathData.future_timestamps[i] * 1000,
-            y: pathData.future_heading[i],
+          ...futurePathData.timestamps.map((x, i) => ({
+            x: futurePathData.timestamps[i] * 1000,
+            y: futurePathData.heading[i],
           })),
         ],
       },

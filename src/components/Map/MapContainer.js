@@ -31,8 +31,8 @@ import vesselTypeLookup from "data/vessel_type_lookup.json";
 const MapContainer = ({
   vesselsData,
   activeVesselsData,
-  pathData,
-  pathDataNew,
+  historicalPathData,
+  futurePathData,
   mapStyle,
 }) => {
   // Set your mapbox access token here
@@ -53,7 +53,6 @@ const MapContainer = ({
   };
   const vesselTypeFilter = useSelector((state) => state.vesselTypeFilter);
   const vesselSliderFilter = useSelector((state) => state.vesselSliderFilter);
-  const currentFrame = useSelector((state) => state.frames.currentFrame);
 
   const VIEWS = [
     new MapView({
@@ -176,116 +175,6 @@ const MapContainer = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeVesselsData]);
-
-  const [futurePathData, setFuturePathData] = useState([]);
-  const [historicalPathData, setHistoricalPathData] = useState([]);
-
-  useEffect(() => {
-    let currentIndex = pathDataNew.findIndex(
-      (obj) => obj.frame === currentFrame
-    );
-    if (
-      pathDataNew.length > 0 &&
-      currentFrame <= pathDataNew[pathDataNew.length - 1].frame &&
-      currentFrame >= pathDataNew[0].frame &&
-      currentIndex !== -1
-    ) {
-      // console.log("currentFrame", currentFrame);
-      // console.log("currentIndex", currentIndex);
-      // console.log("pathDataNew.length", pathDataNew.length);
-      // console.log("pathDataNew[0]", pathDataNew[0]);
-      // console.log(
-      //   "pathDataNew[pathDataNew.length - 1]",
-      //   pathDataNew[pathDataNew.length - 1]
-      // );
-      // console.log("pathDataNew", pathDataNew);
-
-      for (let index = currentIndex; index <= pathDataNew.length - 1; index++) {
-        if (currentIndex === pathDataNew.length - 1) {
-          setFuturePathData([]);
-          break;
-        } else if (index === pathDataNew.length - 1) {
-          setFuturePathData([
-            {
-              path: pathDataNew
-                .filter((elem) => {
-                  return (
-                    elem.frame >= currentFrame &&
-                    elem.frame <= pathDataNew[index].frame
-                  );
-                })
-                .map((frame) => [frame.longitude, frame.latitude]),
-            },
-          ]);
-          break;
-        } else if (
-          pathDataNew[index + 1].frame - pathDataNew[index].frame >
-          1
-        ) {
-          setFuturePathData([
-            {
-              path: pathDataNew
-                .filter((elem) => {
-                  return (
-                    elem.frame >= currentFrame &&
-                    elem.frame <= pathDataNew[index].frame
-                  );
-                })
-                .map((frame) => [frame.longitude, frame.latitude]),
-            },
-          ]);
-          break;
-        }
-      }
-
-      for (let index = currentIndex; index >= 0; index--) {
-        if (currentIndex === 0) {
-          setHistoricalPathData([]);
-          break;
-        } else if (index === 0) {
-          setHistoricalPathData([
-            {
-              path: pathDataNew
-                .filter((elem) => {
-                  return (
-                    elem.frame >= pathDataNew[index].frame &&
-                    elem.frame <= currentFrame
-                  );
-                })
-                .map((frame) => [frame.longitude, frame.latitude]),
-            },
-          ]);
-          break;
-        } else if (
-          pathDataNew[index].frame - pathDataNew[index - 1].frame >
-          1
-        ) {
-          setHistoricalPathData([
-            {
-              path: pathDataNew
-                .filter((elem) => {
-                  return (
-                    elem.frame >= pathDataNew[index].frame &&
-                    elem.frame <= currentFrame
-                  );
-                })
-                .map((frame) => [frame.longitude, frame.latitude]),
-            },
-          ]);
-          break;
-        }
-      }
-    } else {
-      setFuturePathData([]);
-      setHistoricalPathData([]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathDataNew, currentFrame]);
-
-  // useEffect(() => {
-  //   console.log(historicalPathData);
-  //   console.log(futurePathData);
-  // }, [futurePathData, historicalPathData]);
 
   const layers = [
     layerVisibility.riskScreenGrid.visible &&
