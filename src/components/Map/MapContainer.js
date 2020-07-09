@@ -26,6 +26,7 @@ import MapTooltip from "./MapTooltip";
 
 import dataAnchorages from "data/seamark_anchorages.json";
 import dataMooringAreas from "data/seamark_dredged_areas.json";
+import dataUnionMooringAreas from "data/seamark_mooring_areas_1.json";
 import vesselTypeLookup from "data/vessel_type_lookup.json";
 
 const MapContainer = ({
@@ -197,6 +198,29 @@ const MapContainer = ({
         coverage: 0.98,
         getPosition: (d) => [d.longitude, d.latitude],
       }),
+
+    new PolygonLayer({
+      id: "union-mooring-polygon-layer",
+      data: dataUnionMooringAreas,
+      stroked: true,
+      filled: true,
+      lineWidthMinPixels: 1,
+      getPolygon: (d) => d.convex_hull,
+      getFillColor: [255, 190, 90, 100],
+      getLineColor: [200, 130, 40],
+      getLineWidth: 1,
+      pickable: true,
+      autoHighlight: true,
+      highlightColor: [255, 190, 90, 220],
+      onHover: (info) =>
+        setTooltipInfo({
+          objectType: "mooring",
+          hoveredObject: info.object,
+          pointerX: info.x,
+          pointerY: info.y,
+          coordinate: info.centroid,
+        }),
+    }),
     layerVisibility.mooringPolygon.visible &&
       new PolygonLayer({
         id: "dredged-polygon-layer",
