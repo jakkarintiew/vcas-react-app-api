@@ -248,7 +248,7 @@ const MapContainer = ({
         id: "anchorages-text-layer",
         data: dataAnchorages,
         pickable: true,
-        getPosition: (d) => d.centroid,
+        getPosition: (d) => [...d.centroid, 200],
         getText: (d) => d.name,
         getColor: [110, 110, 110],
         sizeUnits: "meters",
