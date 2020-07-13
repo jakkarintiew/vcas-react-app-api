@@ -231,6 +231,9 @@ const framesSlice = createSlice({
     setLoadedFrames: (state, { payload }) => {
       state.loadedFrames = payload;
     },
+    incrementLoadedFrames: (state) => {
+      state.loadedFrames++;
+    },
   },
 });
 
@@ -271,6 +274,7 @@ export const {
   setMetadata: setMetadataActionCreator,
   setCurrentFrame: setCurrentFrameActionCreator,
   setLoadedFrames: setLoadedFramesActionCreator,
+  incrementLoadedFrames: incrementLoadedFramesActionCreator,
 } = framesSlice.actions;
 
 // define reducers

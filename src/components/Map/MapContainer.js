@@ -36,6 +36,8 @@ const MapContainer = ({
   futurePathData,
   mapStyle,
 }) => {
+  // console.log("MapContainer");
+
   // Set your mapbox access token here
   const MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
@@ -198,29 +200,29 @@ const MapContainer = ({
         coverage: 0.98,
         getPosition: (d) => [d.longitude, d.latitude],
       }),
-
-    new PolygonLayer({
-      id: "union-mooring-polygon-layer",
-      data: dataUnionMooringAreas,
-      stroked: true,
-      filled: true,
-      lineWidthMinPixels: 1,
-      getPolygon: (d) => d.convex_hull,
-      getFillColor: [255, 190, 90, 100],
-      getLineColor: [200, 130, 40],
-      getLineWidth: 1,
-      pickable: true,
-      autoHighlight: true,
-      highlightColor: [255, 190, 90, 220],
-      onHover: (info) =>
-        setTooltipInfo({
-          objectType: "mooring",
-          hoveredObject: info.object,
-          pointerX: info.x,
-          pointerY: info.y,
-          coordinate: info.centroid,
-        }),
-    }),
+    false &&
+      new PolygonLayer({
+        id: "union-mooring-polygon-layer",
+        data: dataUnionMooringAreas,
+        stroked: true,
+        filled: true,
+        lineWidthMinPixels: 1,
+        getPolygon: (d) => d.convex_hull,
+        getFillColor: [255, 190, 90, 100],
+        getLineColor: [200, 130, 40],
+        getLineWidth: 1,
+        pickable: true,
+        autoHighlight: true,
+        highlightColor: [255, 190, 90, 220],
+        onHover: (info) =>
+          setTooltipInfo({
+            objectType: "mooring",
+            hoveredObject: info.object,
+            pointerX: info.x,
+            pointerY: info.y,
+            coordinate: info.centroid,
+          }),
+      }),
     layerVisibility.mooringPolygon.visible &&
       new PolygonLayer({
         id: "dredged-polygon-layer",

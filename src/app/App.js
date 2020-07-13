@@ -17,7 +17,8 @@ import TimeSlider from "components/TimeSlider/TimeSlider";
 
 import {
   setMetadataActionCreator,
-  setLoadedFramesActionCreator,
+  // setLoadedFramesActionCreator,
+  incrementLoadedFramesActionCreator,
 } from "app/redux";
 
 const METADATA_PATH =
@@ -35,24 +36,41 @@ const ScreenCircularProgress = withStyles({
 const App = () => {
   // Redux states
   const dispatch = useDispatch();
-
   const darkThemeEnabled = useSelector((state) => state.darkThemeEnabled);
   const metadata = useSelector((state) => state.frames.metadata);
   const currentFrame = useSelector((state) => state.frames.currentFrame);
   const activeVesselID = useSelector((state) => state.activeVesselID);
+  const setMetadata = (metadata) => {
+    dispatch(setMetadataActionCreator(metadata));
+  };
+  // const setLoadedFrames = (framesLength) => {
+  //   dispatch(setLoadedFramesActionCreator(framesLength));
+  // };
+  const incrementLoadedFrames = () => {
+    dispatch(incrementLoadedFramesActionCreator());
+  };
 
   const [vesselsData, setVesselsData] = useState([]);
   const [frames, setFrames] = useState({});
   const [activeVesselsData, setActiveVesselsData] = useState([]);
-  // const [pathData, setPathData] = useState([]);
-  // const [pathFrames, setPathFrames] = useState([]);
   const [error, setError] = useState(null);
-
+  const [pathData, setPathData] = useState([]);
+  const pathDataInitialState = [
+    {
+      path: [],
+      timestamps: [],
+      speed: [],
+      heading: [],
+      course: [],
+      risk: [],
+    },
+  ];
+  const [futurePathData, setFuturePathData] = useState(pathDataInitialState);
+  const [historicalPathData, setHistoricalPathData] = useState(
+    pathDataInitialState
+  );
   // Load first frame + metadata; ran once
   useEffect(() => {
-    const setMetadata = (metadata) => {
-      dispatch(setMetadataActionCreator(metadata));
-    };
     const getFirstFrame = async () => {
       try {
         const promiseFrame = axios.get(FRAMES_DIR + `${0}_frame.json`);
@@ -61,6 +79,7 @@ const App = () => {
           promiseFrame,
           promiseMetadata,
         ]);
+        incrementLoadedFrames();
         setFrames((prevFrames) => ({ ...prevFrames, 0: firstFrame.data }));
         setVesselsData(firstFrame.data);
         setMetadata(metadata.data);
@@ -79,10 +98,8 @@ const App = () => {
         const promiseFrame = await axios.get(
           FRAMES_DIR + `${index}_frame.json`
         );
-        setFrames((prevFrames) => ({
-          ...prevFrames,
-          [index]: promiseFrame.data,
-        }));
+        incrementLoadedFrames();
+        return { frameIndex: index, frameData: promiseFrame.data };
       } catch (error) {
         setError(error);
       }
@@ -95,35 +112,32 @@ const App = () => {
       for (let index = 1; index < totalFrames; index++) {
         promiseFrames.push(getFrame(index));
       }
-      Promise.all(promiseFrames);
+      Promise.all(promiseFrames)
+        .then((responses) => {
+          let framesData = {};
+          responses.map(
+            (elem) => (framesData[elem.frameIndex] = elem.frameData)
+          );
+          // console.log(framesData);
+          setFrames((prevFrames) => ({
+            ...prevFrames,
+            ...framesData,
+          }));
+        })
+        .catch((error) => setError(error));
     };
 
     if (metadata.frames.length) {
       getRemainingFrames();
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [metadata]);
-
-  // When frames are updated, update progress
-  useEffect(() => {
-    const setLoadedFrames = (framesLength) => {
-      dispatch(setLoadedFramesActionCreator(framesLength));
-    };
-    if (
-      (Object.keys(frames).length > 0 &&
-        Object.keys(frames).length % 24 === 0) ||
-      Object.keys(frames).length === metadata.frames.length
-    ) {
-      setLoadedFrames(Object.keys(frames).length);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [frames]);
 
   // When current frame is updated, update data
   useEffect(() => {
     setVesselsData(frames[currentFrame]);
     if (activeVesselID) {
-      // setPathData(pathFrames[currentFrame]);
       const newActiveVessel = frames[currentFrame].filter((vessel) => {
         return vessel.mmsi === activeVesselID;
       });
@@ -132,13 +146,9 @@ const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFrame]);
 
-  const [pathDataNew, setPathDataNew] = useState([]);
-
   // When active vessel is updated, load path data and frames
   useEffect(() => {
     if (vesselsData && activeVesselID) {
-      // setPathData([]);
-      // setPathFrames([]);
       setActiveVesselsData(
         vesselsData.filter((vessel) => {
           return vessel.mmsi === activeVesselID;
@@ -150,125 +160,36 @@ const App = () => {
           const path = await axios.get(
             FRAMES_DIR + `paths_new/${activeVesselID}_path.json`
           );
-          setPathDataNew(path.data);
+          setPathData(path.data);
         } catch (error) {
           console.log(error);
         }
       };
-
-      // const getFirstPathFrames = async () => {
-      //   try {
-      //     const firstPathFrame = await axios.get(
-      //       FRAMES_DIR +
-      //         `paths/${activeVesselID}/${currentFrame}_frame_${activeVesselID}.json`
-      //     );
-      //     setPathData(firstPathFrame.data);
-      //     setPathFrames((prevFrames) => ({
-      //       ...prevFrames,
-      //       [currentFrame]: firstPathFrame.data,
-      //     }));
-      //   } catch (error) {
-      //     console.log(error);
-      //   }
-      // };
-      // getFirstPathFrames();
-
-      // const getPathFrame = async (index) => {
-      //   try {
-      //     const promiseFrame = await axios.get(
-      //       FRAMES_DIR +
-      //         `paths/${activeVesselID}/${index}_frame_${activeVesselID}.json`
-      //     );
-      //     setPathFrames((prevFrames) => ({
-      //       ...prevFrames,
-      //       [index]: promiseFrame.data,
-      //     }));
-      //   } catch {
-      //     // do nothing
-      //   }
-      // };
-      // const getRemainingPathFrames = async () => {
-      //   const promiseFrames = [];
-      //   const totalFrames = metadata.frames.length;
-
-      //   // search ahead
-      //   for (let index = currentFrame + 1; index < totalFrames; index++) {
-      //     promiseFrames.push(getPathFrame(index));
-      //   }
-
-      //   // search back
-      //   for (let index = currentFrame - 1; index >= 0; index--) {
-      //     promiseFrames.push(getPathFrame(index));
-      //   }
-
-      //   Promise.all(promiseFrames.map((p) => p.catch((error) => null)));
-      // };
-      // getRemainingPathFrames();
-
       getPathData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeVesselID]);
 
-  const pathDataInitialState = [
-    {
-      path: [],
-      timestamps: [],
-      speed: [],
-      heading: [],
-      course: [],
-      risk: [],
-    },
-  ];
-  const [futurePathData, setFuturePathData] = useState(pathDataInitialState);
-  const [historicalPathData, setHistoricalPathData] = useState(
-    pathDataInitialState
-  );
-
   useEffect(() => {
-    let currentIndex = pathDataNew.findIndex(
-      (obj) => obj.frame === currentFrame
-    );
+    let currentIndex = pathData.findIndex((obj) => obj.frame === currentFrame);
     let filteredPath;
     if (
-      pathDataNew.length > 0 &&
-      currentFrame <= pathDataNew[pathDataNew.length - 1].frame &&
-      currentFrame >= pathDataNew[0].frame &&
+      pathData.length > 0 &&
+      currentFrame <= pathData[pathData.length - 1].frame &&
+      currentFrame >= pathData[0].frame &&
       currentIndex !== -1
     ) {
-      for (let index = currentIndex; index <= pathDataNew.length - 1; index++) {
-        if (currentIndex === pathDataNew.length - 1) {
+      for (let index = currentIndex; index <= pathData.length - 1; index++) {
+        if (currentIndex === pathData.length - 1) {
           setFuturePathData(pathDataInitialState);
           break;
-        } else if (index === pathDataNew.length - 1) {
-          filteredPath = pathDataNew.filter((elem) => {
-            return (
-              elem.frame >= currentFrame &&
-              elem.frame <= pathDataNew[index].frame
-            );
-          });
-          setFuturePathData([
-            {
-              path: filteredPath.map((frame) => [
-                frame.longitude,
-                frame.latitude,
-              ]),
-              timestamps: filteredPath.map((frame) => frame.timestamp),
-              speed: filteredPath.map((frame) => frame.speed),
-              heading: filteredPath.map((frame) => frame.heading),
-              course: filteredPath.map((frame) => frame.course),
-              risk: filteredPath.map((frame) => frame.risk),
-            },
-          ]);
-          break;
         } else if (
-          pathDataNew[index + 1].frame - pathDataNew[index].frame >
-          1
+          index === pathData.length - 1 ||
+          pathData[index + 1].frame - pathData[index].frame > 1
         ) {
-          filteredPath = pathDataNew.filter((elem) => {
+          filteredPath = pathData.filter((elem) => {
             return (
-              elem.frame >= currentFrame &&
-              elem.frame <= pathDataNew[index].frame
+              elem.frame >= currentFrame && elem.frame <= pathData[index].frame
             );
           });
           setFuturePathData([
@@ -292,35 +213,13 @@ const App = () => {
         if (currentIndex === 0) {
           setHistoricalPathData(pathDataInitialState);
           break;
-        } else if (index === 0) {
-          filteredPath = pathDataNew.filter((elem) => {
-            return (
-              elem.frame >= pathDataNew[index].frame &&
-              elem.frame <= currentFrame
-            );
-          });
-          setHistoricalPathData([
-            {
-              path: filteredPath.map((frame) => [
-                frame.longitude,
-                frame.latitude,
-              ]),
-              timestamps: filteredPath.map((frame) => frame.timestamp),
-              speed: filteredPath.map((frame) => frame.speed),
-              heading: filteredPath.map((frame) => frame.heading),
-              course: filteredPath.map((frame) => frame.course),
-              risk: filteredPath.map((frame) => frame.risk),
-            },
-          ]);
-          break;
         } else if (
-          pathDataNew[index].frame - pathDataNew[index - 1].frame >
-          1
+          index === 0 ||
+          pathData[index].frame - pathData[index - 1].frame > 1
         ) {
-          filteredPath = pathDataNew.filter((elem) => {
+          filteredPath = pathData.filter((elem) => {
             return (
-              elem.frame >= pathDataNew[index].frame &&
-              elem.frame <= currentFrame
+              elem.frame >= pathData[index].frame && elem.frame <= currentFrame
             );
           });
           setHistoricalPathData([
@@ -344,7 +243,7 @@ const App = () => {
       setHistoricalPathData(pathDataInitialState);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathDataNew, currentFrame]);
+  }, [pathData, currentFrame]);
 
   if (error) return <div>Error: {error.message}</div>;
   if (!vesselsData || metadata.frames.length === 0)
