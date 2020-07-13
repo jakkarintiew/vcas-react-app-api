@@ -13,7 +13,7 @@ import PauseCircleFilledIcon from "@material-ui/icons/PauseCircleFilled";
 import {
   togglePanelOpenActionCreator,
   setCurrentFrameActionCreator,
-} from "app/redux";
+} from "app/Redux";
 import CollapseButton from "components/common/CollapseButton";
 import ArrowRight from "components/common/icons/arrow-right";
 

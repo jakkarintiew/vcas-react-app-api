@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
-import { toggleLayerVisibilityActionCreator } from "app/redux";
+import { toggleLayerVisibilityActionCreator } from "app/Redux";
 
 import EyeSeen from "components/common/icons/eye-seen";
 import EyeUnseen from "components/common/icons/eye-unseen";

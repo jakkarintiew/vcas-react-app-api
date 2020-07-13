@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import VCASLogo from "./logo";
+import VCASLogo from "./Logo";
 
 const StyledPanelHeader = styled.div`
   background-color: ${(props) => props.theme.sidePanelHeaderBg};

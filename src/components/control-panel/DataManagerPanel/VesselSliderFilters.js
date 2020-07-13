@@ -5,7 +5,7 @@ import styled from "styled-components";
 import {
   setVesselRiskFilterRangeActionCreator,
   setVesselSpeedFilterRangeActionCreator,
-} from "app/redux";
+} from "app/Redux";
 import SliderFilter from "./SliderFilter";
 
 const FilterWidgetContainer = styled.div`

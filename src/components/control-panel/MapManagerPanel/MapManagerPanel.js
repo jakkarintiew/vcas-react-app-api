@@ -8,7 +8,7 @@ import {
   toggleMiniMapViewActionCreator,
   setViewStatesActionCreator,
   resetViewStatesActionCreator,
-} from "app/redux";
+} from "app/Redux";
 import MapControlToggle from "./MapControlToggle";
 
 const StyledPanelContent = styled.div`

@@ -10,16 +10,16 @@ import { useSelector, useDispatch } from "react-redux";
 import { lightTheme, darkTheme } from "styles/themes";
 import { GlobalStyle } from "styles/global";
 
-import MapContainer from "components/Map/MapContainer";
-import SidePanel from "components/SidePanel/SidePanel";
-import DetailsPanel from "components/DetailsPanel/DetailsPanel";
-import TimeSlider from "components/TimeSlider/TimeSlider";
+import MapContainer from "components/map/MapContainer";
+import SidePanel from "components/control-panel/ControlPanel";
+import DetailsPanel from "components/details-panel/DetailsPanel";
+import TimeSlider from "components/time-slider/TimeSlider";
 
 import {
   setMetadataActionCreator,
   // setLoadedFramesActionCreator,
   incrementLoadedFramesActionCreator,
-} from "app/redux";
+} from "app/Redux";
 
 const METADATA_PATH =
   "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/frames_metadata.json";

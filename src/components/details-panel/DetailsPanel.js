@@ -2,7 +2,7 @@ import React from "react";
 
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
-import { togglePanelOpenActionCreator } from "app/redux";
+import { togglePanelOpenActionCreator } from "app/Redux";
 
 import VesselDetails from "./VesselDetails";
 import CollapseButton from "components/common/CollapseButton";

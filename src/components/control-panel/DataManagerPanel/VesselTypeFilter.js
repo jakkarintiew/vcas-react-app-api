@@ -12,7 +12,7 @@ import {
   searchFilterActionCreator,
   selectAllActionCreator,
   deselectAllActionCreator,
-} from "app/redux";
+} from "app/Redux";
 
 const FilterWidgetContainer = styled.div`
   background-color: ${(props) => props.theme.sidePanelHeaderBg};
