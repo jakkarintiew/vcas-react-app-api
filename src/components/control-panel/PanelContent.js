@@ -10,9 +10,9 @@ import EditLocationIcon from "@material-ui/icons/EditLocation";
 
 import { Scrollbars } from "react-custom-scrollbars";
 
-import DataManagerPanel from "./DataManagerPanel/DataManagerPanel";
-import LayerManagerPanel from "./LayerManagerPanel/LayerManagerPanel";
-import MapManagerPanel from "./MapManagerPanel/MapManagerPanel";
+import DataManagerPanel from "./data-manager-panel/DataManagerPanel";
+import LayerManagerPanel from "./layer-manager-panel/LayerManagerPanel";
+import MapManagerPanel from "./map-manager-panel/MapManagerPanel";
 
 const StyledTabsContainer = styled.div`
   background-color: ${(props) => props.theme.sidePanelHeaderBg};

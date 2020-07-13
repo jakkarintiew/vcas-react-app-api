@@ -4,8 +4,9 @@ import styled from "styled-components";
 const ControlContainer = styled.div`
   background-color: ${(props) => props.theme.sidePanelHeaderBg};
   color: ${(props) => props.theme.labelTextColor};
+  font-size: 0.8em;
   width: 100%;
-  height: 40px;
+  height: 35px;
 `;
 
 const CheckBoxWrapper = styled.div`
@@ -17,17 +18,17 @@ const CheckBoxLabel = styled.label`
   position: absolute;
   top: 0;
   left: 0;
-  width: 42px;
-  height: 26px;
-  border-radius: 15px;
+  width: 35px;
+  height: 22px;
+  border-radius: 12.5px;
   background: #bebebe;
   cursor: pointer;
   &::after {
     content: "";
     display: block;
     border-radius: 50%;
-    width: 18px;
-    height: 18px;
+    width: 15px;
+    height: 15px;
     margin: 3px;
     background: #ffffff;
     transition: 0.2s;
@@ -36,18 +37,18 @@ const CheckBoxLabel = styled.label`
 const CheckBox = styled.input`
   opacity: 0;
   z-index: 3;
-  border-radius: 15px;
-  width: 42px;
-  height: 26px;
+  border-radius: 12.5px;
+  width: 35px;
+  height: 22px;
   &:checked + ${CheckBoxLabel} {
     background: #009e8c;
     &::after {
       content: "";
       display: block;
       border-radius: 50%;
-      width: 18px;
-      height: 18px;
-      margin-left: 21px;
+      width: 15px;
+      height: 15px;
+      margin-left: 17.5px;
       transition: 0.2s;
     }
   }
