@@ -69,11 +69,11 @@ const App = () => {
   const [historicalPathData, setHistoricalPathData] = useState(
     pathDataInitialState
   );
-  // Load first frame + metadata; ran once
+  // Load first frame + metadata; ran once at startup
   useEffect(() => {
     const getFirstFrame = async () => {
       try {
-        const promiseFrame = axios.get(FRAMES_DIR + `${0}_frame.json`);
+        const promiseFrame = axios.get(FRAMES_DIR + `0_frame.json`);
         const promiseMetadata = axios.get(METADATA_PATH);
         const [firstFrame, metadata] = await Promise.all([
           promiseFrame,
