@@ -11,7 +11,7 @@ import { lightTheme, darkTheme } from "styles/themes";
 import { GlobalStyle } from "styles/global";
 
 import MapContainer from "components/map/MapContainer";
-import SidePanel from "components/control-panel/ControlPanel";
+import ControlPanel from "components/control-panel/ControlPanel";
 import DetailsPanel from "components/details-panel/DetailsPanel";
 import TimeSlider from "components/time-slider/TimeSlider";
 
@@ -260,7 +260,7 @@ const App = () => {
         <ThemeProvider theme={darkThemeEnabled ? darkTheme : lightTheme}>
           <GlobalStyle />
           <div className="h-screen w-screen flex justify-between overflow-hidden">
-            <SidePanel vesselsData={vesselsData} />
+            <ControlPanel vesselsData={vesselsData} />
             <div className="h-full w-full flex-1">
               <TimeSlider />
             </div>
