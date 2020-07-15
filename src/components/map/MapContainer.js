@@ -36,26 +36,34 @@ const MapContainer = ({
   futurePathData,
   mapStyle,
 }) => {
-  // console.log("MapContainer");
-
   // Set your mapbox access token here
   const MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
-
   // Redux states
   const dispatch = useDispatch();
   const layerVisibility = useSelector((state) => state.layerVisibility);
+  const mapView = useSelector((state) => state.mapView);
+  const vesselTypeFilter = useSelector((state) => state.vesselTypeFilter);
+  const vesselSliderFilter = useSelector((state) => state.vesselSliderFilter);
+
   const setActiveVesselID = (activeVesselID) => {
     dispatch(setActiveVesselActionCreator(activeVesselID));
   };
-  const mapView = useSelector((state) => state.mapView);
   const setViewStates = (newViewState) => {
     dispatch(setViewStatesActionCreator(newViewState));
   };
   const storeActiveVesselViewStates = (vesselViewState) => {
     dispatch(storeActiveVesselViewStatesActionCreator(vesselViewState));
   };
-  const vesselTypeFilter = useSelector((state) => state.vesselTypeFilter);
-  const vesselSliderFilter = useSelector((state) => state.vesselSliderFilter);
+
+  const onViewStateChange = ({ viewState, viewId }) => {
+    const newViewStates = {
+      ...mapView.viewStates,
+    };
+    // Update a single view
+    newViewStates[viewId] = viewState;
+    // Save the view state and trigger rerender
+    setViewStates(newViewStates);
+  };
 
   const VIEWS = [
     new MapView({
@@ -85,16 +93,6 @@ const MapContainer = ({
         },
       }),
   ].filter(Boolean);
-
-  const onViewStateChange = ({ viewState, viewId }) => {
-    const newViewStates = {
-      ...mapView.viewStates,
-    };
-    // Update a single view
-    newViewStates[viewId] = viewState;
-    // Save the view state and trigger rerender
-    setViewStates(newViewStates);
-  };
 
   const updateVesselViewState = (vesselViewState) => {
     if (mapView.vesselViewEnabled) {
@@ -195,7 +193,8 @@ const MapContainer = ({
         data: riskyVessels,
         lowerPercentile: 0,
         extruded: false,
-        radius: 1500,
+        radius:
+          78271.484 * Math.exp(-0.6932415 * mapView.viewStates.main.zoom) * 50,
         opacity: 0.25,
         coverage: 0.98,
         getPosition: (d) => [d.longitude, d.latitude],
