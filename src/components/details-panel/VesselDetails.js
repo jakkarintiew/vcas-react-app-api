@@ -18,8 +18,8 @@ const VesselDetails = ({
         label: "Historical Speed",
         fill: false,
         lineTension: 0,
-        pointBackgroundColor: "rgba(225, 105, 40, 0.5)",
-        borderColor: "rgba(225, 105, 40, 0.5)",
+        pointBackgroundColor: "rgba(150, 150, 150, 0.75)",
+        borderColor: "rgba(150, 150, 150, 0.75)",
         pointRadius: 1,
         data: [
           ...historicalPathData.timestamps.map((x, i) => ({
@@ -32,8 +32,8 @@ const VesselDetails = ({
         label: "Future Speed",
         fill: false,
         lineTension: 0,
-        pointBackgroundColor: "rgba(54, 225, 215, 0.5)",
-        borderColor: "rgba(54, 225, 215, 0.5)",
+        pointBackgroundColor: "rgb(41, 169, 255, 0.5)",
+        borderColor: "rgb(41, 169, 255, 0.5)",
         pointRadius: 1,
         data: [
           ...futurePathData.timestamps.map((x, i) => ({
@@ -51,8 +51,8 @@ const VesselDetails = ({
         label: "Historical Course",
         fill: false,
         lineTension: 0,
-        pointBackgroundColor: "rgba(225, 105, 40, 0.5)",
-        borderColor: "rgba(225, 105, 40, 0.5)",
+        pointBackgroundColor: "rgba(150, 150, 150, 0.75)",
+        borderColor: "rgba(150, 150, 150, 0.75)",
         pointRadius: 1,
         data: [
           ...historicalPathData.timestamps.map((x, i) => ({
@@ -65,8 +65,8 @@ const VesselDetails = ({
         label: "Future Course",
         fill: false,
         lineTension: 0,
-        pointBackgroundColor: "rgba(54, 225, 215, 0.5)",
-        borderColor: "rgba(54, 225, 215, 0.5)",
+        pointBackgroundColor: "rgb(41, 169, 255, 0.5)",
+        borderColor: "rgb(41, 169, 255, 0.5)",
         pointRadius: 1,
         data: [
           ...futurePathData.timestamps.map((x, i) => ({
@@ -84,8 +84,8 @@ const VesselDetails = ({
         label: "Historical Heading",
         fill: false,
         lineTension: 0,
-        pointBackgroundColor: "rgba(225, 105, 40, 0.5)",
-        borderColor: "rgba(225, 105, 40, 0.5)",
+        pointBackgroundColor: "rgba(150, 150, 150, 0.75)",
+        borderColor: "rgba(150, 150, 150, 0.75)",
         pointRadius: 1,
         data: [
           ...historicalPathData.timestamps.map((x, i) => ({
@@ -98,8 +98,8 @@ const VesselDetails = ({
         label: "Future Heading",
         fill: false,
         lineTension: 0,
-        pointBackgroundColor: "rgba(54, 225, 215, 0.5)",
-        borderColor: "rgba(54, 225, 215, 0.5)",
+        pointBackgroundColor: "rgb(41, 169, 255, 0.5)",
+        borderColor: "rgb(41, 169, 255, 0.5)",
         pointRadius: 1,
         data: [
           ...futurePathData.timestamps.map((x, i) => ({
