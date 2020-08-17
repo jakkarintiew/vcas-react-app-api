@@ -325,7 +325,7 @@ const MapContainer = ({
         getSize: (d) => 300,
         sizeUnits: "meters",
         sizeScale: 1,
-        sizeMinPixels: 10,
+        sizeMinPixels: 8,
         pickable: true,
         billboard: false,
         onHover: (info) =>
@@ -337,6 +337,12 @@ const MapContainer = ({
             coordinate: info.coordinate,
           }),
         onClick: (info) => clickVesselEvent(info.object.mmsi),
+        loadOptions: {
+          imagebitmap: {
+            premultiplyAlpha: "premultiply",
+            resizeQuality: "high",
+          },
+        },
       }),
     activeVesselsData.length > 0 &&
       layerVisibility.vesselIcon.visible &&
@@ -354,7 +360,7 @@ const MapContainer = ({
         getSize: (d) => 300,
         sizeUnits: "meters",
         sizeScale: 2.5,
-        sizeMinPixels: 15,
+        sizeMinPixels: 16,
         billboard: false,
         pickable: true,
         onHover: (info) =>
@@ -365,6 +371,12 @@ const MapContainer = ({
             pointerY: info.y,
             coordinate: info.coordinate,
           }),
+        loadOptions: {
+          imagebitmap: {
+            premultiplyAlpha: "premultiply",
+            resizeQuality: "high",
+          },
+        },
       }),
   ].filter(Boolean);
 
