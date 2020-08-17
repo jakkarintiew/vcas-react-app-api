@@ -43,6 +43,7 @@ const LayerManagerPanel = () => {
           </div>
           <LayerVisibilityToggle layerName={"Mooring Areas"} />
           <LayerVisibilityToggle layerName={"Anchorage Areas"} />
+          <LayerVisibilityToggle layerName={"Collision Risk Heatmap"} />
           <LayerVisibilityToggle layerName={"Collision Risk Hexagon Grid"} />
           <LayerVisibilityToggle layerName={"Collision Risk Screen Grid"} />
         </LayerGroupContainer>

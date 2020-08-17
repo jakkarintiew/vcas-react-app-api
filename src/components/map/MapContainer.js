@@ -6,6 +6,7 @@ import DeckGL from "@deck.gl/react";
 import {
   IconLayer,
   PathLayer,
+  HeatmapLayer,
   ScreenGridLayer,
   HexagonLayer,
   PolygonLayer,
@@ -178,6 +179,18 @@ const MapContainer = ({
   }, [activeVesselsData]);
 
   const layers = [
+    layerVisibility.riskHeatmap.visible &&
+      new HeatmapLayer({
+        id: "heatmapLayer",
+        id: "risk-heatmap-layer",
+        data: riskyVessels,
+        getPosition: (d) => [d.longitude, d.latitude],
+        getWeight: (d) => d.risk,
+        radiusPixels: 80,
+        opacity: 0.2,
+        intensity: 1,
+        threshold: 0.1,
+      }),
     layerVisibility.riskScreenGrid.visible &&
       new ScreenGridLayer({
         id: "risk-screen-grid-layer",
