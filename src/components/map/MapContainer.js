@@ -145,7 +145,7 @@ const MapContainer = ({
   };
 
   const riskyVessels = vesselsData.filter((vessel) => {
-    return vessel.risk > 50;
+    return vessel.risk > 65;
   });
 
   const visibleVessels = vesselsData.filter((vessel) => {
@@ -181,13 +181,14 @@ const MapContainer = ({
   const layers = [
     layerVisibility.riskHeatmap.visible &&
       new HeatmapLayer({
-        id: "heatmapLayer",
         id: "risk-heatmap-layer",
         data: riskyVessels,
         getPosition: (d) => [d.longitude, d.latitude],
-        getWeight: (d) => d.risk,
-        radiusPixels: 80,
-        opacity: 0.2,
+        getWeight: (d) => d.risk / 100,
+        radiusPixels:
+          8000 /
+          (78271.484 * Math.exp(-0.6932415 * mapView.viewStates.main.zoom)),
+        opacity: 0.1,
         intensity: 1,
         threshold: 0.1,
       }),
@@ -196,7 +197,7 @@ const MapContainer = ({
         id: "risk-screen-grid-layer",
         data: riskyVessels,
         pickable: false,
-        opacity: 0.25,
+        opacity: 0.15,
         cellSizePixels: 64,
         getPosition: (d) => [d.longitude, d.latitude],
       }),
@@ -208,7 +209,7 @@ const MapContainer = ({
         extruded: false,
         radius:
           78271.484 * Math.exp(-0.6932415 * mapView.viewStates.main.zoom) * 50,
-        opacity: 0.25,
+        opacity: 0.15,
         coverage: 0.98,
         getPosition: (d) => [d.longitude, d.latitude],
       }),
@@ -303,9 +304,22 @@ const MapContainer = ({
         id: "historical-path-layer",
         data: historicalPathData,
         getPath: (d) => d.path,
+        getColor: [100, 100, 100],
+        opacity: 1,
+        getWidth: 12,
+        rounded: true,
+        widthMinPixels: 12,
+        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+      }),
+    activeVesselsData.length > 0 &&
+      layerVisibility.historicalPath.visible &&
+      new PathLayer({
+        id: "historical-path-layer",
+        data: historicalPathData,
+        getPath: (d) => d.path,
         getColor: [150, 150, 150],
         opacity: 1,
-        getWidth: 10,
+        getWidth: 8,
         rounded: true,
         widthMinPixels: 8,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
@@ -316,8 +330,21 @@ const MapContainer = ({
         id: "future-path-layer",
         data: futurePathData,
         getPath: (d) => d.path,
+        getColor: [25, 120, 180],
+        getWidth: 12,
+        opacity: 1,
+        rounded: true,
+        widthMinPixels: 12,
+        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+      }),
+    activeVesselsData.length > 0 &&
+      layerVisibility.futurePath.visible &&
+      new PathLayer({
+        id: "future-path-layer",
+        data: futurePathData,
+        getPath: (d) => d.path,
         getColor: [41, 168, 255],
-        getWidth: 10,
+        getWidth: 8,
         opacity: 1,
         rounded: true,
         widthMinPixels: 8,
@@ -330,8 +357,43 @@ const MapContainer = ({
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
         iconAtlas: require("img/vessel_marker.png"),
         iconMapping: {
-          vesselMarker: { x: 0, y: 0, width: 512, height: 512, mask: false },
+          vesselMarker: { x: 0, y: 0, width: 512, height: 512, mask: true },
         },
+        getColor: (d) => [255, 255, 255, 200],
+        getIcon: (d) => "vesselMarker",
+        getPosition: (d) => [d.longitude, d.latitude, 0],
+        getAngle: (d) => 360 - d.heading,
+        getSize: (d) => 300,
+        sizeUnits: "meters",
+        sizeScale: 1.8,
+        sizeMinPixels: 14,
+        pickable: true,
+        billboard: false,
+        onHover: (info) =>
+          setTooltipInfo({
+            objectType: "vessel",
+            hoveredObject: info.object,
+            pointerX: info.x,
+            pointerY: info.y,
+            coordinate: info.coordinate,
+          }),
+        onClick: (info) => clickVesselEvent(info.object.mmsi),
+      }),
+    layerVisibility.vesselIcon.visible &&
+      new IconLayer({
+        id: "vessel-icon-layer",
+        data: visibleVessels,
+        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+        iconAtlas: require("img/vessel_marker.png"),
+        iconMapping: {
+          vesselMarker: { x: 0, y: 0, width: 512, height: 512, mask: true },
+        },
+        getColor: (d) =>
+          d.risk > 75
+            ? [252, 40, 20]
+            : d.risk > 50
+            ? [255, 160, 0]
+            : [52, 199, 89],
         getIcon: (d) => "vesselMarker",
         getPosition: (d) => [d.longitude, d.latitude, 0],
         getAngle: (d) => 360 - d.heading,
@@ -350,13 +412,8 @@ const MapContainer = ({
             coordinate: info.coordinate,
           }),
         onClick: (info) => clickVesselEvent(info.object.mmsi),
-        loadOptions: {
-          imagebitmap: {
-            premultiplyAlpha: "premultiply",
-            resizeQuality: "high",
-          },
-        },
       }),
+
     activeVesselsData.length > 0 &&
       layerVisibility.vesselIcon.visible &&
       new IconLayer({
