@@ -14,7 +14,7 @@ import {
   COORDINATE_SYSTEM,
   FlyToInterpolator,
 } from "deck.gl";
-// import { PathStyleExtension } from "@deck.gl/extensions";
+import { PathStyleExtension } from "@deck.gl/extensions";
 import { View, MapView } from "@deck.gl/core";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -197,7 +197,7 @@ const MapContainer = ({
         getLineWidth: 1,
         pickable: true,
         autoHighlight: true,
-        highlightColor: [250, 182, 255, 220],
+        highlightColor: [220, 182, 225, 200],
         onHover: (info) =>
           setTooltipInfo({
             objectType: "fairway",
@@ -252,6 +252,9 @@ const MapContainer = ({
             pointerY: info.y,
             coordinate: info.centroid,
           }),
+        getDashArray: [10, 10],
+        dashJustified: true,
+        extensions: [new PathStyleExtension({ dash: true })],
       }),
     false &&
       new PolygonLayer({
