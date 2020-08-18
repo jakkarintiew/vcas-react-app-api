@@ -85,7 +85,8 @@ const MapTooltip = ({ tooltipInfo }) => {
             <b>Ship Name</b>: {hoveredObject.shipname}
           </div>
           <div>
-            <b>Ship Type</b>: {vessel_type_lookup[hoveredObject.shiptype]} ({hoveredObject.shiptype})
+            <b>Ship Type</b>: {vessel_type_lookup[hoveredObject.shiptype]} (
+            {hoveredObject.shiptype})
           </div>
           <div>
             <b>Speed</b>: {hoveredObject.speed}
@@ -111,7 +112,9 @@ const MapTooltip = ({ tooltipInfo }) => {
         </div>
       )}
 
-      {(objectType === "anchorage" || objectType === "mooring") && (
+      {(objectType === "anchorage" ||
+        objectType === "mooring" ||
+        objectType === "fairway") && (
         <div>
           <div>
             <b>Seamark Type</b>: {hoveredObject["seamark_type"]}

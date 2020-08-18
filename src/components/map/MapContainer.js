@@ -26,6 +26,9 @@ import {
 
 import MapTooltip from "./MapTooltip";
 
+import dataFairways from "data/seamark_fairways.json";
+import dataLanes from "data/seamark_lanes.json";
+import dataLaneBoundaries from "data/seamark_separation.json";
 import dataAnchorages from "data/seamark_anchorages.json";
 import dataMooringAreas from "data/seamark_dredged_areas.json";
 import dataUnionMooringAreas from "data/seamark_mooring_areas_1.json";
@@ -181,6 +184,75 @@ const MapContainer = ({
   }, [activeVesselsData]);
 
   const layers = [
+    layerVisibility.anchorangePolygon.visible &&
+      new PolygonLayer({
+        id: "fairways-polygon-layer",
+        data: dataFairways,
+        stroked: true,
+        filled: true,
+        lineWidthMinPixels: 1,
+        getPolygon: (d) => d.coordinates,
+        getFillColor: [200, 152, 210, 100],
+        getLineColor: [180, 132, 190],
+        getLineWidth: 1,
+        pickable: true,
+        autoHighlight: true,
+        highlightColor: [250, 182, 255, 220],
+        onHover: (info) =>
+          setTooltipInfo({
+            objectType: "fairway",
+            hoveredObject: info.object,
+            pointerX: info.x,
+            pointerY: info.y,
+            coordinate: info.centroid,
+          }),
+      }),
+    layerVisibility.anchorangePolygon.visible &&
+      new PathLayer({
+        id: "lanes-path-layer",
+        data: dataLanes,
+        getPath: (d) => d.coordinates,
+        getColor: [180, 132, 190],
+        opacity: 1,
+        getWidth: 2,
+        rounded: false,
+        widthMinPixels: 2,
+        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+        pickable: true,
+        autoHighlight: true,
+        highlightColor: [250, 182, 255, 220],
+        onHover: (info) =>
+          setTooltipInfo({
+            objectType: "fairway",
+            hoveredObject: info.object,
+            pointerX: info.x,
+            pointerY: info.y,
+            coordinate: info.centroid,
+          }),
+      }),
+    layerVisibility.anchorangePolygon.visible &&
+      new PathLayer({
+        id: "lane-boundary-path-layer",
+        data: dataLaneBoundaries,
+        getPath: (d) => d.coordinates,
+        getColor: [140, 140, 140],
+        opacity: 1,
+        getWidth: 1,
+        rounded: false,
+        widthMinPixels: 1,
+        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+        pickable: true,
+        autoHighlight: true,
+        highlightColor: [180, 180, 180, 220],
+        onHover: (info) =>
+          setTooltipInfo({
+            objectType: "fairway",
+            hoveredObject: info.object,
+            pointerX: info.x,
+            pointerY: info.y,
+            coordinate: info.centroid,
+          }),
+      }),
     false &&
       new PolygonLayer({
         id: "union-mooring-polygon-layer",
