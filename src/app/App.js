@@ -71,6 +71,7 @@ const App = () => {
   );
 
   const [riskPaths, setRiskPaths] = useState([]);
+  const [riskPathsLoading, setRiskPathsLoading] = useState(false);
 
   const getPath = async (vesselID) => {
     try {
@@ -158,6 +159,8 @@ const App = () => {
     riskVessels.forEach((vessel) => {
       promiseRiskPaths.push(getPath(vessel.mmsi));
     });
+
+    setRiskPathsLoading(true);
     Promise.all(promiseRiskPaths)
       .then((responses) => {
         responses.forEach((path) => {
@@ -166,6 +169,7 @@ const App = () => {
             getFuturePath(path)[0],
           ]);
         });
+        setRiskPathsLoading(false);
       })
       .catch((error) => setError(error));
   };
@@ -250,7 +254,7 @@ const App = () => {
 
   // When vesselsData is updated, update data
   useEffect(() => {
-    if (vesselsData) {
+    if (vesselsData && !riskPathsLoading) {
       setRiskPaths([]);
       getRiskPathData();
     }
