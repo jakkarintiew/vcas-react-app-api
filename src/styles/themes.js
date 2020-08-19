@@ -254,7 +254,7 @@ export const panelActiveBgLT = "#6A7485";
 export const panelHeaderIcon = "#6A7485";
 export const panelHeaderIconActive = "#A0A7B4";
 export const panelHeaderHeight = 48;
-export const panelBoxShadow = "0 6px 12px 0 rgba(0,0,0,0.16)";
+export const panelBoxShadow = "0 3px 6px 0 rgba(0,0,0,0.10)";
 export const panelBorderRadius = "2px";
 export const panelBackgroundLT = "#F8F8F9";
 
