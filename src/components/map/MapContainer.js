@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 import StaticMap, { TRANSITION_EVENTS } from "react-map-gl";
@@ -34,9 +35,13 @@ import dataMooringAreas from "data/seamark_mooring_areas.json";
 // import dataUnionMooringAreas from "data/seamark_mooring_areas_1.json";
 import vesselTypeLookup from "data/vessel_type_lookup.json";
 
+const FRAMES_DIR =
+  "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/";
+
 const MapContainer = ({
   vesselsData,
   riskPaths,
+  closeEncounters,
   activeVesselsData,
   historicalPathData,
   futurePathData,
@@ -134,6 +139,93 @@ const MapContainer = ({
       transitionInterpolator: new FlyToInterpolator(),
     };
     updateVesselViewState(vesselViewState);
+  };
+
+  const pathDataInitialState = [
+    {
+      path: [],
+      timestamps: [],
+      speed: [],
+      heading: [],
+      course: [],
+      risk: [],
+    },
+  ];
+  const [V1PathData, setV1PathData] = useState(pathDataInitialState);
+  const [V2PathData, setV2PathData] = useState(pathDataInitialState);
+
+  const getPath = async (vesselID) => {
+    try {
+      const promisePath = await axios.get(
+        FRAMES_DIR + `paths_new/${vesselID}_path.json`
+      );
+      return promisePath.data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const currentFrame = useSelector((state) => state.frames.currentFrame);
+
+  const getFuturePath = (pathData) => {
+    let currentIndex = pathData.findIndex((obj) => obj.frame === currentFrame);
+    let filteredPath;
+    for (let index = currentIndex; index <= pathData.length - 1; index++) {
+      if (currentIndex === pathData.length - 1) {
+        return pathDataInitialState;
+      } else if (
+        index === pathData.length - 1 ||
+        pathData[index + 1].frame - pathData[index].frame > 1
+      ) {
+        filteredPath = pathData.filter((elem) => {
+          return (
+            elem.frame >= currentFrame && elem.frame <= pathData[index].frame
+          );
+        });
+        return [
+          {
+            path: filteredPath.map((frame) => [
+              frame.longitude,
+              frame.latitude,
+            ]),
+            timestamps: filteredPath.map((frame) => frame.timestamp),
+            speed: filteredPath.map((frame) => frame.speed),
+            heading: filteredPath.map((frame) => frame.heading),
+            course: filteredPath.map((frame) => frame.course),
+            risk: filteredPath.map((frame) => frame.risk),
+          },
+        ];
+      }
+    }
+  };
+
+  const clickWarningEvent = (object) => {
+    // Zoom to event
+    setViewStates({
+      main: {
+        ...mapView.viewStates.main,
+        longitude: object.vessel_1_longitude,
+        latitude: object.vessel_1_latitude,
+        zoom: 12,
+        pitch: 0,
+        bearning: 0,
+        transitionDuration: 500,
+        transitionInterruption: TRANSITION_EVENTS.UPDATE,
+        transitionInterpolator: new FlyToInterpolator(),
+      },
+      minimap: {
+        ...mapView.viewStates.minimap,
+        longitude: object.vessel_1_longitude,
+        latitude: object.vessel_1_latitude,
+      },
+    });
+
+    // Get paths
+    Promise.resolve(getPath(object.vessel_1_mmsi)).then((response) => {
+      setV1PathData(getFuturePath(response));
+    });
+    Promise.resolve(getPath(object.vessel_2_mmsi)).then((response) => {
+      setV2PathData(getFuturePath(response));
+    });
   };
 
   const [tooltipInfo, setTooltipInfo] = useState({
@@ -400,6 +492,79 @@ const MapContainer = ({
         rounded: true,
         widthMinPixels: 5,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+      }),
+
+    true &&
+      new PathLayer({
+        id: "v1-path-border-layer",
+        data: V1PathData,
+        getPath: (d) => d.path,
+        getColor: [150, 132, 0],
+        widthUnits: "meters",
+        getWidth: 80,
+        rounded: true,
+        widthMinPixels: 9,
+        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+      }),
+    true &&
+      new PathLayer({
+        id: "v1-path-layer",
+        data: V1PathData,
+        getPath: (d) => d.path,
+        getColor: [250, 232, 0],
+        widthUnits: "meters",
+        getWidth: 60,
+        rounded: true,
+        widthMinPixels: 6,
+        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+      }),
+    true &&
+      new PathLayer({
+        id: "v2-path-border-layer",
+        data: V2PathData,
+        getPath: (d) => d.path,
+        getColor: [180, 80, 180],
+        widthUnits: "meters",
+        getWidth: 80,
+        rounded: true,
+        widthMinPixels: 9,
+        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+      }),
+    true &&
+      new PathLayer({
+        id: "v2-path-layer",
+        data: V2PathData,
+        getPath: (d) => d.path,
+        getColor: [230, 120, 230],
+        widthUnits: "meters",
+        getWidth: 60,
+        rounded: true,
+        widthMinPixels: 6,
+        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+      }),
+    true &&
+      new IconLayer({
+        id: "warning-icon-layer",
+        data: closeEncounters,
+        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+        iconAtlas: require("img/warning_red.png"),
+        iconMapping: {
+          warningMarker: { x: 0, y: 0, width: 570, height: 570, mask: false },
+        },
+        getIcon: (d) => "warningMarker",
+        getPosition: (d) => [
+          (d.vessel_1_longitude + d.vessel_2_longitude) / 2,
+          (d.vessel_1_latitude + d.vessel_2_latitude) / 2,
+          0,
+        ],
+        getSize: (d) => 600,
+        sizeUnits: "meters",
+        sizeScale: 1,
+        sizeMinPixels: 30,
+        sizeMaxPixels: 400,
+        billboard: true,
+        pickable: true,
+        onClick: (info) => clickWarningEvent(info.object),
       }),
     activeVesselsData.length > 0 &&
       layerVisibility.historicalPath.visible &&

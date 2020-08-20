@@ -21,6 +21,8 @@ import {
   incrementLoadedFramesActionCreator,
 } from "app/Redux";
 
+import allCloseEncounters from "data/close_encounters.json";
+
 const METADATA_PATH =
   "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/frames_metadata.json";
 const FRAMES_DIR =
@@ -210,7 +212,7 @@ const App = () => {
       }
     };
     const getRemainingFrames = async () => {
-      await new Promise((r) => setTimeout(r, 1000));
+      await new Promise((r) => setTimeout(r, 3000));
       const totalFrames = metadata.frames.length;
       const promiseFrames = [];
       for (let index = 1; index < totalFrames; index++) {
@@ -252,11 +254,15 @@ const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFrame]);
 
+  const layerVisibility = useSelector((state) => state.layerVisibility);
+
   // When vesselsData is updated, update data
   useEffect(() => {
     if (vesselsData && !riskPathsLoading) {
       setRiskPaths([]);
-      getRiskPathData();
+      if (layerVisibility.riskPath.visible) {
+        getRiskPathData();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vesselsData]);
@@ -328,6 +334,9 @@ const App = () => {
           <MapContainer
             vesselsData={vesselsData}
             riskPaths={riskPaths}
+            closeEncounters={
+              allCloseEncounters[currentFrame >= 134 ? 179 : currentFrame + 45]
+            }
             activeVesselsData={activeVesselsData}
             historicalPathData={historicalPathData}
             futurePathData={futurePathData}
