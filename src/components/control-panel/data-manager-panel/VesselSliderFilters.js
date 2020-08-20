@@ -13,7 +13,7 @@ const FilterWidgetContainer = styled.div`
   color: ${(props) => props.theme.textColor};
   padding: 6px;
   margin-bottom: 8px;
-  max-height: 200px;
+  max-height: 250px;
 `;
 
 const VesselSliderFilters = ({ vesselsData }) => {
