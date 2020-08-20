@@ -23,20 +23,21 @@ import Box from "@material-ui/core/Box";
 
 const BottomPanelBox = styled.div`
   width: 100%;
-  height: ${(props) => props.height + 2 * props.theme.sidePanel.margin.top}px;
+  height: ${(props) =>
+    props.height + 2 * props.theme.sidePanel.margin.bottom}px;
   position: relative;
 `;
 
 const StyledTimeSliderContainer = styled.div`
   z-index: 99;
-  bottom: 5px;
-  height: ${(props) => props.height + 2 * props.theme.sidePanel.margin.top}px;
+  height: ${(props) =>
+    props.height + 2 * props.theme.sidePanel.margin.bottom}px;
   max-width: 100%;
   display: flex;
   position: relative;
-  padding-top: ${(props) => props.theme.sidePanel.margin.top}px;
-  padding-right: 0px;
+  padding-top: ${(props) => props.theme.sidePanel.margin.bottom}px;
   padding-bottom: ${(props) => props.theme.sidePanel.margin.bottom}px;
+  padding-right: 0px;
   padding-left: 0px;
   transition: ${(props) => props.theme.transitionFast};
 `;
@@ -47,6 +48,7 @@ const TimeSliderInner = styled.div`
   background-color: ${(props) => props.theme.sidePanelBg};
   height: 100%;
   width: 100%;
+  border-radius: 5px;
 `;
 
 const StyledIconButton = styled(IconButton)`
@@ -125,19 +127,6 @@ const CircularProgressWithLabel = (props) => {
   );
 };
 
-// const StyledLinearProgress = withStyles({
-//   root: {
-//     height: 8,
-//     marginTop: 20,
-//   },
-//   colorPrimary: {
-//     backgroundColor: "#808080",
-//   },
-//   bar: {
-//     backgroundColor: "#00d672",
-//   },
-// })(LinearProgress);
-
 const TimeSlider = () => {
   // Redux states
   const dispatch = useDispatch();
@@ -146,6 +135,7 @@ const TimeSlider = () => {
   const togglePanelOpen = (panelKey) => {
     dispatch(togglePanelOpenActionCreator(panelKey));
   };
+
   const currentFrame = useSelector((state) => state.frames.currentFrame);
   const metadata = useSelector((state) => state.frames.metadata);
   const loadedFrames = useSelector((state) => state.frames.loadedFrames);
@@ -202,7 +192,7 @@ const TimeSlider = () => {
 
   // Component constants
   const initialDegree = 90;
-  const height = 100;
+  const height = 90;
   const panelKey = "timeSlider";
   const panel =
     panelOpen[Object.keys(panelOpen).find((key) => key === panelKey)];
@@ -252,7 +242,7 @@ const TimeSlider = () => {
   }, [loadedFrames, totalFrames]);
 
   return (
-    <BottomPanelBox className="h-full flex flex-col-reverse space-y-reverse">
+    <BottomPanelBox className="flex-1 flex flex-col-reverse space-y-reverse">
       <StyledTimeSliderContainer height={panel.isOpen ? height : 0}>
         {panel.isOpen && (
           <TimeSliderInner>
@@ -269,12 +259,6 @@ const TimeSlider = () => {
                 </StyledIconButton>
 
                 <div className="px-5 flex-auto -mb-6">
-                  {/* {loadedFrames < totalFrames ? (
-                  <StyledLinearProgress
-                    variant="indeterminate"
-                    value={(loadedFrames / totalFrames) * 100}
-                  />
-                ) : ()} */}
                   <StyledSlider
                     value={sliderValue}
                     min={0}
@@ -289,7 +273,7 @@ const TimeSlider = () => {
             )}
           </TimeSliderInner>
         )}
-        <CollapseButton onClick={handleOnClick} style={{ top: "-5px" }}>
+        <CollapseButton onClick={handleOnClick} style={{ top: "2px" }}>
           <ArrowRight
             height="12px"
             style={{

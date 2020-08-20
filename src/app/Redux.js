@@ -65,6 +65,10 @@ const panelOpenInitialState = {
     panelName: "Time Slider",
     isOpen: true,
   },
+  searchBar: {
+    panelName: "Search Bar",
+    isOpen: true,
+  },
 };
 
 const panelOpenSlice = createSlice({

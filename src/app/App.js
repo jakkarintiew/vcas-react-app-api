@@ -14,7 +14,7 @@ import MapContainer from "components/map/MapContainer";
 import ControlPanel from "components/control-panel/ControlPanel";
 import DetailsPanel from "components/details-panel/DetailsPanel";
 import TimeSlider from "components/time-slider/TimeSlider";
-
+import SearchBar from "components/search-bar/SearchBar";
 import {
   setMetadataActionCreator,
   // setLoadedFramesActionCreator,
@@ -313,7 +313,8 @@ const App = () => {
           <GlobalStyle />
           <div className="h-screen w-screen flex justify-between overflow-hidden">
             <ControlPanel vesselsData={vesselsData} />
-            <div className="h-full w-full flex-1">
+            <div className="h-full w-full flex flex-col flex-1">
+              <SearchBar />
               <TimeSlider />
             </div>
             <DetailsPanel

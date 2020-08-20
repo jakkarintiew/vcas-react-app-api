@@ -387,9 +387,6 @@ const MapContainer = ({
         rounded: true,
         widthMinPixels: 7,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
-        // getDashArray: [5, 10],
-        // dashJustified: true,
-        // extensions: [new PathStyleExtension({ dash: true })],
       }),
     true &&
       new PathLayer({
@@ -403,9 +400,6 @@ const MapContainer = ({
         rounded: true,
         widthMinPixels: 5,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
-        // getDashArray: [5, 10],
-        // dashJustified: true,
-        // extensions: [new PathStyleExtension({ dash: true })],
       }),
 
     activeVesselsData.length > 0 &&
