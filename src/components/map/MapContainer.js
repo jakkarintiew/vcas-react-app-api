@@ -30,8 +30,8 @@ import dataFairways from "data/seamark_fairways.json";
 import dataLanes from "data/seamark_lanes.json";
 import dataLaneBoundaries from "data/seamark_separation.json";
 import dataAnchorages from "data/seamark_anchorages.json";
-import dataMooringAreas from "data/seamark_dredged_areas.json";
-import dataUnionMooringAreas from "data/seamark_mooring_areas_1.json";
+import dataMooringAreas from "data/seamark_mooring_areas.json";
+// import dataUnionMooringAreas from "data/seamark_mooring_areas_1.json";
 import vesselTypeLookup from "data/vessel_type_lookup.json";
 
 const MapContainer = ({
@@ -184,7 +184,7 @@ const MapContainer = ({
   }, [activeVesselsData]);
 
   const layers = [
-    layerVisibility.anchorangePolygon.visible &&
+    layerVisibility.fairwayPolygon.visible &&
       new PolygonLayer({
         id: "fairways-polygon-layer",
         data: dataFairways,
@@ -207,7 +207,7 @@ const MapContainer = ({
             coordinate: info.centroid,
           }),
       }),
-    layerVisibility.anchorangePolygon.visible &&
+    layerVisibility.lanePolygon.visible &&
       new PathLayer({
         id: "lanes-path-layer",
         data: dataLanes,
@@ -230,7 +230,7 @@ const MapContainer = ({
             coordinate: info.centroid,
           }),
       }),
-    layerVisibility.anchorangePolygon.visible &&
+    layerVisibility.lanePolygon.visible &&
       new PathLayer({
         id: "lane-boundary-path-layer",
         data: dataLaneBoundaries,
@@ -256,32 +256,32 @@ const MapContainer = ({
         dashJustified: true,
         extensions: [new PathStyleExtension({ dash: true })],
       }),
-    false &&
-      new PolygonLayer({
-        id: "union-mooring-polygon-layer",
-        data: dataUnionMooringAreas,
-        stroked: true,
-        filled: true,
-        lineWidthMinPixels: 1,
-        getPolygon: (d) => d.convex_hull,
-        getFillColor: [255, 190, 90, 100],
-        getLineColor: [200, 130, 40],
-        getLineWidth: 1,
-        pickable: true,
-        autoHighlight: true,
-        highlightColor: [255, 190, 90, 220],
-        onHover: (info) =>
-          setTooltipInfo({
-            objectType: "mooring",
-            hoveredObject: info.object,
-            pointerX: info.x,
-            pointerY: info.y,
-            coordinate: info.centroid,
-          }),
-      }),
+    // false &&
+    //   new PolygonLayer({
+    //     id: "union-mooring-polygon-layer",
+    //     data: dataUnionMooringAreas,
+    //     stroked: true,
+    //     filled: true,
+    //     lineWidthMinPixels: 1,
+    //     getPolygon: (d) => d.convex_hull,
+    //     getFillColor: [255, 190, 90, 100],
+    //     getLineColor: [200, 130, 40],
+    //     getLineWidth: 1,
+    //     pickable: true,
+    //     autoHighlight: true,
+    //     highlightColor: [255, 190, 90, 220],
+    //     onHover: (info) =>
+    //       setTooltipInfo({
+    //         objectType: "mooring",
+    //         hoveredObject: info.object,
+    //         pointerX: info.x,
+    //         pointerY: info.y,
+    //         coordinate: info.centroid,
+    //       }),
+    //   }),
     layerVisibility.mooringPolygon.visible &&
       new PolygonLayer({
-        id: "dredged-polygon-layer",
+        id: "mooring-polygon-layer",
         data: dataMooringAreas,
         stroked: true,
         filled: true,
@@ -375,9 +375,9 @@ const MapContainer = ({
         coverage: 0.98,
         getPosition: (d) => [d.longitude, d.latitude],
       }),
-    true &&
+    layerVisibility.riskPath.visible &&
       new PathLayer({
-        id: "risk-path-layer",
+        id: "risk-path-border-layer",
         data: riskPaths,
         getPath: (d) => d.path,
         getColor: [141, 0, 0],
@@ -388,7 +388,7 @@ const MapContainer = ({
         widthMinPixels: 7,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
       }),
-    true &&
+    layerVisibility.riskPath.visible &&
       new PathLayer({
         id: "risk-path-layer",
         data: riskPaths,
@@ -401,7 +401,6 @@ const MapContainer = ({
         widthMinPixels: 5,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
       }),
-
     activeVesselsData.length > 0 &&
       layerVisibility.historicalPath.visible &&
       new PathLayer({
@@ -519,7 +518,6 @@ const MapContainer = ({
           }),
         onClick: (info) => clickVesselEvent(info.object.mmsi),
       }),
-
     activeVesselsData.length > 0 &&
       layerVisibility.vesselIcon.visible &&
       new IconLayer({

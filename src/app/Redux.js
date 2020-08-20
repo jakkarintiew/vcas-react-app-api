@@ -83,6 +83,8 @@ const panelOpenSlice = createSlice({
 });
 
 const layerVisibilityInitialState = {
+  fairwayPolygon: { layerName: "Fairways", visible: true },
+  lanePolygon: { layerName: "Lanes and boundaries", visible: true },
   mooringPolygon: { layerName: "Mooring Areas", visible: true },
   anchorangePolygon: { layerName: "Anchorage Areas", visible: true },
   riskHeatmap: { layerName: "Collision Risk Heatmap", visible: false },
@@ -90,6 +92,7 @@ const layerVisibilityInitialState = {
   riskHexagon: { layerName: "Collision Risk Hexagon Grid", visible: false },
   historicalPath: { layerName: "Historical Path", visible: true },
   futurePath: { layerName: "Future Path", visible: true },
+  riskPath: { layerName: "High-risk Vessel Path", visible: false },
   vesselIcon: { layerName: "Vessels", visible: true },
 };
 

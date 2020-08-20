@@ -34,11 +34,14 @@ const LayerManagerPanel = () => {
           </div>
           <LayerVisibilityToggle layerName={"Historical Path"} />
           <LayerVisibilityToggle layerName={"Future Path"} />
+          <LayerVisibilityToggle layerName={"High-risk Vessel Path"} />
         </LayerGroupContainer>
         <LayerGroupContainer>
           <div className="px ml-1 mb-2">
             <b>Zones</b>
           </div>
+          <LayerVisibilityToggle layerName={"Fairways"} />
+          <LayerVisibilityToggle layerName={"Lanes and boundaries"} />
           <LayerVisibilityToggle layerName={"Mooring Areas"} />
           <LayerVisibilityToggle layerName={"Anchorage Areas"} />
           <LayerVisibilityToggle layerName={"Collision Risk Heatmap"} />
