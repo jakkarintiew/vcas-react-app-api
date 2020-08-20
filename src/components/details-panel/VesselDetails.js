@@ -125,7 +125,7 @@ const VesselDetails = ({
       style={{ height: "100%" }}
     >
       <div className="p-3 h-full flex flex-col">
-        <div className="p-1">
+        <div>
           <PropertyInfo label="MMSI" data={activeVessel.mmsi} />
           <PropertyInfo label="Ship Name" data={activeVessel.shipname} />
           <PropertyInfo label="Ship Type" data={shipType} />
