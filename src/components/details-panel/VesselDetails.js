@@ -2,7 +2,7 @@ import React from "react";
 
 import PropertyInfo from "./PropertyInfo";
 
-// import { Scrollbars } from "react-custom-scrollbars";
+import { Scrollbars } from "react-custom-scrollbars";
 
 import VesselLineChart from "./VesselLineChart";
 import vessel_type_lookup from "data/vessel_type_lookup.json";
@@ -118,22 +118,29 @@ const VesselDetails = ({
     ")";
 
   return (
-    <div className="p-3 h-full flex flex-col">
-      <div className="p-1">
-        <PropertyInfo label="MMSI" data={activeVessel.mmsi} />
-        <PropertyInfo label="Ship Name" data={activeVessel.shipname} />
-        <PropertyInfo label="Ship Type" data={shipType} />
-        <PropertyInfo label="Speed" data={activeVessel.speed} />
-        <PropertyInfo label="Course" data={activeVessel.course} />
-        <PropertyInfo label="Heading" data={activeVessel.heading} />
-        <PropertyInfo label="Collision Risk" data={activeVessel.risk} />
+    <Scrollbars
+      autoHide
+      autoHideDuration={200}
+      autoHideTimeout={200}
+      style={{ height: "100%" }}
+    >
+      <div className="p-3 h-full flex flex-col">
+        <div className="p-1">
+          <PropertyInfo label="MMSI" data={activeVessel.mmsi} />
+          <PropertyInfo label="Ship Name" data={activeVessel.shipname} />
+          <PropertyInfo label="Ship Type" data={shipType} />
+          <PropertyInfo label="Speed" data={activeVessel.speed} />
+          <PropertyInfo label="Course" data={activeVessel.course} />
+          <PropertyInfo label="Heading" data={activeVessel.heading} />
+          <PropertyInfo label="Collision Risk" data={activeVessel.risk} />
+        </div>
+        <div>
+          <VesselLineChart data={speedChartData} yMax={20} />
+          <VesselLineChart data={courseChartData} yMax={360} />
+          <VesselLineChart data={headingChartData} yMax={360} />
+        </div>
       </div>
-      <div className="flex flex-col flex-auto min-h-0">
-        <VesselLineChart data={speedChartData} yMax={20} />
-        <VesselLineChart data={courseChartData} yMax={360} />
-        <VesselLineChart data={headingChartData} yMax={360} />
-      </div>
-    </div>
+    </Scrollbars>
   );
 };
 
