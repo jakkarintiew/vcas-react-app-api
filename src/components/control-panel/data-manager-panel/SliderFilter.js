@@ -21,11 +21,11 @@ const StyledSlider = withStyles({
     paddingBottom: 0,
   },
   thumb: {
-    height: 12,
-    width: 12,
+    height: 14,
+    width: 14,
     backgroundColor: "#fff",
     border: "2px solid currentColor",
-    marginTop: -5,
+    marginTop: -18,
     marginLeft: -6,
     "&:focus, &:hover, &$active": {
       boxShadow: "inherit",
@@ -33,13 +33,16 @@ const StyledSlider = withStyles({
   },
   active: {},
   track: {
-    height: 4,
+    marginTop: -14,
+    height: 3,
     borderRadius: 2,
   },
   rail: {
-    height: 4,
+    marginTop: -14,
+    height: 3,
     borderRadius: 2,
     backgroundColor: "#c9c9c9",
+    opacity: "100%",
   },
 })(Slider);
 
@@ -129,7 +132,6 @@ const SliderFilter = (props) => {
           domain={domain}
           binSize={binSize}
           highlight={sliderRange}
-          className="p-0"
         />
         <div className="px-1">
           <StyledSlider
@@ -140,7 +142,7 @@ const SliderFilter = (props) => {
             valueLabelDisplay="off"
           />
         </div>
-        <div className="flex flex-row items-center justify-between">
+        <div className="flex flex-row items-center justify-between -mt-4">
           <FilterInput
             value={inputRange[0]}
             placeholder="Min"

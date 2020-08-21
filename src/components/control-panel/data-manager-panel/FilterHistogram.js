@@ -5,11 +5,6 @@ function histogram(data, size, domain) {
   let min = domain[0];
   let max = domain[1];
 
-  // for (const item of data) {
-  //   if (item < min) min = item;
-  //   else if (item > max) max = item;
-  // }
-
   const bins = Math.floor((max - min + 1) / size);
 
   var histogram = [];
@@ -80,8 +75,8 @@ const FilterHistogram = (props) => {
   };
 
   return (
-    <div className="flex-1 min-h-0">
-      <Bar data={chart_data} height={90} options={options} />
+    <div className="px-1">
+      <Bar data={chart_data} height={80} options={options} />
     </div>
   );
 };
