@@ -29,13 +29,14 @@ const ChipsContainer = styled.div`
   list-style: none;
   margin: 0px;
   padding: 0px;
+  line-height: 1.1em;
 `;
 
 const StyledChip = styled(Chip)`
   background: ${(props) =>
     props.filterstate === "true" ? "#29a9ff" : "#c9c9c9"};
   color: ${(props) => (props.filterstate === "true" ? "#ffffff" : "#808080")};
-  font-size: 0.6em;
+  font-size: 0.7em;
   :focus {
     background: ${(props) =>
       props.filterstate === "true" ? "#29a9ff" : "#c9c9c9"};
@@ -46,8 +47,12 @@ const StyledChip = styled(Chip)`
   }
   min-width: auto;
   min-height: auto;
-  margin: 1px;
-  height: 20px;
+  height: 18px;
+  line-height: 1em;
+  margin-left: 0px;
+  margin-right: 1px;
+  margin-top: 0px;
+  margin-bottom: 0px;
   transition: ${(props) => props.theme.transition};
 `;
 
