@@ -42,11 +42,7 @@ import vesselTypeLookup from "data/vessel_type_lookup.json";
 const FRAMES_DIR =
   "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/";
 
-const MapContainer = ({
-  vesselsData,
-  closeEncounters,
-  mapStyle,
-}) => {
+const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
   // Set your mapbox access token here
   const MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
   // Redux states
@@ -291,18 +287,17 @@ const MapContainer = ({
 
   useEffect(() => {
     setHighRiskPaths([]);
-    getHighRiskPath();
+    if (layerVisibility.riskPath.visible) {
+      getHighRiskPath();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [vesselsData]);
+  }, [vesselsData, layerVisibility]);
 
   useEffect(() => {
     if (activePathData.length > 0) {
       setActiveFuturePath(getFuturePath(activePathData));
       setActiveHistoricalPath(getHistoricalPath(activePathData));
 
-      const activeVessel = visibleVessels.filter((vessel) => {
-        return vessel.mmsi === activeVesselID;
-      });
       const vesselViewState = {
         longitude: activeVessel[0].longitude,
         latitude: activeVessel[0].latitude,

@@ -279,6 +279,22 @@ const pathDataSlice = createSlice({
   },
 });
 
+const vesselDataSlice = createSlice({
+  name: "vesselData",
+  initialState: {
+    activeVesselData: [],
+    warningVesselData: [],
+  },
+  reducers: {
+    setActiveVessels: (state, { payload }) => {
+      state.activeVesselData = payload;
+    },
+    setWarningVessels: (state, { payload }) => {
+      state.warningVesselData = payload;
+    },
+  },
+});
+
 // export actions
 export const {
   toggleVesselView: toggleVesselViewActionCreator,
