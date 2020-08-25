@@ -40,7 +40,6 @@ const App = () => {
   const darkThemeEnabled = useSelector((state) => state.darkThemeEnabled);
   const metadata = useSelector((state) => state.frames.metadata);
   const currentFrame = useSelector((state) => state.frames.currentFrame);
-  const activeVesselID = useSelector((state) => state.activeVesselID);
 
   const setMetadata = (metadata) => {
     dispatch(setMetadataActionCreator(metadata));
@@ -51,7 +50,6 @@ const App = () => {
 
   const [vesselsData, setVesselsData] = useState([]);
   const [frames, setFrames] = useState({});
-  const [activeVesselsData, setActiveVesselsData] = useState([]);
   const [error, setError] = useState(null);
 
   // Load first frame + metadata; ran once at startup
@@ -120,13 +118,6 @@ const App = () => {
   // When current frame is updated, update data
   useEffect(() => {
     setVesselsData(frames[currentFrame]);
-
-    if (activeVesselID) {
-      const newActiveVessel = frames[currentFrame].filter((vessel) => {
-        return vessel.mmsi === activeVesselID;
-      });
-      setActiveVesselsData(newActiveVessel);
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFrame]);
 
@@ -150,10 +141,7 @@ const App = () => {
               <SearchBar />
               <TimeSlider />
             </div>
-            <DetailsPanel
-              vesselsData={vesselsData}
-              activeVesselsData={activeVesselsData}
-            />
+            <DetailsPanel vesselsData={vesselsData} />
           </div>
 
           <MapContainer
