@@ -22,11 +22,12 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   setViewStatesActionCreator,
   storeActiveVesselViewStatesActionCreator,
-  setActiveVesselActionCreator,
   setActivePathActionCreator,
   setActiveFuturePathActionCreator,
   setActiveHistoricalPathActionCreator,
   setHighRiskPathsActionCreator,
+  setActiveVesselsActionCreator,
+  setAlertVesselsActionCreator,
 } from "app/Redux";
 
 import MapTooltip from "./MapTooltip";
@@ -52,7 +53,9 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
   const vesselTypeFilter = useSelector((state) => state.vesselTypeFilter);
   const vesselSliderFilter = useSelector((state) => state.vesselSliderFilter);
   const currentFrame = useSelector((state) => state.frames.currentFrame);
-  const activeVesselID = useSelector((state) => state.activeVesselID);
+  const activeVessels = useSelector(
+    (state) => state.vesselData.activeVesselData
+  );
   const activePathData = useSelector((state) => state.pathData.activePathData);
   const activeFuturePathData = useSelector(
     (state) => state.pathData.activeFuturePathData
@@ -62,9 +65,13 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
   );
   const highRiskPaths = useSelector((state) => state.pathData.highRiskPathData);
 
-  const setActiveVesselID = (activeVesselID) => {
-    dispatch(setActiveVesselActionCreator(activeVesselID));
+  const setActiveVessels = (vessel) => {
+    dispatch(setActiveVesselsActionCreator(vessel));
   };
+  const setAlertVessels = (vessel) => {
+    dispatch(setAlertVesselsActionCreator(vessel));
+  };
+
   const setViewStates = (newViewState) => {
     dispatch(setViewStatesActionCreator(newViewState));
   };
@@ -167,10 +174,6 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
 
   const stoppedVessels = visibleVessels.filter((vessel) => {
     return vessel.speed < 1;
-  });
-
-  const activeVessel = visibleVessels.filter((vessel) => {
-    return vessel.mmsi === activeVesselID;
   });
 
   const riskVessels = movingVessels.filter((vessel) => {
@@ -290,6 +293,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
     if (layerVisibility.riskPath.visible) {
       getHighRiskPath();
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vesselsData, layerVisibility]);
 
@@ -298,12 +302,16 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
       setActiveFuturePath(getFuturePath(activePathData));
       setActiveHistoricalPath(getHistoricalPath(activePathData));
 
+      const newActiveVessel = visibleVessels.filter((vessel) => {
+        return vessel.mmsi === activeVessels[0].mmsi;
+      });
+      setActiveVessels(newActiveVessel);
       const vesselViewState = {
-        longitude: activeVessel[0].longitude,
-        latitude: activeVessel[0].latitude,
+        longitude: newActiveVessel[0].longitude,
+        latitude: newActiveVessel[0].latitude,
         zoom: 13,
         pitch: 60,
-        bearing: activeVessel[0].heading,
+        bearing: newActiveVessel[0].heading,
         transitionDuration: 500,
         transitionInterruption: TRANSITION_EVENTS.UPDATE,
         transitionInterpolator: new FlyToInterpolator(),
@@ -314,16 +322,14 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
   }, [currentFrame]);
 
   const clickVesselEvent = (mmsi) => {
-    setActiveVesselID(mmsi);
-
+    const newActiveVessel = visibleVessels.filter((vessel) => {
+      return vessel.mmsi === mmsi;
+    });
+    setActiveVessels(newActiveVessel);
     Promise.resolve(getPath(mmsi)).then((response) => {
       setActivePath(response);
       setActiveFuturePath(getFuturePath(response));
       setActiveHistoricalPath(getHistoricalPath(response));
-    });
-
-    const newActiveVessel = visibleVessels.filter((vessel) => {
-      return vessel.mmsi === mmsi;
     });
     const vesselViewState = {
       longitude: newActiveVessel[0].longitude,
@@ -648,7 +654,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
         pickable: true,
         onClick: (info) => clickWarningEvent(info.object),
       }),
-    activeVessel.length > 0 &&
+    activeVessels.length > 0 &&
       layerVisibility.historicalPath.visible &&
       new PathLayer({
         id: "historical-path-border-layer",
@@ -662,7 +668,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
         widthMinPixels: 9,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
       }),
-    activeVessel.length > 0 &&
+    activeVessels.length > 0 &&
       layerVisibility.historicalPath.visible &&
       new PathLayer({
         id: "historical-path-layer",
@@ -676,7 +682,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
         widthMinPixels: 6,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
       }),
-    activeVessel.length > 0 &&
+    activeVessels.length > 0 &&
       layerVisibility.futurePath.visible &&
       new PathLayer({
         id: "future-path-border-layer",
@@ -689,7 +695,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
         widthMinPixels: 9,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
       }),
-    activeVessel.length > 0 &&
+    activeVessels.length > 0 &&
       layerVisibility.futurePath.visible &&
       new PathLayer({
         id: "future-path-layer",
@@ -823,11 +829,13 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
           }),
         onClick: (info) => clickVesselEvent(info.object.mmsi),
       }),
-    activeVessel.length > 0 &&
+    activeVessels.length > 0 &&
       layerVisibility.movingVesselIcon.visible &&
       new IconLayer({
         id: "active-vessel-icon-layer",
-        data: activeVessel,
+        data: visibleVessels.filter((vessel) => {
+          return vessel.mmsi === activeVessels[0].mmsi;
+        }),
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
         iconAtlas: require("img/vessel_marker_active.png"),
         iconMapping: {

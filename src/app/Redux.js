@@ -111,14 +111,6 @@ const layerVisibilitySlice = createSlice({
   },
 });
 
-const activeVesselSlice = createSlice({
-  name: "activeVesselID",
-  initialState: null,
-  reducers: {
-    set: (state, { payload }) => payload,
-  },
-});
-
 const themeSlice = createSlice({
   name: "darkThemeEnabled",
   initialState: false,
@@ -283,14 +275,14 @@ const vesselDataSlice = createSlice({
   name: "vesselData",
   initialState: {
     activeVesselData: [],
-    warningVesselData: [],
+    alertVesselData: [],
   },
   reducers: {
     setActiveVessels: (state, { payload }) => {
       state.activeVesselData = payload;
     },
-    setWarningVessels: (state, { payload }) => {
-      state.warningVesselData = payload;
+    setAlertVessels: (state, { payload }) => {
+      state.alertVesselData = payload;
     },
   },
 });
@@ -313,8 +305,6 @@ export const {
 } = layerVisibilitySlice.actions;
 
 export const { toggle: toggleThemeActionCreator } = themeSlice.actions;
-
-export const { set: setActiveVesselActionCreator } = activeVesselSlice.actions;
 
 export const {
   toggle_filter: filterVesselTypeActionCreator,
@@ -342,17 +332,22 @@ export const {
   setHighRiskPaths: setHighRiskPathsActionCreator,
 } = pathDataSlice.actions;
 
+export const {
+  setActiveVessels: setActiveVesselsActionCreator,
+  setAlertVessels: setAlertVesselsActionCreator,
+} = vesselDataSlice.actions;
+
 // define reducers
 const reducer = {
   mapView: mapViewSlice.reducer,
   panelOpen: panelOpenSlice.reducer,
   layerVisibility: layerVisibilitySlice.reducer,
   darkThemeEnabled: themeSlice.reducer,
-  activeVesselID: activeVesselSlice.reducer,
   vesselTypeFilter: vesselTypeFilterSlice.reducer,
   vesselSliderFilter: vesselSliderFilterSlice.reducer,
   frames: framesSlice.reducer,
   pathData: pathDataSlice.reducer,
+  vesselData: vesselDataSlice.reducer,
 };
 
 // define middleware
