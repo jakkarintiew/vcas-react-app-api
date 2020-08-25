@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { togglePanelOpenActionCreator } from "app/Redux";
 
 import VesselDetails from "./VesselDetails";
+import AlertDetails from "./AlertDetails";
 import CollapseButton from "components/common/CollapseButton";
 import ArrowRight from "components/common/icons/arrow-right";
 
@@ -49,6 +50,10 @@ const DetailsPanel = ({ vesselsData }) => {
   // Redux states
   const dispatch = useDispatch();
   const panelOpen = useSelector((state) => state.panelOpen);
+  const activeVessels = useSelector(
+    (state) => state.vesselData.activeVesselData
+  );
+  const alertVessels = useSelector((state) => state.vesselData.alertVesselData);
   const activeFuturePathData = useSelector(
     (state) => state.pathData.activeFuturePathData
   );
@@ -71,10 +76,6 @@ const DetailsPanel = ({ vesselsData }) => {
     togglePanelOpen(panelKey);
   };
 
-  const activeVessels = useSelector(
-    (state) => state.vesselData.activeVesselData
-  );
-
   return (
     <RightPanelBox className="flex flex-row-reverse space-x-reverse">
       <StyledDetailsPanelContainer width={panel.isOpen ? width : 0}>
@@ -88,6 +89,8 @@ const DetailsPanel = ({ vesselsData }) => {
                 historicalPathData={activeHistoricalPathData[0]}
                 futurePathData={activeFuturePathData[0]}
               />
+            ) : alertVessels.length > 0 ? (
+              <AlertDetails alertVessels={alertVessels}></AlertDetails>
             ) : (
               <div className="flex content-center flex-wrap flex-auto h-full p-5">
                 <PlaceholderContainer className="flex-auto">
