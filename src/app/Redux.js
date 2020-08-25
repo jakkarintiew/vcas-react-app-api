@@ -254,6 +254,7 @@ const pathDataSlice = createSlice({
     activeFuturePathData: pathDataInitialState,
     activeHistoricalPathData: pathDataInitialState,
     highRiskPathData: [],
+    alertPathData: [],
   },
   reducers: {
     setActivePath: (state, { payload }) => {
@@ -267,6 +268,9 @@ const pathDataSlice = createSlice({
     },
     setHighRiskPaths: (state, { payload }) => {
       state.highRiskPathData = payload;
+    },
+    setAlertPaths: (state, { payload }) => {
+      state.alertPathData = payload;
     },
   },
 });
@@ -330,6 +334,7 @@ export const {
   setActiveFuturePath: setActiveFuturePathActionCreator,
   setActiveHistoricalPath: setActiveHistoricalPathActionCreator,
   setHighRiskPaths: setHighRiskPathsActionCreator,
+  setAlertPaths: setAlertPathsActionCreator,
 } = pathDataSlice.actions;
 
 export const {

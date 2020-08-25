@@ -26,6 +26,7 @@ import {
   setActiveFuturePathActionCreator,
   setActiveHistoricalPathActionCreator,
   setHighRiskPathsActionCreator,
+  setAlertPathsActionCreator,
   setActiveVesselsActionCreator,
   setAlertVesselsActionCreator,
 } from "app/Redux";
@@ -64,6 +65,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
     (state) => state.pathData.activeHistoricalPathData
   );
   const highRiskPaths = useSelector((state) => state.pathData.highRiskPathData);
+  const alertPaths = useSelector((state) => state.pathData.alertPathData);
 
   const setActiveVessels = (vessel) => {
     dispatch(setActiveVesselsActionCreator(vessel));
@@ -87,9 +89,11 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
   const setActiveHistoricalPath = (path) => {
     dispatch(setActiveHistoricalPathActionCreator(path));
   };
-
   const setHighRiskPaths = (paths) => {
     dispatch(setHighRiskPathsActionCreator(paths));
+  };
+  const setAlertPaths = (paths) => {
+    dispatch(setAlertPathsActionCreator(paths));
   };
 
   // View states functions
@@ -180,7 +184,6 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
     return vessel.risk > 75;
   });
 
-  // Path data
   const pathDataInitialState = [
     {
       path: [],
@@ -191,8 +194,6 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
       risk: [],
     },
   ];
-  const [V1PathData, setV1PathData] = useState(pathDataInitialState);
-  const [V2PathData, setV2PathData] = useState(pathDataInitialState);
 
   const getPath = async (vesselID) => {
     try {
@@ -276,14 +277,12 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
       promiseRiskPaths.push(getPath(vessel.mmsi));
     });
 
-    // setHighRiskPathsLoading(true);
     Promise.all(promiseRiskPaths)
       .then((responses) => {
         responses.forEach((path) => {
           newRiskPaths.push(getFuturePath(path)[0]);
         });
         setHighRiskPaths(newRiskPaths);
-        // setHighRiskPathsLoading(false);
       })
       .catch((error) => console.log(error));
   };
@@ -322,6 +321,12 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
   }, [currentFrame]);
 
   const clickVesselEvent = (mmsi) => {
+    // Reset
+    setActivePath(pathDataInitialState);
+    setActiveFuturePath(pathDataInitialState);
+    setActiveHistoricalPath(pathDataInitialState);
+    setAlertPaths([]);
+
     const newActiveVessel = visibleVessels.filter((vessel) => {
       return vessel.mmsi === mmsi;
     });
@@ -345,6 +350,9 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
   };
 
   const clickWarningEvent = (object) => {
+    // Reset active vessel
+    setActiveVessels([]);
+
     // Zoom to event
     setViewStates({
       main: {
@@ -365,13 +373,30 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
       },
     });
 
+    // Get vessels
+    setAlertVessels(
+      visibleVessels.filter((vessel) => {
+        return (
+          vessel.mmsi === object.vessel_1_mmsi ||
+          vessel.mmsi === object.vessel_2_mmsi
+        );
+      })
+    );
+
     // Get paths
-    Promise.resolve(getPath(object.vessel_1_mmsi)).then((response) => {
-      setV1PathData(getFuturePath(response));
-    });
-    Promise.resolve(getPath(object.vessel_2_mmsi)).then((response) => {
-      setV2PathData(getFuturePath(response));
-    });
+    let alertPathsPromises = [];
+    let newAlertPaths = [];
+    alertPathsPromises.push(getPath(object.vessel_1_mmsi));
+    alertPathsPromises.push(getPath(object.vessel_2_mmsi));
+
+    Promise.all(alertPathsPromises)
+      .then((responses) => {
+        responses.forEach((path) => {
+          newAlertPaths.push(getFuturePath(path)[0]);
+        });
+        setAlertPaths(newAlertPaths);
+      })
+      .catch((error) => console.log(error));
   };
 
   const [tooltipInfo, setTooltipInfo] = useState({
@@ -584,8 +609,8 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
       }),
     true &&
       new PathLayer({
-        id: "v1-path-border-layer",
-        data: V1PathData,
+        id: "alert-path-border-layer",
+        data: alertPaths,
         getPath: (d) => d.path,
         getColor: [150, 132, 0],
         widthUnits: "meters",
@@ -596,34 +621,10 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
       }),
     true &&
       new PathLayer({
-        id: "v1-path-layer",
-        data: V1PathData,
+        id: "alert-path-layer",
+        data: alertPaths,
         getPath: (d) => d.path,
         getColor: [250, 232, 0],
-        widthUnits: "meters",
-        getWidth: 60,
-        rounded: true,
-        widthMinPixels: 6,
-        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
-      }),
-    true &&
-      new PathLayer({
-        id: "v2-path-border-layer",
-        data: V2PathData,
-        getPath: (d) => d.path,
-        getColor: [180, 80, 180],
-        widthUnits: "meters",
-        getWidth: 80,
-        rounded: true,
-        widthMinPixels: 9,
-        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
-      }),
-    true &&
-      new PathLayer({
-        id: "v2-path-layer",
-        data: V2PathData,
-        getPath: (d) => d.path,
-        getColor: [230, 120, 230],
         widthUnits: "meters",
         getWidth: 60,
         rounded: true,
