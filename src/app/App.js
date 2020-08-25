@@ -71,6 +71,29 @@ const App = () => {
       }
     };
     getFirstFrame();
+
+    axios({
+      method: "post",
+      url:
+        "https://cors-anywhere.herokuapp.com/http://52.163.54.65:80/api/v1/service/snapshot/score",
+      data: { time_stamp_int: [1546272007] },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.REACT_APP_SNAPSHOT_API_KEY}`,
+      },
+    }).then((response) => console.log(response.data));
+
+    axios({
+      method: "post",
+      url:
+        "https://cors-anywhere.herokuapp.com/http://52.163.54.65:80/api/v1/service/history/score",
+      data: { time_stamp_int: [1546272985], mmsi: [563020440] },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.REACT_APP_HISTORY_API_KEY}`,
+      },
+    }).then((response) => console.log(response.data));
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
