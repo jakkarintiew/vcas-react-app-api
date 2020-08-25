@@ -7,10 +7,10 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/styles": "^4.10.0",
     "@reduxjs/toolkit": "^1.4.0",
-    "@testing-library/jest-dom": "^5.11.3",
-    "@testing-library/react": "^10.4.8",
-    "@testing-library/user-event": "^12.1.1",
-    "axios": "^0.19.2",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^10.4.9",
+    "@testing-library/user-event": "^12.1.2",
+    "axios": "^0.20.0",
     "chart.js": "^2.9.3",
     "deck.gl": "^8.2.5",
     "gh-pages": "^3.1.0",
@@ -25,7 +25,7 @@
     "react-scripts": "3.4.3",
     "redux-logger": "^3.0.6",
     "styled-components": "^5.1.1",
-    "swr": "^0.3.0",
+    "swr": "^0.3.1",
     "unfetch": "^4.1.0",
     "yargs-parser": "^19.0.1"
   },
@@ -57,7 +57,7 @@
   "devDependencies": {
     "autoprefixer": "^9.8.6",
     "postcss-cli": "^7.1.1",
-    "tailwindcss": "^1.7.1"
+    "tailwindcss": "^1.7.3"
   },
   "homepage": "https://jakkarintiew.github.io/vcas-react-app"
 }
