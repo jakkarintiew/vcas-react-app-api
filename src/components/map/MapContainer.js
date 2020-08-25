@@ -23,6 +23,10 @@ import {
   setViewStatesActionCreator,
   storeActiveVesselViewStatesActionCreator,
   setActiveVesselActionCreator,
+  setActivePathActionCreator,
+  setActiveFuturePathActionCreator,
+  setActiveHistoricalPathActionCreator,
+  setHighRiskPathsActionCreator,
 } from "app/Redux";
 
 import MapTooltip from "./MapTooltip";
@@ -40,11 +44,7 @@ const FRAMES_DIR =
 
 const MapContainer = ({
   vesselsData,
-  riskPaths,
   closeEncounters,
-  activeVesselsData,
-  historicalPathData,
-  futurePathData,
   mapStyle,
 }) => {
   // Set your mapbox access token here
@@ -55,6 +55,16 @@ const MapContainer = ({
   const mapView = useSelector((state) => state.mapView);
   const vesselTypeFilter = useSelector((state) => state.vesselTypeFilter);
   const vesselSliderFilter = useSelector((state) => state.vesselSliderFilter);
+  const currentFrame = useSelector((state) => state.frames.currentFrame);
+  const activeVesselID = useSelector((state) => state.activeVesselID);
+  const activePathData = useSelector((state) => state.pathData.activePathData);
+  const activeFuturePathData = useSelector(
+    (state) => state.pathData.activeFuturePathData
+  );
+  const activeHistoricalPathData = useSelector(
+    (state) => state.pathData.activeHistoricalPathData
+  );
+  const highRiskPaths = useSelector((state) => state.pathData.highRiskPathData);
 
   const setActiveVesselID = (activeVesselID) => {
     dispatch(setActiveVesselActionCreator(activeVesselID));
@@ -65,7 +75,21 @@ const MapContainer = ({
   const storeActiveVesselViewStates = (vesselViewState) => {
     dispatch(storeActiveVesselViewStatesActionCreator(vesselViewState));
   };
+  const setActivePath = (path) => {
+    dispatch(setActivePathActionCreator(path));
+  };
+  const setActiveFuturePath = (path) => {
+    dispatch(setActiveFuturePathActionCreator(path));
+  };
+  const setActiveHistoricalPath = (path) => {
+    dispatch(setActiveHistoricalPathActionCreator(path));
+  };
 
+  const setHighRiskPaths = (paths) => {
+    dispatch(setHighRiskPathsActionCreator(paths));
+  };
+
+  // View states functions
   const onViewStateChange = ({ viewState, viewId }) => {
     const newViewStates = {
       ...mapView.viewStates,
@@ -123,24 +147,41 @@ const MapContainer = ({
     });
   };
 
-  const clickVesselEvent = (mmsi) => {
-    setActiveVesselID(mmsi);
-    const newActiveVessel = vesselsData.filter((vessel) => {
-      return vessel.mmsi === mmsi;
+  // Vessel data
+  const visibleVessels = vesselsData.filter((vessel) => {
+    const visibleTypes = vesselTypeFilter.map((vessel) => {
+      return vessel.filterState ? vessel.vesselType : null;
     });
-    const vesselViewState = {
-      longitude: newActiveVessel[0].longitude,
-      latitude: newActiveVessel[0].latitude,
-      zoom: 14,
-      pitch: 60,
-      bearing: newActiveVessel[0].heading,
-      transitionDuration: 500,
-      transitionInterruption: TRANSITION_EVENTS.UPDATE,
-      transitionInterpolator: new FlyToInterpolator(),
-    };
-    updateVesselViewState(vesselViewState);
-  };
+    return (
+      visibleTypes.includes(vesselTypeLookup[vessel.shiptype]) &&
+      vessel.risk >= vesselSliderFilter.risk[0] &&
+      vessel.risk <= vesselSliderFilter.risk[1] &&
+      vessel.speed >= vesselSliderFilter.speed[0] &&
+      vessel.speed <= vesselSliderFilter.speed[1]
+    );
+  });
 
+  const riskyVessels = visibleVessels.filter((vessel) => {
+    return vessel.risk > 65 && vessel.speed >= 1;
+  });
+
+  const movingVessels = visibleVessels.filter((vessel) => {
+    return vessel.speed >= 1;
+  });
+
+  const stoppedVessels = visibleVessels.filter((vessel) => {
+    return vessel.speed < 1;
+  });
+
+  const activeVessel = visibleVessels.filter((vessel) => {
+    return vessel.mmsi === activeVesselID;
+  });
+
+  const riskVessels = movingVessels.filter((vessel) => {
+    return vessel.risk > 75;
+  });
+
+  // Path data
   const pathDataInitialState = [
     {
       path: [],
@@ -164,7 +205,6 @@ const MapContainer = ({
       console.log(error);
     }
   };
-  const currentFrame = useSelector((state) => state.frames.currentFrame);
 
   const getFuturePath = (pathData) => {
     let currentIndex = pathData.findIndex((obj) => obj.frame === currentFrame);
@@ -196,6 +236,111 @@ const MapContainer = ({
         ];
       }
     }
+  };
+
+  const getHistoricalPath = (pathData) => {
+    let currentIndex = pathData.findIndex((obj) => obj.frame === currentFrame);
+    let filteredPath;
+    for (let index = currentIndex; index >= 0; index--) {
+      if (currentIndex === 0) {
+        return pathDataInitialState;
+      } else if (
+        index === 0 ||
+        pathData[index].frame - pathData[index - 1].frame > 1
+      ) {
+        filteredPath = pathData.filter((elem) => {
+          return (
+            elem.frame >= pathData[index].frame && elem.frame <= currentFrame
+          );
+        });
+        return [
+          {
+            path: filteredPath.map((frame) => [
+              frame.longitude,
+              frame.latitude,
+            ]),
+            timestamps: filteredPath.map((frame) => frame.timestamp),
+            speed: filteredPath.map((frame) => frame.speed),
+            heading: filteredPath.map((frame) => frame.heading),
+            course: filteredPath.map((frame) => frame.course),
+            risk: filteredPath.map((frame) => frame.risk),
+          },
+        ];
+      }
+    }
+  };
+
+  const getHighRiskPath = () => {
+    const promiseRiskPaths = [];
+    const newRiskPaths = [];
+    riskVessels.forEach((vessel) => {
+      promiseRiskPaths.push(getPath(vessel.mmsi));
+    });
+
+    // setHighRiskPathsLoading(true);
+    Promise.all(promiseRiskPaths)
+      .then((responses) => {
+        responses.forEach((path) => {
+          newRiskPaths.push(getFuturePath(path)[0]);
+        });
+        setHighRiskPaths(newRiskPaths);
+        // setHighRiskPathsLoading(false);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  useEffect(() => {
+    setHighRiskPaths([]);
+    getHighRiskPath();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [vesselsData]);
+
+  useEffect(() => {
+    if (activePathData.length > 0) {
+      setActiveFuturePath(getFuturePath(activePathData));
+      setActiveHistoricalPath(getHistoricalPath(activePathData));
+
+      const activeVessel = visibleVessels.filter((vessel) => {
+        return vessel.mmsi === activeVesselID;
+      });
+      const vesselViewState = {
+        longitude: activeVessel[0].longitude,
+        latitude: activeVessel[0].latitude,
+        zoom: 13,
+        pitch: 60,
+        bearing: activeVessel[0].heading,
+        transitionDuration: 500,
+        transitionInterruption: TRANSITION_EVENTS.UPDATE,
+        transitionInterpolator: new FlyToInterpolator(),
+      };
+      updateVesselViewState(vesselViewState);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentFrame]);
+
+  const clickVesselEvent = (mmsi) => {
+    setActiveVesselID(mmsi);
+
+    Promise.resolve(getPath(mmsi)).then((response) => {
+      setActivePath(response);
+      setActiveFuturePath(getFuturePath(response));
+      setActiveHistoricalPath(getHistoricalPath(response));
+    });
+
+    const newActiveVessel = visibleVessels.filter((vessel) => {
+      return vessel.mmsi === mmsi;
+    });
+    const vesselViewState = {
+      longitude: newActiveVessel[0].longitude,
+      latitude: newActiveVessel[0].latitude,
+      zoom: 13,
+      pitch: 60,
+      bearing: newActiveVessel[0].heading,
+      transitionDuration: 500,
+      transitionInterruption: TRANSITION_EVENTS.UPDATE,
+      transitionInterpolator: new FlyToInterpolator(),
+    };
+    updateVesselViewState(vesselViewState);
   };
 
   const clickWarningEvent = (object) => {
@@ -240,40 +385,6 @@ const MapContainer = ({
     const { hoveredObject } = tooltipInfo;
     return hoveredObject && <MapTooltip tooltipInfo={tooltipInfo} />;
   };
-
-  const riskyVessels = vesselsData.filter((vessel) => {
-    return vessel.risk > 65;
-  });
-
-  const visibleVessels = vesselsData.filter((vessel) => {
-    const visibleTypes = vesselTypeFilter.map((vessel) => {
-      return vessel.filterState ? vessel.vesselType : null;
-    });
-    return (
-      visibleTypes.includes(vesselTypeLookup[vessel.shiptype]) &&
-      vessel.risk >= vesselSliderFilter.risk[0] &&
-      vessel.risk <= vesselSliderFilter.risk[1] &&
-      vessel.speed >= vesselSliderFilter.speed[0] &&
-      vessel.speed <= vesselSliderFilter.speed[1]
-    );
-  });
-
-  useEffect(() => {
-    if (activeVesselsData.length > 0) {
-      const vesselViewState = {
-        longitude: activeVesselsData[0].longitude,
-        latitude: activeVesselsData[0].latitude,
-        zoom: 14,
-        pitch: 60,
-        bearing: activeVesselsData[0].heading,
-        transitionDuration: 500,
-        transitionInterruption: TRANSITION_EVENTS.UPDATE,
-        transitionInterpolator: new FlyToInterpolator(),
-      };
-      updateVesselViewState(vesselViewState);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeVesselsData]);
 
   const layers = [
     layerVisibility.fairwayPolygon.visible &&
@@ -348,29 +459,6 @@ const MapContainer = ({
         dashJustified: true,
         extensions: [new PathStyleExtension({ dash: true })],
       }),
-    // false &&
-    //   new PolygonLayer({
-    //     id: "union-mooring-polygon-layer",
-    //     data: dataUnionMooringAreas,
-    //     stroked: true,
-    //     filled: true,
-    //     lineWidthMinPixels: 1,
-    //     getPolygon: (d) => d.convex_hull,
-    //     getFillColor: [255, 190, 90, 100],
-    //     getLineColor: [200, 130, 40],
-    //     getLineWidth: 1,
-    //     pickable: true,
-    //     autoHighlight: true,
-    //     highlightColor: [255, 190, 90, 220],
-    //     onHover: (info) =>
-    //       setTooltipInfo({
-    //         objectType: "mooring",
-    //         hoveredObject: info.object,
-    //         pointerX: info.x,
-    //         pointerY: info.y,
-    //         coordinate: info.centroid,
-    //       }),
-    //   }),
     layerVisibility.mooringPolygon.visible &&
       new PolygonLayer({
         id: "mooring-polygon-layer",
@@ -470,7 +558,7 @@ const MapContainer = ({
     layerVisibility.riskPath.visible &&
       new PathLayer({
         id: "risk-path-border-layer",
-        data: riskPaths,
+        data: highRiskPaths,
         getPath: (d) => d.path,
         getColor: [141, 0, 0],
         opacity: 1,
@@ -483,7 +571,7 @@ const MapContainer = ({
     layerVisibility.riskPath.visible &&
       new PathLayer({
         id: "risk-path-layer",
-        data: riskPaths,
+        data: highRiskPaths,
         getPath: (d) => d.path,
         getColor: [252, 72, 80],
         opacity: 1,
@@ -493,7 +581,6 @@ const MapContainer = ({
         widthMinPixels: 5,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
       }),
-
     true &&
       new PathLayer({
         id: "v1-path-border-layer",
@@ -566,11 +653,11 @@ const MapContainer = ({
         pickable: true,
         onClick: (info) => clickWarningEvent(info.object),
       }),
-    activeVesselsData.length > 0 &&
+    activeVessel.length > 0 &&
       layerVisibility.historicalPath.visible &&
       new PathLayer({
         id: "historical-path-border-layer",
-        data: historicalPathData,
+        data: activeHistoricalPathData,
         getPath: (d) => d.path,
         getColor: [100, 100, 100],
         opacity: 1,
@@ -580,11 +667,11 @@ const MapContainer = ({
         widthMinPixels: 9,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
       }),
-    activeVesselsData.length > 0 &&
+    activeVessel.length > 0 &&
       layerVisibility.historicalPath.visible &&
       new PathLayer({
         id: "historical-path-layer",
-        data: historicalPathData,
+        data: activeHistoricalPathData,
         getPath: (d) => d.path,
         getColor: [150, 150, 150],
         opacity: 1,
@@ -594,11 +681,11 @@ const MapContainer = ({
         widthMinPixels: 6,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
       }),
-    activeVesselsData.length > 0 &&
+    activeVessel.length > 0 &&
       layerVisibility.futurePath.visible &&
       new PathLayer({
         id: "future-path-border-layer",
-        data: futurePathData,
+        data: activeFuturePathData,
         getPath: (d) => d.path,
         getColor: [25, 120, 180],
         widthUnits: "meters",
@@ -607,11 +694,11 @@ const MapContainer = ({
         widthMinPixels: 9,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
       }),
-    activeVesselsData.length > 0 &&
+    activeVessel.length > 0 &&
       layerVisibility.futurePath.visible &&
       new PathLayer({
         id: "future-path-layer",
-        data: futurePathData,
+        data: activeFuturePathData,
         getPath: (d) => d.path,
         getColor: [41, 168, 255],
         widthUnits: "meters",
@@ -620,10 +707,10 @@ const MapContainer = ({
         widthMinPixels: 6,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
       }),
-    layerVisibility.vesselIcon.visible &&
+    layerVisibility.movingVesselIcon.visible &&
       new IconLayer({
         id: "vessel-icon-border-layer",
-        data: visibleVessels,
+        data: movingVessels,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
         iconAtlas: require("img/vessel_marker.png"),
         iconMapping: {
@@ -649,10 +736,10 @@ const MapContainer = ({
           }),
         onClick: (info) => clickVesselEvent(info.object.mmsi),
       }),
-    layerVisibility.vesselIcon.visible &&
+    layerVisibility.movingVesselIcon.visible &&
       new IconLayer({
         id: "vessel-icon-layer",
-        data: visibleVessels,
+        data: movingVessels,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
         iconAtlas: require("img/vessel_marker.png"),
         iconMapping: {
@@ -683,11 +770,69 @@ const MapContainer = ({
           }),
         onClick: (info) => clickVesselEvent(info.object.mmsi),
       }),
-    activeVesselsData.length > 0 &&
-      layerVisibility.vesselIcon.visible &&
+    layerVisibility.stoppedVesselIcon.visible &&
+      new IconLayer({
+        id: "stopped-vessel-icon-border-layer",
+        data: stoppedVessels,
+        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+        iconAtlas: require("img/vessel_marker.png"),
+        iconMapping: {
+          vesselMarker: { x: 0, y: 0, width: 512, height: 512, mask: true },
+        },
+        getColor: (d) => [255, 255, 255, 255],
+        getIcon: (d) => "vesselMarker",
+        getPosition: (d) => [d.longitude, d.latitude, 0],
+        getAngle: (d) => 360 - d.heading,
+        getSize: (d) => 300,
+        sizeUnits: "meters",
+        sizeScale: 1.8,
+        sizeMinPixels: 14,
+        pickable: true,
+        billboard: false,
+        onHover: (info) =>
+          setTooltipInfo({
+            objectType: "vessel",
+            hoveredObject: info.object,
+            pointerX: info.x,
+            pointerY: info.y,
+            coordinate: info.coordinate,
+          }),
+        onClick: (info) => clickVesselEvent(info.object.mmsi),
+      }),
+    layerVisibility.stoppedVesselIcon.visible &&
+      new IconLayer({
+        id: "stopped-vessel-icon-layer",
+        data: stoppedVessels,
+        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+        iconAtlas: require("img/vessel_marker.png"),
+        iconMapping: {
+          vesselMarker: { x: 0, y: 0, width: 512, height: 512, mask: true },
+        },
+        getColor: [120, 120, 120, 255],
+        getIcon: (d) => "vesselMarker",
+        getPosition: (d) => [d.longitude, d.latitude, 0],
+        getAngle: (d) => 360 - d.heading,
+        getSize: (d) => 300,
+        sizeUnits: "meters",
+        sizeScale: 1,
+        sizeMinPixels: 8,
+        pickable: true,
+        billboard: false,
+        onHover: (info) =>
+          setTooltipInfo({
+            objectType: "vessel",
+            hoveredObject: info.object,
+            pointerX: info.x,
+            pointerY: info.y,
+            coordinate: info.coordinate,
+          }),
+        onClick: (info) => clickVesselEvent(info.object.mmsi),
+      }),
+    activeVessel.length > 0 &&
+      layerVisibility.movingVesselIcon.visible &&
       new IconLayer({
         id: "active-vessel-icon-layer",
-        data: activeVesselsData,
+        data: activeVessel,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
         iconAtlas: require("img/vessel_marker_active.png"),
         iconMapping: {

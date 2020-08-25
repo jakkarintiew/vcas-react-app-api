@@ -93,7 +93,8 @@ const layerVisibilityInitialState = {
   historicalPath: { layerName: "Historical Path", visible: true },
   futurePath: { layerName: "Future Path", visible: true },
   riskPath: { layerName: "High-risk Vessel Path", visible: false },
-  vesselIcon: { layerName: "Vessels", visible: true },
+  movingVesselIcon: { layerName: "Moving Vessels", visible: true },
+  stoppedVesselIcon: { layerName: "Stopped Vessels", visible: false },
 };
 
 const layerVisibilitySlice = createSlice({
@@ -243,6 +244,41 @@ const framesSlice = createSlice({
   },
 });
 
+const pathDataInitialState = [
+  {
+    path: [],
+    timestamps: [],
+    speed: [],
+    heading: [],
+    course: [],
+    risk: [],
+  },
+];
+
+const pathDataSlice = createSlice({
+  name: "pathData",
+  initialState: {
+    activePathData: [],
+    activeFuturePathData: pathDataInitialState,
+    activeHistoricalPathData: pathDataInitialState,
+    highRiskPathData: [],
+  },
+  reducers: {
+    setActivePath: (state, { payload }) => {
+      state.activePathData = payload;
+    },
+    setActiveFuturePath: (state, { payload }) => {
+      state.activeFuturePathData = payload;
+    },
+    setActiveHistoricalPath: (state, { payload }) => {
+      state.activeHistoricalPathData = payload;
+    },
+    setHighRiskPaths: (state, { payload }) => {
+      state.highRiskPathData = payload;
+    },
+  },
+});
+
 // export actions
 export const {
   toggleVesselView: toggleVesselViewActionCreator,
@@ -283,6 +319,13 @@ export const {
   incrementLoadedFrames: incrementLoadedFramesActionCreator,
 } = framesSlice.actions;
 
+export const {
+  setActivePath: setActivePathActionCreator,
+  setActiveFuturePath: setActiveFuturePathActionCreator,
+  setActiveHistoricalPath: setActiveHistoricalPathActionCreator,
+  setHighRiskPaths: setHighRiskPathsActionCreator,
+} = pathDataSlice.actions;
+
 // define reducers
 const reducer = {
   mapView: mapViewSlice.reducer,
@@ -293,6 +336,7 @@ const reducer = {
   vesselTypeFilter: vesselTypeFilterSlice.reducer,
   vesselSliderFilter: vesselSliderFilterSlice.reducer,
   frames: framesSlice.reducer,
+  pathData: pathDataSlice.reducer,
 };
 
 // define middleware

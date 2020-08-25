@@ -57,13 +57,17 @@ const SidePanel = ({ vesselsData }) => {
     togglePanelOpen(panelKey);
   };
 
+  const movingVessels = vesselsData.filter((vessel) => {
+    return vessel.speed >= 1;
+  });
+
   return (
     <LeftPanelBox>
       <StyledSidePanelContainer width={panel.isOpen ? width : 0}>
         {panel.isOpen && (
           <SidePanelInner className="flex flex-col">
             <PanelHeader />
-            <PanelContent vesselsData={vesselsData} />
+            <PanelContent vesselsData={movingVessels} />
           </SidePanelInner>
         )}
         <CollapseButton onClick={handleOnClick} style={{ right: "-5px" }}>

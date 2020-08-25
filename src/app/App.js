@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+
 import axios from "axios";
 import { ThemeProvider } from "styled-components";
 import { StylesProvider } from "@material-ui/styles";
 import { withStyles } from "@material-ui/core/styles";
 import CircularProgress from "@material-ui/core/CircularProgress";
-
-import { useSelector, useDispatch } from "react-redux";
 
 import { lightTheme, darkTheme } from "styles/themes";
 import { GlobalStyle } from "styles/global";
@@ -17,7 +17,6 @@ import TimeSlider from "components/time-slider/TimeSlider";
 import SearchBar from "components/search-bar/SearchBar";
 import {
   setMetadataActionCreator,
-  // setLoadedFramesActionCreator,
   incrementLoadedFramesActionCreator,
 } from "app/Redux";
 
@@ -42,12 +41,10 @@ const App = () => {
   const metadata = useSelector((state) => state.frames.metadata);
   const currentFrame = useSelector((state) => state.frames.currentFrame);
   const activeVesselID = useSelector((state) => state.activeVesselID);
+
   const setMetadata = (metadata) => {
     dispatch(setMetadataActionCreator(metadata));
   };
-  // const setLoadedFrames = (framesLength) => {
-  //   dispatch(setLoadedFramesActionCreator(framesLength));
-  // };
   const incrementLoadedFrames = () => {
     dispatch(incrementLoadedFramesActionCreator());
   };
@@ -56,125 +53,6 @@ const App = () => {
   const [frames, setFrames] = useState({});
   const [activeVesselsData, setActiveVesselsData] = useState([]);
   const [error, setError] = useState(null);
-  const [activePathData, setActivePathData] = useState([]);
-  const pathDataInitialState = [
-    {
-      path: [],
-      timestamps: [],
-      speed: [],
-      heading: [],
-      course: [],
-      risk: [],
-    },
-  ];
-  const [futurePathData, setFuturePathData] = useState(pathDataInitialState);
-  const [historicalPathData, setHistoricalPathData] = useState(
-    pathDataInitialState
-  );
-
-  const [riskPaths, setRiskPaths] = useState([]);
-  const [riskPathsLoading, setRiskPathsLoading] = useState(false);
-
-  const getPath = async (vesselID) => {
-    try {
-      const promisePath = await axios.get(
-        FRAMES_DIR + `paths_new/${vesselID}_path.json`
-      );
-      return promisePath.data;
-    } catch (error) {
-      setError(error);
-    }
-  };
-
-  const getFuturePath = (pathData) => {
-    let currentIndex = pathData.findIndex((obj) => obj.frame === currentFrame);
-    let filteredPath;
-    for (let index = currentIndex; index <= pathData.length - 1; index++) {
-      if (currentIndex === pathData.length - 1) {
-        return pathDataInitialState;
-      } else if (
-        index === pathData.length - 1 ||
-        pathData[index + 1].frame - pathData[index].frame > 1
-      ) {
-        filteredPath = pathData.filter((elem) => {
-          return (
-            elem.frame >= currentFrame && elem.frame <= pathData[index].frame
-          );
-        });
-        return [
-          {
-            path: filteredPath.map((frame) => [
-              frame.longitude,
-              frame.latitude,
-            ]),
-            timestamps: filteredPath.map((frame) => frame.timestamp),
-            speed: filteredPath.map((frame) => frame.speed),
-            heading: filteredPath.map((frame) => frame.heading),
-            course: filteredPath.map((frame) => frame.course),
-            risk: filteredPath.map((frame) => frame.risk),
-          },
-        ];
-      }
-    }
-  };
-
-  const getHistoricalPath = (pathData) => {
-    let currentIndex = pathData.findIndex((obj) => obj.frame === currentFrame);
-    let filteredPath;
-    for (let index = currentIndex; index >= 0; index--) {
-      if (currentIndex === 0) {
-        return pathDataInitialState;
-      } else if (
-        index === 0 ||
-        pathData[index].frame - pathData[index - 1].frame > 1
-      ) {
-        filteredPath = pathData.filter((elem) => {
-          return (
-            elem.frame >= pathData[index].frame && elem.frame <= currentFrame
-          );
-        });
-        return [
-          {
-            path: filteredPath.map((frame) => [
-              frame.longitude,
-              frame.latitude,
-            ]),
-            timestamps: filteredPath.map((frame) => frame.timestamp),
-            speed: filteredPath.map((frame) => frame.speed),
-            heading: filteredPath.map((frame) => frame.heading),
-            course: filteredPath.map((frame) => frame.course),
-            risk: filteredPath.map((frame) => frame.risk),
-          },
-        ];
-      }
-    }
-  };
-
-  const getRiskPathData = () => {
-    setRiskPaths([]);
-    const promiseRiskPaths = [];
-
-    const riskVessels = vesselsData.filter((vessel) => {
-      return vessel.risk > 75;
-    });
-
-    riskVessels.forEach((vessel) => {
-      promiseRiskPaths.push(getPath(vessel.mmsi));
-    });
-
-    setRiskPathsLoading(true);
-    Promise.all(promiseRiskPaths)
-      .then((responses) => {
-        responses.forEach((path) => {
-          setRiskPaths((prevRiskPaths) => [
-            ...prevRiskPaths,
-            getFuturePath(path)[0],
-          ]);
-        });
-        setRiskPathsLoading(false);
-      })
-      .catch((error) => setError(error));
-  };
 
   // Load first frame + metadata; ran once at startup
   useEffect(() => {
@@ -234,7 +112,6 @@ const App = () => {
     };
     if (metadata.frames.length) {
       getRemainingFrames();
-      getRiskPathData();
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -243,7 +120,6 @@ const App = () => {
   // When current frame is updated, update data
   useEffect(() => {
     setVesselsData(frames[currentFrame]);
-    setRiskPaths([]);
 
     if (activeVesselID) {
       const newActiveVessel = frames[currentFrame].filter((vessel) => {
@@ -253,55 +129,6 @@ const App = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFrame]);
-
-  const layerVisibility = useSelector((state) => state.layerVisibility);
-
-  // When vesselsData is updated, update data
-  useEffect(() => {
-    if (vesselsData && !riskPathsLoading) {
-      setRiskPaths([]);
-      if (layerVisibility.riskPath.visible) {
-        getRiskPathData();
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [vesselsData]);
-
-  // When active vessel is updated, load path data and frames
-  useEffect(() => {
-    if (vesselsData && activeVesselID) {
-      setActiveVesselsData(
-        vesselsData.filter((vessel) => {
-          return vessel.mmsi === activeVesselID;
-        })
-      );
-
-      Promise.resolve(getPath(activeVesselID)).then((response) => {
-        setActivePathData(response);
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeVesselID]);
-
-  useEffect(() => {
-    let currentIndex = activePathData.findIndex(
-      (obj) => obj.frame === currentFrame
-    );
-
-    if (
-      activePathData.length > 0 &&
-      currentFrame <= activePathData[activePathData.length - 1].frame &&
-      currentFrame >= activePathData[0].frame &&
-      currentIndex !== -1
-    ) {
-      setFuturePathData(getFuturePath(activePathData));
-      setHistoricalPathData(getHistoricalPath(activePathData));
-    } else {
-      setFuturePathData(pathDataInitialState);
-      setHistoricalPathData(pathDataInitialState);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activePathData, currentFrame]);
 
   if (error) return <div>Error: {error.message}</div>;
   if (!vesselsData || metadata.frames.length === 0)
@@ -326,20 +153,14 @@ const App = () => {
             <DetailsPanel
               vesselsData={vesselsData}
               activeVesselsData={activeVesselsData}
-              historicalPathData={historicalPathData}
-              futurePathData={futurePathData}
             />
           </div>
 
           <MapContainer
             vesselsData={vesselsData}
-            riskPaths={riskPaths}
             closeEncounters={
               allCloseEncounters[currentFrame >= 134 ? 179 : currentFrame + 45]
             }
-            activeVesselsData={activeVesselsData}
-            historicalPathData={historicalPathData}
-            futurePathData={futurePathData}
             mapStyle={
               darkThemeEnabled ? darkTheme.mapStyle : lightTheme.mapStyle
             }

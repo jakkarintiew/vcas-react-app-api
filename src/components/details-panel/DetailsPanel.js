@@ -45,15 +45,17 @@ const PlaceholderContainer = styled.div`
   padding: 10px;
 `;
 
-const DetailsPanel = ({
-  vesselsData,
-  activeVesselsData,
-  historicalPathData,
-  futurePathData,
-}) => {
+const DetailsPanel = ({ vesselsData }) => {
   // Redux states
   const dispatch = useDispatch();
   const panelOpen = useSelector((state) => state.panelOpen);
+  const activeVesselID = useSelector((state) => state.activeVesselID);
+  const activeFuturePathData = useSelector(
+    (state) => state.pathData.activeFuturePathData
+  );
+  const activeHistoricalPathData = useSelector(
+    (state) => state.pathData.activeHistoricalPathData
+  );
 
   const togglePanelOpen = (panelKey) => {
     dispatch(togglePanelOpenActionCreator(panelKey));
@@ -70,21 +72,22 @@ const DetailsPanel = ({
     togglePanelOpen(panelKey);
   };
 
-  // console.log(activeVesselsData)
-  // console.log(historicalPathData)
-  // console.log(futurePathData)
+  const activeVessel = vesselsData.filter((vessel) => {
+    return vessel.mmsi === activeVesselID;
+  });
 
   return (
     <RightPanelBox className="flex flex-row-reverse space-x-reverse">
       <StyledDetailsPanelContainer width={panel.isOpen ? width : 0}>
         {panel.isOpen && (
           <DetailsPanelInner>
-            {activeVesselsData.length > 0 &&
-            (historicalPathData.length > 0 || futurePathData.length > 0) ? (
+            {activeVessel.length > 0 &&
+            (activeHistoricalPathData.length > 0 ||
+              activeFuturePathData.length > 0) ? (
               <VesselDetails
-                activeVessel={activeVesselsData[0]}
-                historicalPathData={historicalPathData[0]}
-                futurePathData={futurePathData[0]}
+                activeVessel={activeVessel[0]}
+                historicalPathData={activeHistoricalPathData[0]}
+                futurePathData={activeFuturePathData[0]}
               />
             ) : (
               <div className="flex content-center flex-wrap flex-auto h-full p-5">

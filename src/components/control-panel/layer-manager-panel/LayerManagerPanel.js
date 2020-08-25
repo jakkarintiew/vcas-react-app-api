@@ -26,7 +26,8 @@ const LayerManagerPanel = () => {
           <div className="px ml-1 mb-2">
             <b>Points</b>
           </div>
-          <LayerVisibilityToggle layerName={"Vessels"} />
+          <LayerVisibilityToggle layerName={"Moving Vessels"} />
+          <LayerVisibilityToggle layerName={"Stopped Vessels"} />
         </LayerGroupContainer>
         <LayerGroupContainer>
           <div className="px ml-1 mb-2">
