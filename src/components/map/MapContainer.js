@@ -607,7 +607,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
         widthMinPixels: 5,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
       }),
-    true &&
+    layerVisibility.alertIcon.visible &&
       new PathLayer({
         id: "alert-path-border-layer",
         data: alertPaths,
@@ -619,7 +619,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
         widthMinPixels: 9,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
       }),
-    true &&
+    layerVisibility.alertIcon.visible &&
       new PathLayer({
         id: "alert-path-layer",
         data: alertPaths,
@@ -631,7 +631,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
         widthMinPixels: 6,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
       }),
-    true &&
+    layerVisibility.alertIcon.visible &&
       new IconLayer({
         id: "warning-icon-layer",
         data: closeEncounters,
