@@ -301,7 +301,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
       setActiveFuturePath(getFuturePath(activePathData));
       setActiveHistoricalPath(getHistoricalPath(activePathData));
 
-      if (activeVessels.length != 0) {
+      if (activeVessels.length !== 0) {
         const newActiveVessel = visibleVessels.filter((vessel) => {
           return vessel.mmsi === activeVessels[0].mmsi;
         });
