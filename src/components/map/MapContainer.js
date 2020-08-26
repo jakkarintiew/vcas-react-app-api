@@ -361,7 +361,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
         latitude: object.vessel_1_latitude,
         zoom: 12,
         pitch: 0,
-        bearning: 0,
+        bearing: 0,
         transitionDuration: 500,
         transitionInterruption: TRANSITION_EVENTS.UPDATE,
         transitionInterpolator: new FlyToInterpolator(),
@@ -644,7 +644,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
         getPosition: (d) => [
           (d.vessel_1_longitude + d.vessel_2_longitude) / 2,
           (d.vessel_1_latitude + d.vessel_2_latitude) / 2,
-          0,
+          200,
         ],
         getSize: (d) => 600,
         sizeUnits: "meters",
