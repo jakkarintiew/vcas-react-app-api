@@ -14,7 +14,7 @@ const AlertDetails = ({ alertVessels }) => {
     >
       <div className="p-3 h-full flex flex-col">
         {alertVessels.map((vessel) => (
-          <div className="mb-2">
+          <div key={vessel.mmsi} className="mb-2">
             <PropertyInfo label="Pilot" data={"<PILOT NAME>"} />
             <PropertyInfo label="MMSI" data={vessel.mmsi} />
             <PropertyInfo label="Ship Name" data={vessel.shipname} />

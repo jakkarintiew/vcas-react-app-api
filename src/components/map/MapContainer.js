@@ -169,7 +169,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
   });
 
   const riskyVessels = visibleVessels.filter((vessel) => {
-    return vessel.risk > 65 && vessel.speed >= 1;
+    return vessel.risk > 50 && vessel.speed >= 1;
   });
 
   const movingVessels = visibleVessels.filter((vessel) => {
@@ -270,7 +270,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
     }
   };
 
-  const getHighRiskPath = () => {
+  const getHighRiskPaths = (riskVessels) => {
     const promiseRiskPaths = [];
     const newRiskPaths = [];
     riskVessels.forEach((vessel) => {
@@ -290,7 +290,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
   useEffect(() => {
     setHighRiskPaths([]);
     if (layerVisibility.riskPath.visible) {
-      getHighRiskPath();
+      getHighRiskPaths(riskVessels);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -554,11 +554,11 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
         getPosition: (d) => [d.longitude, d.latitude],
         getWeight: (d) => d.risk / 100,
         radiusPixels:
-          8000 /
+          5000 /
           (78271.484 * Math.exp(-0.6932415 * mapView.viewStates.main.zoom)),
         opacity: 0.1,
         intensity: 1,
-        threshold: 0.1,
+        threshold: 0.01,
       }),
     layerVisibility.riskScreenGrid.visible &&
       new ScreenGridLayer({
