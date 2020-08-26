@@ -638,7 +638,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
         iconAtlas: require("img/warning_red.png"),
         iconMapping: {
-          warningMarker: { x: 0, y: 0, width: 570, height: 570, mask: false },
+          warningMarker: { x: 0, y: 0, width: 300, height: 300, mask: false },
         },
         getIcon: (d) => "warningMarker",
         getPosition: (d) => [
