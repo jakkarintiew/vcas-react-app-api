@@ -301,21 +301,23 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
       setActiveFuturePath(getFuturePath(activePathData));
       setActiveHistoricalPath(getHistoricalPath(activePathData));
 
-      const newActiveVessel = visibleVessels.filter((vessel) => {
-        return vessel.mmsi === activeVessels[0].mmsi;
-      });
-      setActiveVessels(newActiveVessel);
-      const vesselViewState = {
-        longitude: newActiveVessel[0].longitude,
-        latitude: newActiveVessel[0].latitude,
-        zoom: 13,
-        pitch: 60,
-        bearing: newActiveVessel[0].heading,
-        transitionDuration: 500,
-        transitionInterruption: TRANSITION_EVENTS.UPDATE,
-        transitionInterpolator: new FlyToInterpolator(),
-      };
-      updateVesselViewState(vesselViewState);
+      if (activeVessels.length != 0) {
+        const newActiveVessel = visibleVessels.filter((vessel) => {
+          return vessel.mmsi === activeVessels[0].mmsi;
+        });
+        setActiveVessels(newActiveVessel);
+        const vesselViewState = {
+          longitude: newActiveVessel[0].longitude,
+          latitude: newActiveVessel[0].latitude,
+          zoom: 13,
+          pitch: 60,
+          bearing: newActiveVessel[0].heading,
+          transitionDuration: 500,
+          transitionInterruption: TRANSITION_EVENTS.UPDATE,
+          transitionInterpolator: new FlyToInterpolator(),
+        };
+        updateVesselViewState(vesselViewState);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFrame]);
