@@ -168,10 +168,6 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
     );
   });
 
-  const riskyVessels = visibleVessels.filter((vessel) => {
-    return vessel.risk > 50 && vessel.speed >= 1;
-  });
-
   const movingVessels = visibleVessels.filter((vessel) => {
     return vessel.speed >= 1;
   });
@@ -180,7 +176,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
     return vessel.speed < 1;
   });
 
-  const riskVessels = movingVessels.filter((vessel) => {
+  const highRiskVessels = movingVessels.filter((vessel) => {
     return vessel.risk > 75;
   });
 
@@ -270,10 +266,10 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
     }
   };
 
-  const getHighRiskPaths = (riskVessels) => {
+  const getHighRiskPaths = (highRiskVessels) => {
     const promiseRiskPaths = [];
     const newRiskPaths = [];
-    riskVessels.forEach((vessel) => {
+    highRiskVessels.forEach((vessel) => {
       promiseRiskPaths.push(getPath(vessel.mmsi));
     });
 
@@ -290,7 +286,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
   useEffect(() => {
     setHighRiskPaths([]);
     if (layerVisibility.riskPath.visible) {
-      getHighRiskPaths(riskVessels);
+      getHighRiskPaths(highRiskVessels);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -552,7 +548,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
     layerVisibility.riskHeatmap.visible &&
       new HeatmapLayer({
         id: "risk-heatmap-layer",
-        data: riskyVessels,
+        data: highRiskVessels,
         getPosition: (d) => [d.longitude, d.latitude],
         getWeight: (d) => d.risk / 100,
         radiusPixels:
@@ -565,7 +561,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
     layerVisibility.riskScreenGrid.visible &&
       new ScreenGridLayer({
         id: "risk-screen-grid-layer",
-        data: riskyVessels,
+        data: highRiskVessels,
         pickable: false,
         opacity: 0.15,
         cellSizePixels: 64,
@@ -574,7 +570,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
     layerVisibility.riskHexagon.visible &&
       new HexagonLayer({
         id: "risk-hexagon-layer",
-        data: riskyVessels,
+        data: highRiskVessels,
         lowerPercentile: 0,
         extruded: false,
         radius:
