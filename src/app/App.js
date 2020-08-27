@@ -17,6 +17,7 @@ import TimeSlider from "components/time-slider/TimeSlider";
 import SearchBar from "components/search-bar/SearchBar";
 import {
   setMetadataActionCreator,
+  setAllVesselsActionCreator,
   incrementLoadedFramesActionCreator,
 } from "app/Redux";
 
@@ -40,16 +41,21 @@ const App = () => {
   const darkThemeEnabled = useSelector((state) => state.darkThemeEnabled);
   const metadata = useSelector((state) => state.frames.metadata);
   const currentFrame = useSelector((state) => state.frames.currentFrame);
+  const allVessels = useSelector((state) => state.vesselData.allVesselData);
   const alertVessels = useSelector((state) => state.vesselData.alertVesselData);
 
   const setMetadata = (metadata) => {
     dispatch(setMetadataActionCreator(metadata));
   };
+
+  const setAllVessels = (vessels) => {
+    dispatch(setAllVesselsActionCreator(vessels));
+  };
+
   const incrementLoadedFrames = () => {
     dispatch(incrementLoadedFramesActionCreator());
   };
 
-  const [vesselsData, setVesselsData] = useState([]);
   const [frames, setFrames] = useState({});
   const [error, setError] = useState(null);
   const [alertFrame, setAlertFrame] = useState(0);
@@ -65,7 +71,7 @@ const App = () => {
         ]);
         incrementLoadedFrames();
         setFrames((prevFrames) => ({ ...prevFrames, 0: firstFrame.data }));
-        setVesselsData(firstFrame.data);
+        setAllVessels(firstFrame.data);
         setMetadata(metadata.data);
       } catch (error) {
         setError(error);
@@ -141,7 +147,8 @@ const App = () => {
 
   // When current frame is updated, update data
   useEffect(() => {
-    setVesselsData(frames[currentFrame]);
+    setAllVessels(frames[currentFrame]);
+
     if (alertVessels.length === 0) {
       setAlertFrame(currentFrame >= 134 ? 179 : currentFrame + 45);
     }
@@ -149,7 +156,7 @@ const App = () => {
   }, [currentFrame]);
 
   if (error) return <div>Error: {error.message}</div>;
-  if (!vesselsData || metadata.frames.length === 0)
+  if (!allVessels || metadata.frames.length === 0)
     return (
       <div className="flex h-screen">
         <div className="m-auto ">
@@ -163,16 +170,15 @@ const App = () => {
         <ThemeProvider theme={darkThemeEnabled ? darkTheme : lightTheme}>
           <GlobalStyle />
           <div className="h-screen w-screen flex justify-between overflow-hidden">
-            <ControlPanel vesselsData={vesselsData} />
+            <ControlPanel vesselsData={allVessels} />
             <div className="h-full w-full flex flex-col flex-1">
               <SearchBar />
               <TimeSlider />
             </div>
-            <DetailsPanel vesselsData={vesselsData} />
+            <DetailsPanel vesselsData={allVessels} />
           </div>
 
           <MapContainer
-            vesselsData={vesselsData}
             closeEncounters={allCloseEncounters[alertFrame]}
             mapStyle={
               darkThemeEnabled ? darkTheme.mapStyle : lightTheme.mapStyle

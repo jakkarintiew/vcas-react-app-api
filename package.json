@@ -5,6 +5,7 @@
   "dependencies": {
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.56",
     "@material-ui/styles": "^4.10.0",
     "@reduxjs/toolkit": "^1.4.0",
     "@testing-library/jest-dom": "^5.11.4",
@@ -25,8 +26,6 @@
     "react-scripts": "3.4.3",
     "redux-logger": "^3.0.6",
     "styled-components": "^5.1.1",
-    "swr": "^0.3.1",
-    "unfetch": "^4.1.0",
     "yargs-parser": "^19.0.1"
   },
   "scripts": {

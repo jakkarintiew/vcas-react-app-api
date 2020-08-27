@@ -279,6 +279,7 @@ const pathDataSlice = createSlice({
 const vesselDataSlice = createSlice({
   name: "vesselData",
   initialState: {
+    allVesselData: [],
     activeVesselData: [],
     alertVesselData: [],
     alertColors: [
@@ -297,6 +298,9 @@ const vesselDataSlice = createSlice({
     ],
   },
   reducers: {
+    setAllVessels: (state, { payload }) => {
+      state.allVesselData = payload;
+    },
     setActiveVessels: (state, { payload }) => {
       state.activeVesselData = payload;
     },
@@ -353,6 +357,7 @@ export const {
 } = pathDataSlice.actions;
 
 export const {
+  setAllVessels: setAllVesselsActionCreator,
   setActiveVessels: setActiveVesselsActionCreator,
   setAlertVessels: setAlertVesselsActionCreator,
 } = vesselDataSlice.actions;

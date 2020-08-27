@@ -44,7 +44,7 @@ import vesselTypeLookup from "data/vessel_type_lookup.json";
 const FRAMES_DIR =
   "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/";
 
-const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
+const MapContainer = ({ closeEncounters, mapStyle }) => {
   // Set your mapbox access token here
   const MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
   // Redux states
@@ -54,6 +54,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
   const vesselTypeFilter = useSelector((state) => state.vesselTypeFilter);
   const vesselSliderFilter = useSelector((state) => state.vesselSliderFilter);
   const currentFrame = useSelector((state) => state.frames.currentFrame);
+  const allVessels = useSelector((state) => state.vesselData.allVesselData);
   const activeVessels = useSelector(
     (state) => state.vesselData.activeVesselData
   );
@@ -156,7 +157,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
   };
 
   // Vessel data
-  const visibleVessels = vesselsData.filter((vessel) => {
+  const visibleVessels = allVessels.filter((vessel) => {
     const visibleTypes = vesselTypeFilter.map((vessel) => {
       return vessel.filterState ? vessel.vesselType : null;
     });
@@ -290,7 +291,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
       getHighRiskPaths(highRiskVessels);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [vesselsData, layerVisibility]);
+  }, [allVessels, layerVisibility]);
 
   useEffect(() => {
     if (activePathData.length > 0) {
@@ -316,14 +317,46 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
       }
 
       if (alertVessels.length !== 0) {
-        const newAlertVessels = vesselsData.filter((vessel) => {
+        const newAlertVessels = allVessels.filter((vessel) => {
           return alertVessels.map((v) => v.mmsi).includes(vessel.mmsi);
         });
         setAlertVessels(newAlertVessels);
+        // Get paths
+        let alertPathsPromises = [];
+        let newAlertPaths = [];
+
+        newAlertVessels.forEach((vessel) => {
+          alertPathsPromises.push(getPath(vessel.mmsi));
+        });
+
+        Promise.all(alertPathsPromises)
+          .then((responses) => {
+            responses.forEach((path) => {
+              newAlertPaths.push(getFuturePath(path)[0]);
+            });
+            setAlertPaths(newAlertPaths);
+          })
+          .catch((error) => console.log(error));
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFrame]);
+
+  let activeMMSI = null;
+  if (activeVessels.length > 0) {
+    activeMMSI = activeVessels[0].mmsi;
+  }
+
+  useEffect(() => {
+    if (activeMMSI) {
+      Promise.resolve(getPath(activeVessels[0].mmsi)).then((response) => {
+        setActivePath(response);
+        setActiveFuturePath(getFuturePath(response));
+        setActiveHistoricalPath(getHistoricalPath(response));
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeMMSI]);
 
   const clickVesselEvent = (mmsi) => {
     // Reset
@@ -337,11 +370,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
       return vessel.mmsi === mmsi;
     });
     setActiveVessels(newActiveVessel);
-    Promise.resolve(getPath(mmsi)).then((response) => {
-      setActivePath(response);
-      setActiveFuturePath(getFuturePath(response));
-      setActiveHistoricalPath(getHistoricalPath(response));
-    });
+
     const vesselViewState = {
       longitude: newActiveVessel[0].longitude,
       latitude: newActiveVessel[0].latitude,
@@ -381,7 +410,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
 
     // Get vessels
     setAlertVessels(
-      vesselsData.filter((vessel) => {
+      allVessels.filter((vessel) => {
         return (
           vessel.mmsi === object.vessel_1_mmsi ||
           vessel.mmsi === object.vessel_2_mmsi
@@ -715,6 +744,65 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
         widthMinPixels: 6,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
       }),
+
+    layerVisibility.stoppedVesselIcon.visible &&
+      new IconLayer({
+        id: "stopped-vessel-icon-border-layer",
+        data: stoppedVessels,
+        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+        iconAtlas: require("img/vessel_marker.png"),
+        iconMapping: {
+          vesselMarker: { x: 0, y: 0, width: 512, height: 512, mask: true },
+        },
+        getColor: (d) => [255, 255, 255, 255],
+        getIcon: (d) => "vesselMarker",
+        getPosition: (d) => [d.longitude, d.latitude, 0],
+        getAngle: (d) => 360 - d.heading,
+        getSize: (d) => 300,
+        sizeUnits: "meters",
+        sizeScale: 1.8,
+        sizeMinPixels: 14,
+        pickable: true,
+        billboard: false,
+        onHover: (info) =>
+          setTooltipInfo({
+            objectType: "vessel",
+            hoveredObject: info.object,
+            pointerX: info.x,
+            pointerY: info.y,
+            coordinate: info.coordinate,
+          }),
+        onClick: (info) => clickVesselEvent(info.object.mmsi),
+      }),
+    layerVisibility.stoppedVesselIcon.visible &&
+      new IconLayer({
+        id: "stopped-vessel-icon-layer",
+        data: stoppedVessels,
+        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+        iconAtlas: require("img/vessel_marker.png"),
+        iconMapping: {
+          vesselMarker: { x: 0, y: 0, width: 512, height: 512, mask: true },
+        },
+        getColor: [120, 120, 120, 255],
+        getIcon: (d) => "vesselMarker",
+        getPosition: (d) => [d.longitude, d.latitude, 0],
+        getAngle: (d) => 360 - d.heading,
+        getSize: (d) => 300,
+        sizeUnits: "meters",
+        sizeScale: 1,
+        sizeMinPixels: 8,
+        pickable: true,
+        billboard: false,
+        onHover: (info) =>
+          setTooltipInfo({
+            objectType: "vessel",
+            hoveredObject: info.object,
+            pointerX: info.x,
+            pointerY: info.y,
+            coordinate: info.coordinate,
+          }),
+        onClick: (info) => clickVesselEvent(info.object.mmsi),
+      }),
     layerVisibility.movingVesselIcon.visible &&
       new IconLayer({
         id: "vessel-icon-border-layer",
@@ -773,64 +861,6 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
             : d.risk > 50
             ? [255, 160, 0]
             : [52, 199, 89],
-        getIcon: (d) => "vesselMarker",
-        getPosition: (d) => [d.longitude, d.latitude, 0],
-        getAngle: (d) => 360 - d.heading,
-        getSize: (d) => 300,
-        sizeUnits: "meters",
-        sizeScale: 1,
-        sizeMinPixels: 8,
-        pickable: true,
-        billboard: false,
-        onHover: (info) =>
-          setTooltipInfo({
-            objectType: "vessel",
-            hoveredObject: info.object,
-            pointerX: info.x,
-            pointerY: info.y,
-            coordinate: info.coordinate,
-          }),
-        onClick: (info) => clickVesselEvent(info.object.mmsi),
-      }),
-    layerVisibility.stoppedVesselIcon.visible &&
-      new IconLayer({
-        id: "stopped-vessel-icon-border-layer",
-        data: stoppedVessels,
-        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
-        iconAtlas: require("img/vessel_marker.png"),
-        iconMapping: {
-          vesselMarker: { x: 0, y: 0, width: 512, height: 512, mask: true },
-        },
-        getColor: (d) => [255, 255, 255, 255],
-        getIcon: (d) => "vesselMarker",
-        getPosition: (d) => [d.longitude, d.latitude, 0],
-        getAngle: (d) => 360 - d.heading,
-        getSize: (d) => 300,
-        sizeUnits: "meters",
-        sizeScale: 1.8,
-        sizeMinPixels: 14,
-        pickable: true,
-        billboard: false,
-        onHover: (info) =>
-          setTooltipInfo({
-            objectType: "vessel",
-            hoveredObject: info.object,
-            pointerX: info.x,
-            pointerY: info.y,
-            coordinate: info.coordinate,
-          }),
-        onClick: (info) => clickVesselEvent(info.object.mmsi),
-      }),
-    layerVisibility.stoppedVesselIcon.visible &&
-      new IconLayer({
-        id: "stopped-vessel-icon-layer",
-        data: stoppedVessels,
-        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
-        iconAtlas: require("img/vessel_marker.png"),
-        iconMapping: {
-          vesselMarker: { x: 0, y: 0, width: 512, height: 512, mask: true },
-        },
-        getColor: [120, 120, 120, 255],
         getIcon: (d) => "vesselMarker",
         getPosition: (d) => [d.longitude, d.latitude, 0],
         getAngle: (d) => 360 - d.heading,
