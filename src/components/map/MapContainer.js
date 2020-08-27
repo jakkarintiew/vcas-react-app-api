@@ -66,7 +66,8 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
   );
   const highRiskPaths = useSelector((state) => state.pathData.highRiskPathData);
   const alertPaths = useSelector((state) => state.pathData.alertPathData);
-
+  const alertVessels = useSelector((state) => state.vesselData.alertVesselData);
+  const alertColors = useSelector((state) => state.vesselData.alertColors);
   const setActiveVessels = (vessel) => {
     dispatch(setActiveVesselsActionCreator(vessel));
   };
@@ -288,7 +289,6 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
     if (layerVisibility.riskPath.visible) {
       getHighRiskPaths(highRiskVessels);
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vesselsData, layerVisibility]);
 
@@ -314,6 +314,13 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
         };
         updateVesselViewState(vesselViewState);
       }
+
+      if (alertVessels.length !== 0) {
+        const newAlertVessels = vesselsData.filter((vessel) => {
+          return alertVessels.map((v) => v.mmsi).includes(vessel.mmsi);
+        });
+        setAlertVessels(newAlertVessels);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFrame]);
@@ -324,6 +331,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
     setActiveFuturePath(pathDataInitialState);
     setActiveHistoricalPath(pathDataInitialState);
     setAlertPaths([]);
+    setAlertVessels([]);
 
     const newActiveVessel = visibleVessels.filter((vessel) => {
       return vessel.mmsi === mmsi;
@@ -347,7 +355,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
     updateVesselViewState(vesselViewState);
   };
 
-  const clickWarningEvent = (object) => {
+  const clickAlertEvent = (object) => {
     // Reset active vessel
     setActiveVessels([]);
 
@@ -373,7 +381,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
 
     // Get vessels
     setAlertVessels(
-      visibleVessels.filter((vessel) => {
+      vesselsData.filter((vessel) => {
         return (
           vessel.mmsi === object.vessel_1_mmsi ||
           vessel.mmsi === object.vessel_2_mmsi
@@ -610,7 +618,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
         id: "alert-path-border-layer",
         data: alertPaths,
         getPath: (d) => d.path,
-        getColor: [150, 132, 0],
+        getColor: (d) => alertColors[alertPaths.indexOf(d)].borderRGB,
         widthUnits: "meters",
         getWidth: 80,
         rounded: true,
@@ -622,7 +630,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
         id: "alert-path-layer",
         data: alertPaths,
         getPath: (d) => d.path,
-        getColor: [250, 232, 0],
+        getColor: (d) => alertColors[alertPaths.indexOf(d)].fillRGB,
         widthUnits: "meters",
         getWidth: 60,
         rounded: true,
@@ -651,7 +659,7 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
         sizeMaxPixels: 400,
         billboard: true,
         pickable: true,
-        onClick: (info) => clickWarningEvent(info.object),
+        onClick: (info) => clickAlertEvent(info.object),
       }),
     activeVessels.length > 0 &&
       layerVisibility.historicalPath.visible &&
@@ -746,11 +754,25 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
           vesselMarker: { x: 0, y: 0, width: 512, height: 512, mask: true },
         },
         getColor: (d) =>
-          d.risk > 75
-            ? [252, 40, 20, 255]
+          activeVessels.filter((vessel) => {
+            return vessel.mmsi === d.mmsi;
+          }).length > 0
+            ? [89, 173, 255]
+            : alertVessels.filter((vessel) => {
+                return vessel.mmsi === d.mmsi;
+              }).length > 0
+            ? alertColors[
+                alertVessels.indexOf(
+                  alertVessels.find((vessel) => {
+                    return vessel.mmsi === d.mmsi;
+                  })
+                )
+              ].fillRGB
+            : d.risk > 75
+            ? [252, 40, 20]
             : d.risk > 50
-            ? [255, 160, 0, 255]
-            : [52, 199, 89, 255],
+            ? [255, 160, 0]
+            : [52, 199, 89],
         getIcon: (d) => "vesselMarker",
         getPosition: (d) => [d.longitude, d.latitude, 0],
         getAngle: (d) => 360 - d.heading,
@@ -827,42 +849,6 @@ const MapContainer = ({ vesselsData, closeEncounters, mapStyle }) => {
             coordinate: info.coordinate,
           }),
         onClick: (info) => clickVesselEvent(info.object.mmsi),
-      }),
-    activeVessels.length > 0 &&
-      layerVisibility.movingVesselIcon.visible &&
-      new IconLayer({
-        id: "active-vessel-icon-layer",
-        data: visibleVessels.filter((vessel) => {
-          return vessel.mmsi === activeVessels[0].mmsi;
-        }),
-        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
-        iconAtlas: require("img/vessel_marker_active.png"),
-        iconMapping: {
-          vesselMarker: { x: 0, y: 0, width: 2048, height: 2048, mask: false },
-        },
-        getIcon: (d) => "vesselMarker",
-        getPosition: (d) => [d.longitude, d.latitude, 0],
-        getAngle: (d) => 360 - d.heading,
-        getSize: (d) => 300,
-        sizeUnits: "meters",
-        sizeScale: 2.5,
-        sizeMinPixels: 16,
-        billboard: false,
-        pickable: true,
-        onHover: (info) =>
-          setTooltipInfo({
-            objectType: "vessel",
-            hoveredObject: info.object,
-            pointerX: info.x,
-            pointerY: info.y,
-            coordinate: info.coordinate,
-          }),
-        loadOptions: {
-          imagebitmap: {
-            premultiplyAlpha: "premultiply",
-            resizeQuality: "high",
-          },
-        },
       }),
   ].filter(Boolean);
 

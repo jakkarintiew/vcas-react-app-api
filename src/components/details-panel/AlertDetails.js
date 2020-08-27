@@ -1,10 +1,13 @@
 import React from "react";
+import { useSelector } from "react-redux";
+
 import { Scrollbars } from "react-custom-scrollbars";
 
-import PropertyInfo from "./PropertyInfo";
-import vessel_type_lookup from "data/vessel_type_lookup.json";
+import VesselDetailsCard from "./VesselDetailsCard";
 
 const AlertDetails = ({ alertVessels }) => {
+  const alertColors = useSelector((state) => state.vesselData.alertColors);
+
   return (
     <Scrollbars
       autoHide
@@ -13,25 +16,12 @@ const AlertDetails = ({ alertVessels }) => {
       style={{ height: "100%" }}
     >
       <div className="p-3 h-full flex flex-col">
-        {alertVessels.map((vessel) => (
-          <div key={vessel.mmsi} className="mb-2">
-            <PropertyInfo label="Pilot" data={"<PILOT NAME>"} />
-            <PropertyInfo label="MMSI" data={vessel.mmsi} />
-            <PropertyInfo label="Ship Name" data={vessel.shipname} />
-            <PropertyInfo
-              label="Ship Type"
-              data={
-                vessel_type_lookup[vessel.shiptype] +
-                " (" +
-                vessel.shiptype +
-                ")"
-              }
-            />
-            <PropertyInfo label="Speed" data={vessel.speed} />
-            <PropertyInfo label="Course" data={vessel.course} />
-            <PropertyInfo label="Heading" data={vessel.heading} />
-            <PropertyInfo label="Collision Risk" data={vessel.risk} />
-          </div>
+        {alertVessels.map((vessel, index) => (
+          <VesselDetailsCard
+            key={vessel.mmsi}
+            vessel={vessel}
+            headerColor={alertColors[index].fill}
+          ></VesselDetailsCard>
         ))}
       </div>
     </Scrollbars>

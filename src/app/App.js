@@ -40,6 +40,7 @@ const App = () => {
   const darkThemeEnabled = useSelector((state) => state.darkThemeEnabled);
   const metadata = useSelector((state) => state.frames.metadata);
   const currentFrame = useSelector((state) => state.frames.currentFrame);
+  const alertVessels = useSelector((state) => state.vesselData.alertVesselData);
 
   const setMetadata = (metadata) => {
     dispatch(setMetadataActionCreator(metadata));
@@ -51,7 +52,7 @@ const App = () => {
   const [vesselsData, setVesselsData] = useState([]);
   const [frames, setFrames] = useState({});
   const [error, setError] = useState(null);
-
+  const [alertFrame, setAlertFrame] = useState(0);
   // Load first frame + metadata; ran once at startup
   useEffect(() => {
     const getFirstFrame = async () => {
@@ -72,27 +73,27 @@ const App = () => {
     };
     getFirstFrame();
 
-    axios({
-      method: "post",
-      url:
-        "https://cors-anywhere.herokuapp.com/http://52.163.54.65:80/api/v1/service/snapshot/score",
-      data: { time_stamp_int: [1546272007] },
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.REACT_APP_SNAPSHOT_API_KEY}`,
-      },
-    }).then((response) => console.log(response.data));
+    // axios({
+    //   method: "post",
+    //   url:
+    //     "https://cors-anywhere.herokuapp.com/http://52.163.54.65:80/api/v1/service/snapshot/score",
+    //   data: { time_stamp_int: [1546272007] },
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     Authorization: `Bearer ${process.env.REACT_APP_SNAPSHOT_API_KEY}`,
+    //   },
+    // }).then((response) => console.log(response.data));
 
-    axios({
-      method: "post",
-      url:
-        "https://cors-anywhere.herokuapp.com/http://52.163.54.65:80/api/v1/service/history/score",
-      data: { time_stamp_int: [1546272985], mmsi: [563020440] },
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.REACT_APP_HISTORY_API_KEY}`,
-      },
-    }).then((response) => console.log(response.data));
+    // axios({
+    //   method: "post",
+    //   url:
+    //     "https://cors-anywhere.herokuapp.com/http://52.163.54.65:80/api/v1/service/history/score",
+    //   data: { time_stamp_int: [1546272985], mmsi: [563020440] },
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     Authorization: `Bearer ${process.env.REACT_APP_HISTORY_API_KEY}`,
+    //   },
+    // }).then((response) => console.log(response.data));
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -141,6 +142,9 @@ const App = () => {
   // When current frame is updated, update data
   useEffect(() => {
     setVesselsData(frames[currentFrame]);
+    if (alertVessels.length === 0) {
+      setAlertFrame(currentFrame >= 134 ? 179 : currentFrame + 45);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFrame]);
 
@@ -169,9 +173,7 @@ const App = () => {
 
           <MapContainer
             vesselsData={vesselsData}
-            closeEncounters={
-              allCloseEncounters[currentFrame >= 134 ? 179 : currentFrame + 45]
-            }
+            closeEncounters={allCloseEncounters[alertFrame]}
             mapStyle={
               darkThemeEnabled ? darkTheme.mapStyle : lightTheme.mapStyle
             }

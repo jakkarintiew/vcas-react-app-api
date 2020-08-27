@@ -281,6 +281,20 @@ const vesselDataSlice = createSlice({
   initialState: {
     activeVesselData: [],
     alertVesselData: [],
+    alertColors: [
+      {
+        border: "#530354",
+        borderRGB: [83, 3, 84],
+        fill: "#A004A4",
+        fillRGB: [160, 4, 164],
+      },
+      {
+        border: "#AB4700",
+        borderRGB: [171, 71, 0],
+        fill: "#FF6A00",
+        fillRGB: [255, 106, 0],
+      },
+    ],
   },
   reducers: {
     setActiveVessels: (state, { payload }) => {

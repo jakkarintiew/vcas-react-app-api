@@ -34,12 +34,12 @@ const ChipsContainer = styled.div`
 
 const StyledChip = styled(Chip)`
   background: ${(props) =>
-    props.filterstate === "true" ? "#29a9ff" : "#c9c9c9"};
+    props.filterstate === "true" ? "#0A9DFF" : "#c9c9c9"};
   color: ${(props) => (props.filterstate === "true" ? "#ffffff" : "#808080")};
   font-size: 0.7em;
   :focus {
     background: ${(props) =>
-      props.filterstate === "true" ? "#29a9ff" : "#c9c9c9"};
+      props.filterstate === "true" ? "#0A9DFF" : "#c9c9c9"};
   }
   :hover {
     background: ${(props) =>

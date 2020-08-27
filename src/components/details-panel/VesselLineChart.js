@@ -7,11 +7,14 @@ const ChartContainer = styled.div`
   color: ${(props) => props.theme.textColor};
   padding: 6px;
   margin-bottom: 5px;
+`;
+
+const GraphContainer = styled.div`
+  color: ${(props) => props.theme.textColor};
   height: 250px;
 `;
 
-const VesselLineChart = (props) => {
-  var data = props.data;
+const VesselLineChart = ({ chartTitle, data, yMax }) => {
   var options = {
     animation: {
       duration: 0,
@@ -24,7 +27,7 @@ const VesselLineChart = (props) => {
           ticks: {
             fontSize: 9,
             min: 0,
-            suggestedMax: props.yMax,
+            suggestedMax: yMax,
           },
         },
       ],
@@ -52,7 +55,12 @@ const VesselLineChart = (props) => {
 
   return (
     <ChartContainer>
-      <Line data={data} options={options} />
+      <div className="px-1 mb-1">
+        <b>{chartTitle}</b>
+      </div>
+      <GraphContainer>
+        <Line data={data} options={options} />
+      </GraphContainer>
     </ChartContainer>
   );
 };

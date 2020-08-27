@@ -34,7 +34,7 @@ const DetailsPanelInner = styled.div`
   align-items: stretch;
   background-color: ${(props) => props.theme.sidePanelBg};
   border-radius: 5px;
-  height: 100%;
+  max-height: 100%;
   width: ${(props) => props.theme.sidePanel.width}px;
 `;
 
@@ -85,7 +85,7 @@ const DetailsPanel = ({ vesselsData }) => {
             (activeHistoricalPathData.length > 0 ||
               activeFuturePathData.length > 0) ? (
               <VesselDetails
-                activeVessel={activeVessels[0]}
+                vessel={activeVessels[0]}
                 historicalPathData={activeHistoricalPathData[0]}
                 futurePathData={activeFuturePathData[0]}
               />

@@ -4,19 +4,21 @@ import styled from "styled-components";
 const PropertyLabel = styled.div`
   background-color: ${(props) => props.theme.labelColor};
   color: ${(props) => props.theme.labelTextColor};
-  font-size: 0.75em;
-  font-weight: 500;
-  padding: 3px 5px 3px 5px;
-  width: 45%;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 3px 3px 3px;
+  min-width: 80px;
 `;
 
 const PropertyData = styled.div`
   background-color: ${(props) => props.theme.panelBackground};
   color: ${(props) => props.theme.labelTextColor};
-  font-size: 0.75em;
-  font-weight: 200;
-  padding: 3px 5px 3px 5px;
+  font-size: 12px;
+  font-weight: 400;
+  padding: 3px 3px 3px 3px;
+  margin-right: 1px;
   width: 100%;
+  min-width: 49px;
 `;
 
 const PropertyInfo = (props) => {
