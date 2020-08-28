@@ -235,7 +235,7 @@ const SearchBar = () => {
                   if (option.type === "location") {
                     return option.name;
                   } else if (option.type === "vessel") {
-                    return option.name + "(" + option.mmsi + ")";
+                    return option.name + " (" + option.mmsi + ")";
                   }
                 }}
                 options={options}

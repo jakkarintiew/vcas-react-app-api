@@ -252,8 +252,8 @@ const pathDataSlice = createSlice({
   name: "pathData",
   initialState: {
     activePathData: [],
-    activeFuturePathData: pathDataInitialState,
-    activeHistoricalPathData: pathDataInitialState,
+    activeFuturePath: pathDataInitialState,
+    activeHistoricalPath: pathDataInitialState,
     highRiskPathData: [],
     alertPathData: [],
   },
@@ -262,10 +262,10 @@ const pathDataSlice = createSlice({
       state.activePathData = payload;
     },
     setActiveFuturePath: (state, { payload }) => {
-      state.activeFuturePathData = payload;
+      state.activeFuturePath = payload;
     },
     setActiveHistoricalPath: (state, { payload }) => {
-      state.activeHistoricalPathData = payload;
+      state.activeHistoricalPath = payload;
     },
     setHighRiskPaths: (state, { payload }) => {
       state.highRiskPathData = payload;

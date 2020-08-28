@@ -59,15 +59,15 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
     (state) => state.vesselData.activeVesselData
   );
   const activePathData = useSelector((state) => state.pathData.activePathData);
-  const activeFuturePathData = useSelector(
-    (state) => state.pathData.activeFuturePathData
+  const activeFuturePath = useSelector(
+    (state) => state.pathData.activeFuturePath
   );
-  const activeHistoricalPathData = useSelector(
-    (state) => state.pathData.activeHistoricalPathData
+  const activeHistoricalPath = useSelector(
+    (state) => state.pathData.activeHistoricalPath
   );
   const highRiskPaths = useSelector((state) => state.pathData.highRiskPathData);
-  const alertPaths = useSelector((state) => state.pathData.alertPathData);
   const alertVessels = useSelector((state) => state.vesselData.alertVesselData);
+  const alertPaths = useSelector((state) => state.pathData.alertPathData);
   const alertColors = useSelector((state) => state.vesselData.alertColors);
   const setActiveVessels = (vessel) => {
     dispatch(setActiveVesselsActionCreator(vessel));
@@ -354,6 +354,17 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
         setActiveFuturePath(getFuturePath(response));
         setActiveHistoricalPath(getHistoricalPath(response));
       });
+      const vesselViewState = {
+        longitude: activeVessels[0].longitude,
+        latitude: activeVessels[0].latitude,
+        zoom: 13,
+        pitch: 60,
+        bearing: activeVessels[0].heading,
+        transitionDuration: 500,
+        transitionInterruption: TRANSITION_EVENTS.UPDATE,
+        transitionInterpolator: new FlyToInterpolator(),
+      };
+      updateVesselViewState(vesselViewState);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeMMSI]);
@@ -365,23 +376,10 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
     setActiveHistoricalPath(pathDataInitialState);
     setAlertPaths([]);
     setAlertVessels([]);
-
     const newActiveVessel = visibleVessels.filter((vessel) => {
       return vessel.mmsi === mmsi;
     });
     setActiveVessels(newActiveVessel);
-
-    const vesselViewState = {
-      longitude: newActiveVessel[0].longitude,
-      latitude: newActiveVessel[0].latitude,
-      zoom: 13,
-      pitch: 60,
-      bearing: newActiveVessel[0].heading,
-      transitionDuration: 500,
-      transitionInterruption: TRANSITION_EVENTS.UPDATE,
-      transitionInterpolator: new FlyToInterpolator(),
-    };
-    updateVesselViewState(vesselViewState);
   };
 
   const clickAlertEvent = (object) => {
@@ -694,7 +692,7 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
       layerVisibility.historicalPath.visible &&
       new PathLayer({
         id: "historical-path-border-layer",
-        data: activeHistoricalPathData,
+        data: activeHistoricalPath,
         getPath: (d) => d.path,
         getColor: [100, 100, 100],
         opacity: 1,
@@ -708,7 +706,7 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
       layerVisibility.historicalPath.visible &&
       new PathLayer({
         id: "historical-path-layer",
-        data: activeHistoricalPathData,
+        data: activeHistoricalPath,
         getPath: (d) => d.path,
         getColor: [150, 150, 150],
         opacity: 1,
@@ -722,7 +720,7 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
       layerVisibility.futurePath.visible &&
       new PathLayer({
         id: "future-path-border-layer",
-        data: activeFuturePathData,
+        data: activeFuturePath,
         getPath: (d) => d.path,
         getColor: [25, 120, 180],
         widthUnits: "meters",
@@ -735,7 +733,7 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
       layerVisibility.futurePath.visible &&
       new PathLayer({
         id: "future-path-layer",
-        data: activeFuturePathData,
+        data: activeFuturePath,
         getPath: (d) => d.path,
         getColor: [41, 168, 255],
         widthUnits: "meters",
