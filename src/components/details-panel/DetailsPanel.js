@@ -46,7 +46,7 @@ const PlaceholderContainer = styled.div`
   padding: 10px;
 `;
 
-const DetailsPanel = ({ vesselsData }) => {
+const DetailsPanel = () => {
   // Redux states
   const dispatch = useDispatch();
   const panelOpen = useSelector((state) => state.panelOpen);
@@ -54,11 +54,11 @@ const DetailsPanel = ({ vesselsData }) => {
     (state) => state.vesselData.activeVesselData
   );
   const alertVessels = useSelector((state) => state.vesselData.alertVesselData);
-  const activeFuturePathData = useSelector(
-    (state) => state.pathData.activeFuturePathData
+  const activeFuturePath = useSelector(
+    (state) => state.pathData.activeFuturePath
   );
-  const activeHistoricalPathData = useSelector(
-    (state) => state.pathData.activeHistoricalPathData
+  const activeHistoricalPath = useSelector(
+    (state) => state.pathData.activeHistoricalPath
   );
 
   const togglePanelOpen = (panelKey) => {
@@ -82,12 +82,11 @@ const DetailsPanel = ({ vesselsData }) => {
         {panel.isOpen && (
           <DetailsPanelInner>
             {activeVessels.length > 0 &&
-            (activeHistoricalPathData.length > 0 ||
-              activeFuturePathData.length > 0) ? (
+            (activeHistoricalPath.length > 0 || activeFuturePath.length > 0) ? (
               <VesselDetails
                 vessel={activeVessels[0]}
-                historicalPathData={activeHistoricalPathData[0]}
-                futurePathData={activeFuturePathData[0]}
+                historicalPath={activeHistoricalPath[0]}
+                futurePath={activeFuturePath[0]}
               />
             ) : alertVessels.length > 0 ? (
               <AlertDetails alertVessels={alertVessels}></AlertDetails>

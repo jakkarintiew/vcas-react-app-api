@@ -5,7 +5,7 @@ import { Scrollbars } from "react-custom-scrollbars";
 import VesselDetailsCard from "./VesselDetailsCard";
 import VesselLineChart from "./VesselLineChart";
 
-const VesselDetails = ({ vessel, historicalPathData, futurePathData }) => {
+const VesselDetails = ({ vessel, historicalPath, futurePath }) => {
   const speedChartData = {
     datasets: [
       {
@@ -16,9 +16,9 @@ const VesselDetails = ({ vessel, historicalPathData, futurePathData }) => {
         borderColor: "rgba(150, 150, 150, 0.75)",
         pointRadius: 1,
         data: [
-          ...historicalPathData.timestamps.map((x, i) => ({
-            x: historicalPathData.timestamps[i] * 1000,
-            y: historicalPathData.speed[i],
+          ...historicalPath.timestamps.map((x, i) => ({
+            x: historicalPath.timestamps[i] * 1000,
+            y: historicalPath.speed[i],
           })),
         ],
       },
@@ -30,9 +30,9 @@ const VesselDetails = ({ vessel, historicalPathData, futurePathData }) => {
         borderColor: "rgb(41, 169, 255, 0.5)",
         pointRadius: 1,
         data: [
-          ...futurePathData.timestamps.map((x, i) => ({
-            x: futurePathData.timestamps[i] * 1000,
-            y: futurePathData.speed[i],
+          ...futurePath.timestamps.map((x, i) => ({
+            x: futurePath.timestamps[i] * 1000,
+            y: futurePath.speed[i],
           })),
         ],
       },
@@ -49,9 +49,9 @@ const VesselDetails = ({ vessel, historicalPathData, futurePathData }) => {
   //       borderColor: "rgba(150, 150, 150, 0.75)",
   //       pointRadius: 1,
   //       data: [
-  //         ...historicalPathData.timestamps.map((x, i) => ({
-  //           x: historicalPathData.timestamps[i] * 1000,
-  //           y: historicalPathData.course[i],
+  //         ...historicalPath.timestamps.map((x, i) => ({
+  //           x: historicalPath.timestamps[i] * 1000,
+  //           y: historicalPath.course[i],
   //         })),
   //       ],
   //     },
@@ -63,9 +63,9 @@ const VesselDetails = ({ vessel, historicalPathData, futurePathData }) => {
   //       borderColor: "rgb(41, 169, 255, 0.5)",
   //       pointRadius: 1,
   //       data: [
-  //         ...futurePathData.timestamps.map((x, i) => ({
-  //           x: futurePathData.timestamps[i] * 1000,
-  //           y: futurePathData.course[i],
+  //         ...futurePath.timestamps.map((x, i) => ({
+  //           x: futurePath.timestamps[i] * 1000,
+  //           y: futurePath.course[i],
   //         })),
   //       ],
   //     },
@@ -82,9 +82,9 @@ const VesselDetails = ({ vessel, historicalPathData, futurePathData }) => {
   //       borderColor: "rgba(150, 150, 150, 0.75)",
   //       pointRadius: 1,
   //       data: [
-  //         ...historicalPathData.timestamps.map((x, i) => ({
-  //           x: historicalPathData.timestamps[i] * 1000,
-  //           y: historicalPathData.heading[i],
+  //         ...historicalPath.timestamps.map((x, i) => ({
+  //           x: historicalPath.timestamps[i] * 1000,
+  //           y: historicalPath.heading[i],
   //         })),
   //       ],
   //     },
@@ -96,9 +96,9 @@ const VesselDetails = ({ vessel, historicalPathData, futurePathData }) => {
   //       borderColor: "rgb(41, 169, 255, 0.5)",
   //       pointRadius: 1,
   //       data: [
-  //         ...futurePathData.timestamps.map((x, i) => ({
-  //           x: futurePathData.timestamps[i] * 1000,
-  //           y: futurePathData.heading[i],
+  //         ...futurePath.timestamps.map((x, i) => ({
+  //           x: futurePath.timestamps[i] * 1000,
+  //           y: futurePath.heading[i],
   //         })),
   //       ],
   //     },

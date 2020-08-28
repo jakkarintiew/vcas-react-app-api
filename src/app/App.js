@@ -175,7 +175,7 @@ const App = () => {
               <SearchBar />
               <TimeSlider />
             </div>
-            <DetailsPanel vesselsData={allVessels} />
+            <DetailsPanel  />
           </div>
 
           <MapContainer
