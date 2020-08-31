@@ -229,7 +229,7 @@ const SearchBar = () => {
             <SearchField>
               <Autocomplete
                 id="search"
-                freeSolo
+                autoComplete
                 size="small"
                 getOptionLabel={(option) => {
                   if (option.type === "location") {
@@ -239,6 +239,7 @@ const SearchBar = () => {
                   }
                 }}
                 options={options}
+                noOptionsText={"No object found"}
                 value={value}
                 onChange={(event, newValue) => {
                   setOptions(newValue ? [newValue, ...options] : options);
@@ -272,8 +273,11 @@ const SearchBar = () => {
                 )}
               />
             </SearchField>
-
-            <StyledIconButton type="submit" className={classes.iconButton}>
+            <StyledIconButton
+              type="submit"
+              disabled={true}
+              className={classes.iconButton}
+            >
               <SearchIcon />
             </StyledIconButton>
           </SearchBarInner>

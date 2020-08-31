@@ -583,12 +583,12 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
     layerVisibility.riskHeatmap.visible &&
       new HeatmapLayer({
         id: "risk-heatmap-layer",
-        data: highRiskVessels,
+        data: movingVessels.filter((vessel)=>vessel.risk>50),
         getPosition: (d) => [d.longitude, d.latitude],
-        getWeight: (d) => d.risk / 100,
-        radiusPixels:
-          5000 /
-          (78271.484 * Math.exp(-0.6932415 * mapView.viewStates.main.zoom)),
+        getWeight: (d) => d.risk,
+        radiusPixels: 50,
+        // 5000 /
+        // (78271.484 * Math.exp(-0.6932415 * mapView.viewStates.main.zoom)),
         opacity: 0.1,
         intensity: 1,
         threshold: 0.01,
@@ -742,7 +742,6 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
         widthMinPixels: 6,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
       }),
-
     layerVisibility.stoppedVesselIcon.visible &&
       new IconLayer({
         id: "stopped-vessel-icon-border-layer",
