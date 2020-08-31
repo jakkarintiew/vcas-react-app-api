@@ -39,38 +39,38 @@ const VesselDetails = ({ vessel, historicalPath, futurePath }) => {
     ],
   };
 
-  // const courseChartData = {
-  //   datasets: [
-  //     {
-  //       label: "Historical Course",
-  //       fill: false,
-  //       lineTension: 0,
-  //       pointBackgroundColor: "rgba(150, 150, 150, 0.75)",
-  //       borderColor: "rgba(150, 150, 150, 0.75)",
-  //       pointRadius: 1,
-  //       data: [
-  //         ...historicalPath.timestamps.map((x, i) => ({
-  //           x: historicalPath.timestamps[i] * 1000,
-  //           y: historicalPath.course[i],
-  //         })),
-  //       ],
-  //     },
-  //     {
-  //       label: "Future Course",
-  //       fill: false,
-  //       lineTension: 0,
-  //       pointBackgroundColor: "rgb(41, 169, 255, 0.5)",
-  //       borderColor: "rgb(41, 169, 255, 0.5)",
-  //       pointRadius: 1,
-  //       data: [
-  //         ...futurePath.timestamps.map((x, i) => ({
-  //           x: futurePath.timestamps[i] * 1000,
-  //           y: futurePath.course[i],
-  //         })),
-  //       ],
-  //     },
-  //   ],
-  // };
+  const riskChartData = {
+    datasets: [
+      {
+        label: "Historical Risk",
+        fill: false,
+        lineTension: 0,
+        pointBackgroundColor: "rgba(150, 150, 150, 0.75)",
+        borderColor: "rgba(150, 150, 150, 0.75)",
+        pointRadius: 1,
+        data: [
+          ...historicalPath.timestamps.map((x, i) => ({
+            x: historicalPath.timestamps[i] * 1000,
+            y: historicalPath.risk[i],
+          })),
+        ],
+      },
+      {
+        label: "Future risk",
+        fill: false,
+        lineTension: 0,
+        pointBackgroundColor: "rgb(41, 169, 255, 0.5)",
+        borderColor: "rgb(41, 169, 255, 0.5)",
+        pointRadius: 1,
+        data: [
+          ...futurePath.timestamps.map((x, i) => ({
+            x: futurePath.timestamps[i] * 1000,
+            y: futurePath.risk[i],
+          })),
+        ],
+      },
+    ],
+  };
 
   // const headingChartData = {
   //   datasets: [
@@ -123,7 +123,11 @@ const VesselDetails = ({ vessel, historicalPath, futurePath }) => {
             data={speedChartData}
             yMax={20}
           />
-          {/* <VesselLineChart data={courseChartData} yMax={360} /> */}
+          <VesselLineChart
+            chartTitle={"Collision Risk Graph"}
+            data={riskChartData}
+            yMax={100}
+          />
           {/* <VesselLineChart data={headingChartData} yMax={360} /> */}
         </div>
       </div>
