@@ -52,7 +52,7 @@ const mapViewSlice = createSlice({
   },
 });
 
-const panelOpenInitialState = {
+const PANEL_OPEN_INITIAL_STATE = {
   controlPanel: {
     panelName: "Control Panel",
     isOpen: true,
@@ -73,7 +73,7 @@ const panelOpenInitialState = {
 
 const panelOpenSlice = createSlice({
   name: "panelOpen",
-  initialState: panelOpenInitialState,
+  initialState: PANEL_OPEN_INITIAL_STATE,
   reducers: {
     toggleOpen: (state, { payload }) => {
       const panel = state[Object.keys(state).find((key) => key === payload)];
