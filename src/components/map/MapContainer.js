@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import styled from "styled-components";
 import axios from "axios";
 
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -40,6 +41,13 @@ import dataAnchorages from "data/seamark_anchorages.json";
 import dataMooringAreas from "data/seamark_mooring_areas.json";
 // import dataUnionMooringAreas from "data/seamark_mooring_areas_1.json";
 import vesselTypeLookup from "data/vessel_type_lookup.json";
+
+const MinimapContainer = styled.div`
+  box-shadow: ${(props) => props.theme.panelBoxShadow};
+  background-color: ${(props) => props.theme.sidePanelBg};
+  height: 300px;
+  width: 300px;
+`;
 
 const FRAMES_DIR =
   "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/";
@@ -99,14 +107,31 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
   };
 
   // View states functions
-  const onViewStateChange = ({ viewState, viewId }) => {
-    const newViewStates = {
-      ...mapView.viewStates,
-    };
-    // Update a single view
-    newViewStates[viewId] = viewState;
-    // Save the view state and trigger rerender
-    setViewStates(newViewStates);
+  const onViewStateChange = ({ viewId, viewState }) => {
+    console.log(viewId);
+    console.log(viewState);
+
+    const currentViewStates = mapView.viewStates;
+
+    if (viewId === "main") {
+      setViewStates({
+        main: viewState,
+        minimap: {
+          ...currentViewStates.minimap,
+          // longitude: viewState.longitude,
+          // latitude: viewState.latitude,
+        },
+      });
+    } else {
+      setViewStates({
+        main: {
+          ...currentViewStates.main,
+          // longitude: viewState.longitude,
+          // latitude: viewState.latitude,
+        },
+        minimap: viewState,
+      });
+    }
   };
 
   const VIEWS = [
@@ -117,24 +142,12 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
     mapView.miniMapViewEnabled &&
       new MapView({
         id: "minimap",
-        // Position on top of main map
         x: "17%",
         y: "65%",
         width: "300px",
         height: "300px",
-        // Minimap is overlaid on top of an existing view, so need to clear the background
+        controller: true,
         clear: true,
-        controller: {
-          maxZoom: 10,
-          minZoom: 10,
-          scrollZoom: true,
-          dragPan: true,
-          dragRotate: false,
-          doubleClickZoom: false,
-          touchZoom: false,
-          touchRotate: false,
-          keyboard: false,
-        },
       }),
   ].filter(Boolean);
 
@@ -583,7 +596,7 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
     layerVisibility.riskHeatmap.visible &&
       new HeatmapLayer({
         id: "risk-heatmap-layer",
-        data: movingVessels.filter((vessel)=>vessel.risk>50),
+        data: movingVessels.filter((vessel) => vessel.risk > 50),
         getPosition: (d) => [d.longitude, d.latitude],
         getWeight: (d) => d.risk,
         radiusPixels: 50,
@@ -885,14 +898,7 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
       layers={layers}
       controller={true}
       getCursor={() => "crosshair"}
-      viewState={{
-        main: {
-          ...mapView.viewStates.main,
-        },
-        minimap: {
-          ...mapView.viewStates.minimap,
-        },
-      }}
+      viewState={mapView.viewStates}
       onViewStateChange={onViewStateChange}
     >
       <StaticMap
@@ -901,7 +907,6 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
         preventStyleDiffing={true}
         mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
       ></StaticMap>
-      {mapView.miniMapViewEnabled && (
         <View id="minimap">
           <StaticMap
             reuseMaps
@@ -910,7 +915,6 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
             mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
           />
         </View>
-      )}
       {renderTooltip()}
     </DeckGL>
   );
