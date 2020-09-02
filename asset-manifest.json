@@ -1,27 +1,27 @@
 {
   "files": {
     "main.css": "/vcas-react-app-api/static/css/main.4bdc3e1c.chunk.css",
-    "main.js": "/vcas-react-app-api/static/js/main.ec77db5a.chunk.js",
-    "main.js.map": "/vcas-react-app-api/static/js/main.ec77db5a.chunk.js.map",
+    "main.js": "/vcas-react-app-api/static/js/main.1c4251a0.chunk.js",
+    "main.js.map": "/vcas-react-app-api/static/js/main.1c4251a0.chunk.js.map",
     "runtime-main.js": "/vcas-react-app-api/static/js/runtime-main.d26a6032.js",
     "runtime-main.js.map": "/vcas-react-app-api/static/js/runtime-main.d26a6032.js.map",
     "static/css/2.b4a16772.chunk.css": "/vcas-react-app-api/static/css/2.b4a16772.chunk.css",
-    "static/js/2.14ab5fea.chunk.js": "/vcas-react-app-api/static/js/2.14ab5fea.chunk.js",
-    "static/js/2.14ab5fea.chunk.js.map": "/vcas-react-app-api/static/js/2.14ab5fea.chunk.js.map",
+    "static/js/2.0fa6b3d9.chunk.js": "/vcas-react-app-api/static/js/2.0fa6b3d9.chunk.js",
+    "static/js/2.0fa6b3d9.chunk.js.map": "/vcas-react-app-api/static/js/2.0fa6b3d9.chunk.js.map",
     "index.html": "/vcas-react-app-api/index.html",
-    "precache-manifest.7db98de55daa20a57d7a8fdf42463f64.js": "/vcas-react-app-api/precache-manifest.7db98de55daa20a57d7a8fdf42463f64.js",
+    "precache-manifest.b784cae0c9c4e2349fb93af8f681a53a.js": "/vcas-react-app-api/precache-manifest.b784cae0c9c4e2349fb93af8f681a53a.js",
     "service-worker.js": "/vcas-react-app-api/service-worker.js",
     "static/css/2.b4a16772.chunk.css.map": "/vcas-react-app-api/static/css/2.b4a16772.chunk.css.map",
     "static/css/main.4bdc3e1c.chunk.css.map": "/vcas-react-app-api/static/css/main.4bdc3e1c.chunk.css.map",
-    "static/js/2.14ab5fea.chunk.js.LICENSE.txt": "/vcas-react-app-api/static/js/2.14ab5fea.chunk.js.LICENSE.txt",
+    "static/js/2.0fa6b3d9.chunk.js.LICENSE.txt": "/vcas-react-app-api/static/js/2.0fa6b3d9.chunk.js.LICENSE.txt",
     "static/media/vessel_marker.png": "/vcas-react-app-api/static/media/vessel_marker.ecf136b4.png",
     "static/media/warning_red.png": "/vcas-react-app-api/static/media/warning_red.e83d5b18.png"
   },
   "entrypoints": [
     "static/js/runtime-main.d26a6032.js",
     "static/css/2.b4a16772.chunk.css",
-    "static/js/2.14ab5fea.chunk.js",
+    "static/js/2.0fa6b3d9.chunk.js",
     "static/css/main.4bdc3e1c.chunk.css",
-    "static/js/main.ec77db5a.chunk.js"
+    "static/js/main.1c4251a0.chunk.js"
   ]
 }
