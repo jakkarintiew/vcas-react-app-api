@@ -58,5 +58,5 @@
     "postcss-cli": "^7.1.1",
     "tailwindcss": "^1.7.5"
   },
-  "homepage": "https://jakkarintiew.github.io/vcas-react-app"
+  "homepage": "https://jakkarintiew.github.io/vcas-react-app-api/"
 }
