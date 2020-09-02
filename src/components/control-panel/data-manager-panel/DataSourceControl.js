@@ -174,7 +174,7 @@ const DataSourceControl = () => {
         <b>Data Source</b>
       </div>
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        <div className="px-1 mb-3 flex flex-row items-stretch">
+        <div className="px-1 mb-8 flex flex-row items-stretch">
           {/* <StyledLabel className="flex-none">Set Time</StyledLabel> */}
           <StyledKeyboardDateTimePicker
             autoOk
@@ -184,7 +184,7 @@ const DataSourceControl = () => {
             label="Set Time"
             value={new Date(currentTime * 1000)}
             onChange={(event, newValue) => setCurrentTime(newValue)}
-            format="dd MMM yyyy, HH:mm:ss"
+            format="dd-MM-yyyy HH:mm:ss"
             InputProps={{
               disableUnderline: true,
             }}
