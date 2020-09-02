@@ -40,6 +40,7 @@ import dataAnchorages from "data/seamark_anchorages.json";
 import dataMooringAreas from "data/seamark_mooring_areas.json";
 // import dataUnionMooringAreas from "data/seamark_mooring_areas_1.json";
 import vesselTypeLookup from "data/vessel_type_lookup.json";
+import mmsiTypeLookup from "data/mmsi_type_lookup.json";
 
 const FRAMES_DIR =
   "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/";
@@ -273,6 +274,53 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
     }
   };
 
+  const apiGetHistoricalPath = async (vessel) => {
+    try {
+      const response = await axios({
+        method: "post",
+        url:
+          "https://cors-anywhere.herokuapp.com/http://52.163.54.65:80/api/v1/service/history/score",
+        data: {
+          time_stamp_int: [vessel.timestamp / 1000],
+          mmsi: [vessel.mmsi],
+        },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.REACT_APP_HISTORY_API_KEY}`,
+        },
+      });
+      let data = JSON.parse(response.data).map((vessel) => ({
+        mmsi: vessel.mmsi,
+        shipname: vessel.mmsi,
+        shiptype: mmsiTypeLookup.find((v) => v.mmsi === vessel.mmsi)
+          ? mmsiTypeLookup.find((v) => v.mmsi === vessel.mmsi).code
+          : "UKNOWN TYPE",
+        longitude: vessel.lon,
+        latitude: vessel.lat,
+        speed: vessel.speed,
+        course: vessel.course,
+        heading: vessel.heading,
+        risk: Math.random() * 100,
+        timestamp: vessel.time_stamp_int * 1000,
+      }));
+
+      let path = [
+        {
+          path: data.map((frame) => [frame.longitude, frame.latitude]),
+          timestamps: data.map((frame) => frame.timestamp),
+          speed: data.map((frame) => frame.speed),
+          heading: data.map((frame) => frame.heading),
+          course: data.map((frame) => frame.course),
+          risk: data.map((frame) => frame.risk),
+        },
+      ];
+
+      return path;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const getHighRiskPaths = (highRiskVessels) => {
     const promiseRiskPaths = [];
     const newRiskPaths = [];
@@ -290,62 +338,62 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
       .catch((error) => console.log(error));
   };
 
-  useEffect(() => {
-    setHighRiskPaths([]);
-    if (layerVisibility.riskPath.visible) {
-      getHighRiskPaths(highRiskVessels);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allVessels, layerVisibility]);
+  // useEffect(() => {
+  //   setHighRiskPaths([]);
+  //   if (layerVisibility.riskPath.visible) {
+  //     getHighRiskPaths(highRiskVessels);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [allVessels, layerVisibility]);
 
-  useEffect(() => {
-    if (activePathData.length > 0) {
-      setActiveFuturePath(getFuturePath(activePathData));
-      setActiveHistoricalPath(getHistoricalPath(activePathData));
+  // useEffect(() => {
+  //   if (activePathData.length > 0) {
+  //     setActiveFuturePath(getFuturePath(activePathData));
+  //     setActiveHistoricalPath(getHistoricalPath(activePathData));
 
-      if (activeVessels.length !== 0) {
-        const newActiveVessel = visibleVessels.filter((vessel) => {
-          return vessel.mmsi === activeVessels[0].mmsi;
-        });
-        setActiveVessels(newActiveVessel);
-        const vesselViewState = {
-          longitude: newActiveVessel[0].longitude,
-          latitude: newActiveVessel[0].latitude,
-          zoom: 13,
-          pitch: 60,
-          bearing: newActiveVessel[0].heading,
-          transitionDuration: 500,
-          transitionInterruption: TRANSITION_EVENTS.UPDATE,
-          transitionInterpolator: new FlyToInterpolator(),
-        };
-        updateVesselViewState(vesselViewState);
-      }
+  //     if (activeVessels.length !== 0) {
+  //       const newActiveVessel = visibleVessels.filter((vessel) => {
+  //         return vessel.mmsi === activeVessels[0].mmsi;
+  //       });
+  //       setActiveVessels(newActiveVessel);
+  //       const vesselViewState = {
+  //         longitude: newActiveVessel[0].longitude,
+  //         latitude: newActiveVessel[0].latitude,
+  //         zoom: 13,
+  //         pitch: 60,
+  //         bearing: newActiveVessel[0].heading,
+  //         transitionDuration: 500,
+  //         transitionInterruption: TRANSITION_EVENTS.UPDATE,
+  //         transitionInterpolator: new FlyToInterpolator(),
+  //       };
+  //       updateVesselViewState(vesselViewState);
+  //     }
 
-      if (alertVessels.length !== 0) {
-        const newAlertVessels = allVessels.filter((vessel) => {
-          return alertVessels.map((v) => v.mmsi).includes(vessel.mmsi);
-        });
-        setAlertVessels(newAlertVessels);
-        // Get paths
-        let alertPathsPromises = [];
-        let newAlertPaths = [];
+  //     if (alertVessels.length !== 0) {
+  //       const newAlertVessels = allVessels.filter((vessel) => {
+  //         return alertVessels.map((v) => v.mmsi).includes(vessel.mmsi);
+  //       });
+  //       setAlertVessels(newAlertVessels);
+  //       // Get paths
+  //       let alertPathsPromises = [];
+  //       let newAlertPaths = [];
 
-        newAlertVessels.forEach((vessel) => {
-          alertPathsPromises.push(getPath(vessel.mmsi));
-        });
+  //       newAlertVessels.forEach((vessel) => {
+  //         alertPathsPromises.push(getPath(vessel.mmsi));
+  //       });
 
-        Promise.all(alertPathsPromises)
-          .then((responses) => {
-            responses.forEach((path) => {
-              newAlertPaths.push(getFuturePath(path)[0]);
-            });
-            setAlertPaths(newAlertPaths);
-          })
-          .catch((error) => console.log(error));
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentFrame]);
+  //       Promise.all(alertPathsPromises)
+  //         .then((responses) => {
+  //           responses.forEach((path) => {
+  //             newAlertPaths.push(getFuturePath(path)[0]);
+  //           });
+  //           setAlertPaths(newAlertPaths);
+  //         })
+  //         .catch((error) => console.log(error));
+  //     }
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [currentFrame]);
 
   let activeMMSI = null;
   if (activeVessels.length > 0) {
@@ -354,11 +402,18 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
 
   useEffect(() => {
     if (activeMMSI) {
-      Promise.resolve(getPath(activeVessels[0].mmsi)).then((response) => {
-        setActivePath(response);
-        setActiveFuturePath(getFuturePath(response));
-        setActiveHistoricalPath(getHistoricalPath(response));
-      });
+      // Promise.resolve(getPath(activeVessels[0].mmsi)).then((response) => {
+      //   setActivePath(response);
+      //   setActiveFuturePath(getFuturePath(response));
+      //   setActiveHistoricalPath(getHistoricalPath(response));
+      // });
+
+      Promise.resolve(apiGetHistoricalPath(activeVessels[0])).then(
+        (response) => {
+          setActiveHistoricalPath(response);
+        }
+      );
+
       const vesselViewState = {
         longitude: activeVessels[0].longitude,
         latitude: activeVessels[0].latitude,

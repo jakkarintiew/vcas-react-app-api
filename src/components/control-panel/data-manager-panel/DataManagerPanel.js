@@ -1,9 +1,10 @@
 import React from "react";
+
 import styled from "styled-components";
 
+import DataSourceControl from "./DataSourceControl";
 import VesselTypeFilter from "./VesselTypeFilter";
 import VesselSliderFilters from "./VesselSliderFilters";
-// import DataSourceControl from "./DataSourceControl";
 
 const StyledPanelContent = styled.div`
   background-color: ${(props) => props.theme.sidePanelBg};
@@ -15,7 +16,7 @@ const StyledPanelContent = styled.div`
 const DataManagerPanel = ({ vesselsData }) => {
   return (
     <StyledPanelContent>
-      {/* <DataSourceControl /> */}
+      <DataSourceControl />
       <VesselTypeFilter />
       <VesselSliderFilters vesselsData={vesselsData} />
     </StyledPanelContent>

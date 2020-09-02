@@ -8,11 +8,11 @@ import * as serviceWorker from "./serviceWorker";
 import "./styles/main.css";
 
 ReactDOM.render(
-  <React.StrictMode>
-    <ReduxProvider store={store}>
-      <App />
-    </ReduxProvider>
-  </React.StrictMode>,
+  // <React.StrictMode>
+  <ReduxProvider store={store}>
+    <App />
+  </ReduxProvider>,
+  // </React.StrictMode>,
   document.getElementById("root")
 );
 

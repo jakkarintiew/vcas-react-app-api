@@ -310,6 +310,21 @@ const vesselDataSlice = createSlice({
   },
 });
 
+const dataSourceControlSlice = createSlice({
+  name: "dataSourceControl",
+  initialState: {
+    currentTime: 1546273002,
+  },
+  reducers: {
+    setCurrentTime: (state, { payload }) => {
+      state.currentTime = payload;
+    },
+    reset: (state) => {
+      state.currentTime = 1546273002;
+    },
+  },
+});
+
 // export actions
 export const {
   toggleVesselView: toggleVesselViewActionCreator,
@@ -362,6 +377,11 @@ export const {
   setAlertVessels: setAlertVesselsActionCreator,
 } = vesselDataSlice.actions;
 
+export const {
+  setCurrentTime: setCurrentTimeActionCreator,
+  reset: resetActionCreator,
+} = dataSourceControlSlice.actions;
+
 // define reducers
 const reducer = {
   mapView: mapViewSlice.reducer,
@@ -373,6 +393,7 @@ const reducer = {
   frames: framesSlice.reducer,
   pathData: pathDataSlice.reducer,
   vesselData: vesselDataSlice.reducer,
+  dataSourceControl: dataSourceControlSlice.reducer,
 };
 
 // define middleware
