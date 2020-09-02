@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
 import axios from "axios";
 
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -41,13 +40,6 @@ import dataAnchorages from "data/seamark_anchorages.json";
 import dataMooringAreas from "data/seamark_mooring_areas.json";
 // import dataUnionMooringAreas from "data/seamark_mooring_areas_1.json";
 import vesselTypeLookup from "data/vessel_type_lookup.json";
-
-const MinimapContainer = styled.div`
-  box-shadow: ${(props) => props.theme.panelBoxShadow};
-  background-color: ${(props) => props.theme.sidePanelBg};
-  height: 300px;
-  width: 300px;
-`;
 
 const FRAMES_DIR =
   "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/";
@@ -907,14 +899,14 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
         preventStyleDiffing={true}
         mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
       ></StaticMap>
-        <View id="minimap">
-          <StaticMap
-            reuseMaps
-            mapStyle={mapStyle}
-            preventStyleDiffing={true}
-            mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
-          />
-        </View>
+      <View id="minimap">
+        <StaticMap
+          reuseMaps
+          mapStyle={mapStyle}
+          preventStyleDiffing={true}
+          mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
+        />
+      </View>
       {renderTooltip()}
     </DeckGL>
   );
