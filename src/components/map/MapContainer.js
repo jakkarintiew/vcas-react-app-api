@@ -100,8 +100,8 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
 
   // View states functions
   const onViewStateChange = ({ viewId, viewState }) => {
-    console.log(viewId);
-    console.log(viewState);
+    // console.log(viewId);
+    // console.log(viewState);
 
     const currentViewStates = mapView.viewStates;
 

@@ -13,7 +13,7 @@ import { GlobalStyle } from "styles/global";
 import MapContainer from "components/map/MapContainer";
 import ControlPanel from "components/control-panel/ControlPanel";
 import DetailsPanel from "components/details-panel/DetailsPanel";
-import TimeSlider from "components/time-slider/TimeSlider";
+// import TimeSlider from "components/time-slider/TimeSlider";
 import SearchBar from "components/search-bar/SearchBar";
 import {
   setMetadataActionCreator,
@@ -79,16 +79,16 @@ const App = () => {
     };
     getFirstFrame();
 
-    // axios({
-    //   method: "post",
-    //   url:
-    //     "https://cors-anywhere.herokuapp.com/http://52.163.54.65:80/api/v1/service/snapshot/score",
-    //   data: { time_stamp_int: [1546272007] },
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     Authorization: `Bearer ${process.env.REACT_APP_SNAPSHOT_API_KEY}`,
-    //   },
-    // }).then((response) => console.log(response.data));
+    axios({
+      method: "post",
+      url:
+        "https://cors-anywhere.herokuapp.com/http://52.163.54.65:80/api/v1/service/snapshot/score",
+      data: { time_stamp_int: [1546272007] },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.REACT_APP_SNAPSHOT_API_KEY}`,
+      },
+    }).then((response) => console.log(response.data));
 
     // axios({
     //   method: "post",
@@ -173,9 +173,9 @@ const App = () => {
             <ControlPanel vesselsData={allVessels} />
             <div className="h-full w-full flex flex-col flex-1">
               <SearchBar />
-              <TimeSlider />
+              {/* <TimeSlider /> */}
             </div>
-            <DetailsPanel  />
+            <DetailsPanel />
           </div>
 
           <MapContainer
