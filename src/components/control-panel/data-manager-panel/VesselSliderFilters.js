@@ -29,8 +29,8 @@ const VesselSliderFilters = ({ vesselsData }) => {
   };
 
   const riskData = vesselsData.map(({ risk }) => risk);
-  const riskDomain = [0, 100];
-  const riskBinSize = 5;
+  const riskDomain = [0, 20];
+  const riskBinSize = 1;
 
   const speedData = vesselsData.map(({ speed }) => speed);
   const speedDomain = [0, 35];

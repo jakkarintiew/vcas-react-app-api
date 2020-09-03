@@ -28,15 +28,15 @@ const LayerManagerPanel = () => {
           </div>
           <LayerVisibilityToggle layerName={"Moving Vessels"} />
           <LayerVisibilityToggle layerName={"Stopped Vessels"} />
-          <LayerVisibilityToggle layerName={"Alerts"} />
+          {/* <LayerVisibilityToggle layerName={"Alerts"} /> */}
         </LayerGroupContainer>
         <LayerGroupContainer>
           <div className="px ml-1 mb-2">
             <b>Paths</b>
           </div>
           <LayerVisibilityToggle layerName={"Historical Path"} />
-          <LayerVisibilityToggle layerName={"Future Path"} />
-          <LayerVisibilityToggle layerName={"High-risk Vessel Path"} />
+          {/* <LayerVisibilityToggle layerName={"Future Path"} /> */}
+          {/* <LayerVisibilityToggle layerName={"High-risk Vessel Path"} /> */}
         </LayerGroupContainer>
         <LayerGroupContainer>
           <div className="px ml-1 mb-2">

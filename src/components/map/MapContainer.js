@@ -25,7 +25,7 @@ import {
   setActivePathActionCreator,
   setActiveFuturePathActionCreator,
   setActiveHistoricalPathActionCreator,
-  setHighRiskPathsActionCreator,
+  // setHighRiskPathsActionCreator,
   setAlertPathsActionCreator,
   setActiveVesselsActionCreator,
   setAlertVesselsActionCreator,
@@ -42,8 +42,7 @@ import dataMooringAreas from "data/seamark_mooring_areas.json";
 import vesselTypeLookup from "data/vessel_type_lookup.json";
 import mmsiTypeLookup from "data/mmsi_type_lookup.json";
 
-const FRAMES_DIR =
-  "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/";
+// const FRAMES_DIR = "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/";
 
 const MapContainer = ({ closeEncounters, mapStyle }) => {
   // Set your mapbox access token here
@@ -54,12 +53,12 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
   const mapView = useSelector((state) => state.mapView);
   const vesselTypeFilter = useSelector((state) => state.vesselTypeFilter);
   const vesselSliderFilter = useSelector((state) => state.vesselSliderFilter);
-  const currentFrame = useSelector((state) => state.frames.currentFrame);
+  // const currentFrame = useSelector((state) => state.frames.currentFrame);
   const allVessels = useSelector((state) => state.vesselData.allVesselData);
   const activeVessels = useSelector(
     (state) => state.vesselData.activeVesselData
   );
-  const activePathData = useSelector((state) => state.pathData.activePathData);
+  // const activePathData = useSelector((state) => state.pathData.activePathData);
   const activeFuturePath = useSelector(
     (state) => state.pathData.activeFuturePath
   );
@@ -92,9 +91,9 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
   const setActiveHistoricalPath = (path) => {
     dispatch(setActiveHistoricalPathActionCreator(path));
   };
-  const setHighRiskPaths = (paths) => {
-    dispatch(setHighRiskPathsActionCreator(paths));
-  };
+  // const setHighRiskPaths = (paths) => {
+  //   dispatch(setHighRiskPathsActionCreator(paths));
+  // };
   const setAlertPaths = (paths) => {
     dispatch(setAlertPathsActionCreator(paths));
   };
@@ -185,7 +184,7 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
   });
 
   const highRiskVessels = movingVessels.filter((vessel) => {
-    return vessel.risk > 75;
+    return vessel.risk > 1.5;
   });
 
   const pathDataInitialState = [
@@ -199,80 +198,80 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
     },
   ];
 
-  const getPath = async (vesselID) => {
-    try {
-      const promisePath = await axios.get(
-        FRAMES_DIR + `paths_new/${vesselID}_path.json`
-      );
-      return promisePath.data;
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const getPath = async (vesselID) => {
+  //   try {
+  //     const promisePath = await axios.get(
+  //       FRAMES_DIR + `paths_new/${vesselID}_path.json`
+  //     );
+  //     return promisePath.data;
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
-  const getFuturePath = (pathData) => {
-    let currentIndex = pathData.findIndex((obj) => obj.frame === currentFrame);
-    let filteredPath;
-    for (let index = currentIndex; index <= pathData.length - 1; index++) {
-      if (currentIndex === pathData.length - 1) {
-        return pathDataInitialState;
-      } else if (
-        index === pathData.length - 1 ||
-        pathData[index + 1].frame - pathData[index].frame > 1
-      ) {
-        filteredPath = pathData.filter((elem) => {
-          return (
-            elem.frame >= currentFrame && elem.frame <= pathData[index].frame
-          );
-        });
-        return [
-          {
-            path: filteredPath.map((frame) => [
-              frame.longitude,
-              frame.latitude,
-            ]),
-            timestamps: filteredPath.map((frame) => frame.timestamp),
-            speed: filteredPath.map((frame) => frame.speed),
-            heading: filteredPath.map((frame) => frame.heading),
-            course: filteredPath.map((frame) => frame.course),
-            risk: filteredPath.map((frame) => frame.risk),
-          },
-        ];
-      }
-    }
-  };
+  // const getFuturePath = (pathData) => {
+  //   let currentIndex = pathData.findIndex((obj) => obj.frame === currentFrame);
+  //   let filteredPath;
+  //   for (let index = currentIndex; index <= pathData.length - 1; index++) {
+  //     if (currentIndex === pathData.length - 1) {
+  //       return pathDataInitialState;
+  //     } else if (
+  //       index === pathData.length - 1 ||
+  //       pathData[index + 1].frame - pathData[index].frame > 1
+  //     ) {
+  //       filteredPath = pathData.filter((elem) => {
+  //         return (
+  //           elem.frame >= currentFrame && elem.frame <= pathData[index].frame
+  //         );
+  //       });
+  //       return [
+  //         {
+  //           path: filteredPath.map((frame) => [
+  //             frame.longitude,
+  //             frame.latitude,
+  //           ]),
+  //           timestamps: filteredPath.map((frame) => frame.timestamp),
+  //           speed: filteredPath.map((frame) => frame.speed),
+  //           heading: filteredPath.map((frame) => frame.heading),
+  //           course: filteredPath.map((frame) => frame.course),
+  //           risk: filteredPath.map((frame) => frame.risk),
+  //         },
+  //       ];
+  //     }
+  //   }
+  // };
 
-  const getHistoricalPath = (pathData) => {
-    let currentIndex = pathData.findIndex((obj) => obj.frame === currentFrame);
-    let filteredPath;
-    for (let index = currentIndex; index >= 0; index--) {
-      if (currentIndex === 0) {
-        return pathDataInitialState;
-      } else if (
-        index === 0 ||
-        pathData[index].frame - pathData[index - 1].frame > 1
-      ) {
-        filteredPath = pathData.filter((elem) => {
-          return (
-            elem.frame >= pathData[index].frame && elem.frame <= currentFrame
-          );
-        });
-        return [
-          {
-            path: filteredPath.map((frame) => [
-              frame.longitude,
-              frame.latitude,
-            ]),
-            timestamps: filteredPath.map((frame) => frame.timestamp),
-            speed: filteredPath.map((frame) => frame.speed),
-            heading: filteredPath.map((frame) => frame.heading),
-            course: filteredPath.map((frame) => frame.course),
-            risk: filteredPath.map((frame) => frame.risk),
-          },
-        ];
-      }
-    }
-  };
+  // const getHistoricalPath = (pathData) => {
+  //   let currentIndex = pathData.findIndex((obj) => obj.frame === currentFrame);
+  //   let filteredPath;
+  //   for (let index = currentIndex; index >= 0; index--) {
+  //     if (currentIndex === 0) {
+  //       return pathDataInitialState;
+  //     } else if (
+  //       index === 0 ||
+  //       pathData[index].frame - pathData[index - 1].frame > 1
+  //     ) {
+  //       filteredPath = pathData.filter((elem) => {
+  //         return (
+  //           elem.frame >= pathData[index].frame && elem.frame <= currentFrame
+  //         );
+  //       });
+  //       return [
+  //         {
+  //           path: filteredPath.map((frame) => [
+  //             frame.longitude,
+  //             frame.latitude,
+  //           ]),
+  //           timestamps: filteredPath.map((frame) => frame.timestamp),
+  //           speed: filteredPath.map((frame) => frame.speed),
+  //           heading: filteredPath.map((frame) => frame.heading),
+  //           course: filteredPath.map((frame) => frame.course),
+  //           risk: filteredPath.map((frame) => frame.risk),
+  //         },
+  //       ];
+  //     }
+  //   }
+  // };
 
   const apiGetHistoricalPath = async (vessel) => {
     try {
@@ -300,7 +299,7 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
         speed: vessel.speed,
         course: vessel.course,
         heading: vessel.heading,
-        risk: Math.random() * 100,
+        risk: vessel.risk,
         timestamp: vessel.time_stamp_int * 1000,
       }));
 
@@ -321,22 +320,22 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
     }
   };
 
-  const getHighRiskPaths = (highRiskVessels) => {
-    const promiseRiskPaths = [];
-    const newRiskPaths = [];
-    highRiskVessels.forEach((vessel) => {
-      promiseRiskPaths.push(getPath(vessel.mmsi));
-    });
+  // const getHighRiskPaths = (highRiskVessels) => {
+  //   const promiseRiskPaths = [];
+  //   const newRiskPaths = [];
+  //   highRiskVessels.forEach((vessel) => {
+  //     promiseRiskPaths.push(getPath(vessel.mmsi));
+  //   });
 
-    Promise.all(promiseRiskPaths)
-      .then((responses) => {
-        responses.forEach((path) => {
-          newRiskPaths.push(getFuturePath(path)[0]);
-        });
-        setHighRiskPaths(newRiskPaths);
-      })
-      .catch((error) => console.log(error));
-  };
+  //   Promise.all(promiseRiskPaths)
+  //     .then((responses) => {
+  //       responses.forEach((path) => {
+  //         newRiskPaths.push(getFuturePath(path)[0]);
+  //       });
+  //       setHighRiskPaths(newRiskPaths);
+  //     })
+  //     .catch((error) => console.log(error));
+  // };
 
   // useEffect(() => {
   //   setHighRiskPaths([]);
@@ -442,55 +441,55 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
     setActiveVessels(newActiveVessel);
   };
 
-  const clickAlertEvent = (object) => {
-    // Reset active vessel
-    setActiveVessels([]);
+  // const clickAlertEvent = (object) => {
+  //   // Reset active vessel
+  //   setActiveVessels([]);
 
-    // Zoom to event
-    setViewStates({
-      main: {
-        ...mapView.viewStates.main,
-        longitude: object.vessel_1_longitude,
-        latitude: object.vessel_1_latitude,
-        zoom: 12,
-        pitch: 0,
-        bearing: 0,
-        transitionDuration: 500,
-        transitionInterruption: TRANSITION_EVENTS.UPDATE,
-        transitionInterpolator: new FlyToInterpolator(),
-      },
-      minimap: {
-        ...mapView.viewStates.minimap,
-        longitude: object.vessel_1_longitude,
-        latitude: object.vessel_1_latitude,
-      },
-    });
+  //   // Zoom to event
+  //   setViewStates({
+  //     main: {
+  //       ...mapView.viewStates.main,
+  //       longitude: object.vessel_1_longitude,
+  //       latitude: object.vessel_1_latitude,
+  //       zoom: 12,
+  //       pitch: 0,
+  //       bearing: 0,
+  //       transitionDuration: 500,
+  //       transitionInterruption: TRANSITION_EVENTS.UPDATE,
+  //       transitionInterpolator: new FlyToInterpolator(),
+  //     },
+  //     minimap: {
+  //       ...mapView.viewStates.minimap,
+  //       longitude: object.vessel_1_longitude,
+  //       latitude: object.vessel_1_latitude,
+  //     },
+  //   });
 
-    // Get vessels
-    setAlertVessels(
-      allVessels.filter((vessel) => {
-        return (
-          vessel.mmsi === object.vessel_1_mmsi ||
-          vessel.mmsi === object.vessel_2_mmsi
-        );
-      })
-    );
+  //   // Get vessels
+  //   setAlertVessels(
+  //     allVessels.filter((vessel) => {
+  //       return (
+  //         vessel.mmsi === object.vessel_1_mmsi ||
+  //         vessel.mmsi === object.vessel_2_mmsi
+  //       );
+  //     })
+  //   );
 
-    // Get paths
-    let alertPathsPromises = [];
-    let newAlertPaths = [];
-    alertPathsPromises.push(getPath(object.vessel_1_mmsi));
-    alertPathsPromises.push(getPath(object.vessel_2_mmsi));
+  //   // Get paths
+  //   let alertPathsPromises = [];
+  //   let newAlertPaths = [];
+  //   alertPathsPromises.push(getPath(object.vessel_1_mmsi));
+  //   alertPathsPromises.push(getPath(object.vessel_2_mmsi));
 
-    Promise.all(alertPathsPromises)
-      .then((responses) => {
-        responses.forEach((path) => {
-          newAlertPaths.push(getFuturePath(path)[0]);
-        });
-        setAlertPaths(newAlertPaths);
-      })
-      .catch((error) => console.log(error));
-  };
+  //   Promise.all(alertPathsPromises)
+  //     .then((responses) => {
+  //       responses.forEach((path) => {
+  //         newAlertPaths.push(getFuturePath(path)[0]);
+  //       });
+  //       setAlertPaths(newAlertPaths);
+  //     })
+  //     .catch((error) => console.log(error));
+  // };
 
   const [tooltipInfo, setTooltipInfo] = useState({
     objectType: "",
@@ -643,15 +642,16 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
     layerVisibility.riskHeatmap.visible &&
       new HeatmapLayer({
         id: "risk-heatmap-layer",
-        data: movingVessels.filter((vessel) => vessel.risk > 50),
+        data: highRiskVessels,
         getPosition: (d) => [d.longitude, d.latitude],
-        getWeight: (d) => d.risk,
-        radiusPixels: 50,
-        // 5000 /
-        // (78271.484 * Math.exp(-0.6932415 * mapView.viewStates.main.zoom)),
-        opacity: 0.1,
+        getWeight: (d) => d.risk / 20,
+        radiusPixels:
+          5000 /
+          (78271.484 * Math.exp(-0.6932415 * mapView.viewStates.main.zoom)),
+        opacity: 0.2,
         intensity: 1,
-        threshold: 0.01,
+        threshold: 0.05,
+        pickable: false,
       }),
     layerVisibility.riskScreenGrid.visible &&
       new ScreenGridLayer({
@@ -724,30 +724,30 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
         widthMinPixels: 6,
         coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
       }),
-    layerVisibility.alertIcon.visible &&
-      new IconLayer({
-        id: "warning-icon-layer",
-        data: closeEncounters,
-        coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
-        iconAtlas: require("img/warning_red.png"),
-        iconMapping: {
-          warningMarker: { x: 0, y: 0, width: 300, height: 300, mask: false },
-        },
-        getIcon: (d) => "warningMarker",
-        getPosition: (d) => [
-          (d.vessel_1_longitude + d.vessel_2_longitude) / 2,
-          (d.vessel_1_latitude + d.vessel_2_latitude) / 2,
-          200,
-        ],
-        getSize: (d) => 600,
-        sizeUnits: "meters",
-        sizeScale: 1,
-        sizeMinPixels: 30,
-        sizeMaxPixels: 400,
-        billboard: true,
-        pickable: true,
-        onClick: (info) => clickAlertEvent(info.object),
-      }),
+    // layerVisibility.alertIcon.visible &&
+    //   new IconLayer({
+    //     id: "warning-icon-layer",
+    //     data: closeEncounters,
+    //     coordinateSystem: COORDINATE_SYSTEM.LNGLAT,
+    //     iconAtlas: require("img/warning_red.png"),
+    //     iconMapping: {
+    //       warningMarker: { x: 0, y: 0, width: 300, height: 300, mask: false },
+    //     },
+    //     getIcon: (d) => "warningMarker",
+    //     getPosition: (d) => [
+    //       (d.vessel_1_longitude + d.vessel_2_longitude) / 2,
+    //       (d.vessel_1_latitude + d.vessel_2_latitude) / 2,
+    //       200,
+    //     ],
+    //     getSize: (d) => 600,
+    //     sizeUnits: "meters",
+    //     sizeScale: 1,
+    //     sizeMinPixels: 30,
+    //     sizeMaxPixels: 400,
+    //     billboard: true,
+    //     pickable: true,
+    //     onClick: (info) => clickAlertEvent(info.object),
+    //   }),
     activeVessels.length > 0 &&
       layerVisibility.historicalPath.visible &&
       new PathLayer({
@@ -913,9 +913,9 @@ const MapContainer = ({ closeEncounters, mapStyle }) => {
                   })
                 )
               ].fillRGB
-            : d.risk > 75
+            : d.risk > 5
             ? [252, 40, 20]
-            : d.risk > 50
+            : d.risk > 1.5
             ? [255, 160, 0]
             : [52, 199, 89],
         getIcon: (d) => "vesselMarker",

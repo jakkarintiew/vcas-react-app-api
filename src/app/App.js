@@ -16,18 +16,16 @@ import DetailsPanel from "components/details-panel/DetailsPanel";
 // import TimeSlider from "components/time-slider/TimeSlider";
 import SearchBar from "components/search-bar/SearchBar";
 import {
-  setMetadataActionCreator,
+  // setMetadataActionCreator,
   setAllVesselsActionCreator,
-  incrementLoadedFramesActionCreator,
+  // incrementLoadedFramesActionCreator,
 } from "app/Redux";
 
-import allCloseEncounters from "data/close_encounters.json";
+// import allCloseEncounters from "data/close_encounters.json";
 import mmsiTypeLookup from "data/mmsi_type_lookup.json";
 
-const METADATA_PATH =
-  "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/frames_metadata.json";
-const FRAMES_DIR =
-  "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/";
+// const METADATA_PATH = "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/frames_metadata.json";
+// const FRAMES_DIR = "https://raw.githubusercontent.com/jakkarintiew/frames-data/master/frames_20s/";
 
 const ScreenCircularProgress = withStyles({
   indeterminate: {
@@ -43,26 +41,26 @@ const App = () => {
   const currentTime = useSelector(
     (state) => state.dataSourceControl.currentTime
   );
-  const metadata = useSelector((state) => state.frames.metadata);
-  const currentFrame = useSelector((state) => state.frames.currentFrame);
+  // const metadata = useSelector((state) => state.frames.metadata);
+  // const currentFrame = useSelector((state) => state.frames.currentFrame);
   const allVessels = useSelector((state) => state.vesselData.allVesselData);
-  const alertVessels = useSelector((state) => state.vesselData.alertVesselData);
+  // const alertVessels = useSelector((state) => state.vesselData.alertVesselData);
 
-  const setMetadata = (metadata) => {
-    dispatch(setMetadataActionCreator(metadata));
-  };
+  // const setMetadata = (metadata) => {
+  //   dispatch(setMetadataActionCreator(metadata));
+  // };
 
   const setAllVessels = (vessels) => {
     dispatch(setAllVesselsActionCreator(vessels));
   };
 
-  const incrementLoadedFrames = () => {
-    dispatch(incrementLoadedFramesActionCreator());
-  };
+  // const incrementLoadedFrames = () => {
+  //   dispatch(incrementLoadedFramesActionCreator());
+  // };
 
-  const [frames, setFrames] = useState({});
+  // const [frames, setFrames] = useState({});
   const [error, setError] = useState(null);
-  const [alertFrame, setAlertFrame] = useState(0);
+  // const [alertFrame, setAlertFrame] = useState(0);
   // Load first frame + metadata; ran once at startup
   useEffect(() => {
     const getFirstFrame = async () => {
@@ -99,7 +97,7 @@ const App = () => {
             speed: vessel.speed,
             course: vessel.course,
             heading: vessel.heading,
-            risk: Math.random() * 100,
+            risk: vessel.risk,
             timestamp: vessel.time_stamp_int * 1000,
           }));
           setAllVessels(vessels);
@@ -135,12 +133,13 @@ const App = () => {
         speed: vessel.speed,
         course: vessel.course,
         heading: vessel.heading,
-        risk: Math.random() * 100,
+        risk: vessel.risk,
         timestamp: vessel.time_stamp_int * 1000,
       }));
 
       setAllVessels(vessels);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTime]);
 
   // // Once metadata loaded, load remaining vessel frames
@@ -219,7 +218,7 @@ const App = () => {
           </div>
 
           <MapContainer
-            closeEncounters={allCloseEncounters[alertFrame]}
+            // closeEncounters={allCloseEncounters[alertFrame]}
             mapStyle={
               darkThemeEnabled ? darkTheme.mapStyle : lightTheme.mapStyle
             }

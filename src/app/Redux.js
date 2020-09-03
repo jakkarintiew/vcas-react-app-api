@@ -195,7 +195,7 @@ const vesselTypeFilterSlice = createSlice({
 
 const vesselSliderFilterSlice = createSlice({
   name: "vesselSliderFilter",
-  initialState: { risk: [0, 100], speed: [0, 35] },
+  initialState: { risk: [0, 20], speed: [0, 35] },
   reducers: {
     set_risk_range: (state, { payload }) => {
       state.risk[0] = payload[0];

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import styled from "styled-components";
@@ -20,27 +20,27 @@ const DataSourceWidgetContainer = styled.div`
   margin-bottom: 8px;
 `;
 
-const StyledLabel = styled.div`
-  background-color: ${(props) => props.theme.labelColor};
-  color: ${(props) => props.theme.labelTextColor};
-  font-size: 0.75em;
-  font-weight: 500;
-  padding: 3px 5px 3px 5px;
-  height: 25px;
-  width: 100px;
-`;
+// const StyledLabel = styled.div`
+//   background-color: ${(props) => props.theme.labelColor};
+//   color: ${(props) => props.theme.labelTextColor};
+//   font-size: 0.75em;
+//   font-weight: 500;
+//   padding: 3px 5px 3px 5px;
+//   height: 25px;
+//   width: 100px;
+// `;
 
-const StyledInput = styled.input`
-  color: ${(props) => props.theme.textColor};
-  background-color: ${(props) => props.theme.sidePanelBg};
-  font-size: 0.75em;
-  height: 25px;
-  padding: 2px;
-  border: none;
-  :focus {
-    outline: 0;
-  }
-`;
+// const StyledInput = styled.input`
+//   color: ${(props) => props.theme.textColor};
+//   background-color: ${(props) => props.theme.sidePanelBg};
+//   font-size: 0.75em;
+//   height: 25px;
+//   padding: 2px;
+//   border: none;
+//   :focus {
+//     outline: 0;
+//   }
+// `;
 
 // const StyledDateTimePicker = styled(function ({ className, onChange, value }) {
 //   return (
